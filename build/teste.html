@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="silegismg-editor-articulacao.js"></script>
+</head>
+
+<body>
+    <button data-tipo-destino="continuacao">Continuação</button>
+    <button data-tipo-destino="artigo">Artigo</button>
+    <button data-tipo-destino="paragrafo">Parágrafo</button>
+    <button data-tipo-destino="inciso">Inciso</button>
+    <button data-tipo-destino="alinea">Alínea</button>
+    <button data-tipo-destino="item">Ítem</button>
+
+    <pre id="contexto" style="float: right"></pre>
+    <div id="articulacao" class="silegismg-articulacao">
+        <p data-tipo="artigo">Primeiro</p>
+        <p data-tipo="artigo">Segundo</p>
+        <p data-tipo="inciso">Inciso 1 do caput</p>
+        <p data-tipo="inciso">Inciso 2 do caput</p>
+        <p data-tipo="paragrafo">Parágrafo</p>
+        <p data-tipo="inciso">Inciso 1 do parágrafo</p>
+        <p data-tipo="inciso">Inciso 2 do parágrafo</p>
+        <p data-tipo="alinea">Alínea</p>
+        <p data-tipo="item">Item</p>
+        <p data-tipo="item">Outro item</p>
+        <p data-tipo="artigo">Terceiro</p>
+        <p data-tipo="artigo">Quarto</p>
+        <p data-tipo="artigo">Quinto</p>
+        <p data-tipo="artigo">Sexto</p>
+        <p data-tipo="artigo">Sétimo</p>
+        <p data-tipo="artigo">Oitavo</p>
+        <p data-tipo="artigo">Nono</p>
+        <p data-tipo="artigo">Décimo</p>
+    </div>
+    <script>
+        silegismgEditorArticulacao(document.getElementById('articulacao'));
+
+        let botoes = document.querySelectorAll('button[data-tipo-destino]');
+
+        for (let i = 0; i < botoes.length; i++) {
+            botoes[i].onclick = function (event) {
+                articulacao.ctrlArticulacao.alterarTipoDispositivoSelecionado(event.target.getAttribute('data-tipo-destino'));
+                articulacao.focus();
+            }
+        }
+    </script>
+</body>
+
+</html>
