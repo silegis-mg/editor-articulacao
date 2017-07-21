@@ -1,4 +1,5 @@
 import EditorArticulacaoController from './EditorArticulacaoController';
+import exportarParaLexML from './lexml/exportarParaLexML'
 import css from './editor-articulacao.css';
 
 /**
@@ -8,6 +9,12 @@ import css from './editor-articulacao.css';
  */
 function prepararEditorArticulacao(elemento) {
     elemento.ctrlArticulacao = new EditorArticulacaoController(elemento);
+    
+    Object.defineProperty(elemento, 'lexml', {
+        get: function() {
+            return exportarParaLexML(elemento);
+        }
+    });
 }
 
 // Adiciona CSS

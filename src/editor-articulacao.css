@@ -1,6 +1,12 @@
 .silegismg-articulacao {
-  counter-reset: titulo capitulo secao subsecao artigo;
+  counter-reset: parte livro titulo capitulo secao subsecao artigo;
   margin: 1em 0;
+}
+
+.silegismg-articulacao p[data-tipo]:before {
+  display: inline-block; /* Resolve problema de cursor antes do rótulo no chrome */
+  margin-right: 1ex;
+  font-weight: bolder;
 }
 
 .silegismg-articulacao p {
@@ -8,6 +14,68 @@
   text-indent: 4ex;
   text-align: justify;
 }
+
+.silegismg-articulacao p[data-tipo="titulo"]:before {
+  content: 'Título ' counter(titulo, upper-roman);
+  counter-increment: titulo;
+  display: block;
+  text-align: center;
+}
+
+.silegismg-articulacao p[data-tipo="titulo"] {
+  counter-reset: capitulo;
+  text-transform: uppercase;
+  font-weight: bolder;
+  font-size: 110%;
+  text-align: center;
+  text-indent: 0;
+}
+
+.silegismg-articulacao p[data-tipo="capitulo"]:before {
+  content: 'Capítulo ' counter(capitulo, upper-roman);
+  counter-increment: capitulo;
+  display: block;
+  text-align: center;
+  font-weight: normal;
+}
+
+.silegismg-articulacao p[data-tipo="capitulo"] {
+  counter-reset: secao;
+  text-transform: uppercase;
+  font-size: 110%;
+  text-align: center;
+  text-indent: 0;
+}
+
+.silegismg-articulacao p[data-tipo="secao"]:before {
+  content: 'Seção ' counter(secao, upper-roman);
+  counter-increment: secao;
+  display: block;
+  text-align: center;
+}
+
+.silegismg-articulacao p[data-tipo="secao"] {
+  counter-reset: subsecao;
+  font-weight: bolder;
+  font-size: 110%;
+  text-align: center;
+  text-indent: 0;
+}
+
+.silegismg-articulacao p[data-tipo="subsecao"]:before {
+  content: 'Subseção ' counter(subsecao, upper-roman);
+  counter-increment: subsecao;
+  display: block;
+  text-align: center;
+}
+
+.silegismg-articulacao p[data-tipo="subsecao"] {
+  font-weight: bolder;
+  font-size: 110%;
+  text-align: center;
+  text-indent: 0;
+}
+
 
 .silegismg-articulacao p[data-tipo="artigo"]:before {
   content: 'Art. ' counter(artigo) 'º – ';
@@ -77,10 +145,4 @@
 
 .silegismg-articulacao > *:last-child {
   margin-bottom: 0;
-}
-
-.silegismg-articulacao p[data-tipo]:before {
-  color: rgb(140, 170, 61);
-  display: inline-block; /* Resolve problema de cursor antes do rótulo no chrome */
-  margin-right: 1ex;
 }

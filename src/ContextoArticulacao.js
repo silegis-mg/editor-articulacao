@@ -1,8 +1,17 @@
+/**
+ * Representa o contexto do usuário no editor de articulação.
+ * Possui dois atributos: cursor, contendo o contexto no cursor,
+ * e as permissões de alteração de dispositivo na seleção.
+ */
 class ContextoArticulacao {
     constructor(elementoArticulacao, dispositivo) {
         let dadosCursor = {
             italico: dispositivo.tagName === 'I',
             desconhecido: false,
+            titulo: false,
+            capitulo: false,
+            secao: false,
+            subsecao: false,
             artigo: false,
             continuacao: false,
             paragrafo: false,
@@ -34,15 +43,46 @@ class ContextoArticulacao {
             dadosCursor.desconhecido = true;
         }
 
-        dadosCursor.primeiroDoTipo = dispositivo && verificarPrimeiroDoTipo(dispositivo);
-        dadosCursor.tipoAnterior =  dispositivo && obterTipoAnterior(dispositivo);
+        let primeiroDoTipo, tipoAnterior;
+        
+        Object.defineProperty(dadosCursor, 'primeiroDoTipo', {
+            get: function() {
+                if (primeiroDoTipo === undefined) {
+                    primeiroDoTipo = dispositivo && verificarPrimeiroDoTipo(dispositivo);
+                }
+
+                return primeiroDoTipo;
+            }
+        });
+
+        dadosCursor.dispositivoAnterior = obterDispositivoAnterior(dispositivo);
+        dadosCursor.tipoAnterior = dadosCursor.dispositivoAnterior && dadosCursor.dispositivoAnterior.getAttribute('data-tipo');
+
+        let matches = Element.prototype.matches || Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.onMatchesSelector || function() { return true; };
+
+        function possuiAnterior(dispositivo, tipo) {
+            /* Implementação falha/incompleta. Uma subseção deve existir depois de uma seção,
+             * mas não deveria permitir capítulo + seção + artigo + capítulo + subseção.
+             * 
+             * Cuidado pois esta implementação não pode ser cara!
+             */
+            return matches.call(dispositivo, 'p[data-tipo="' + tipo + '"] ~ *');
+        }
 
         let permissoes = {
+            titulo: true,
+            capitulo: true,
+            get secao() {
+                return possuiAnterior(dadosCursor.dispositivo, 'capitulo');
+            },
+            get subsecao() {
+                return possuiAnterior(dadosCursor.dispositivo, 'secao');
+            },
             artigo: true,
             continuacao: dadosCursor.tipoAnterior === 'artigo' || dadosCursor.continuacao,
-            inciso: !dadosCursor.artigo || !dadosCursor.primeiroDoTipo,
+            inciso: (dadosCursor.tipoAnterior !== 'titulo' && dadosCursor.tipoAnterior !== 'capitulo' && dadosCursor.tipoAnterior !== 'secao' && dadosCursor.tipoAnterior !== 'subsecao') && !dadosCursor.artigo || !dadosCursor.primeiroDoTipo,
             paragrafo: !dadosCursor.artigo || !dadosCursor.primeiroDoTipo,
-            alinea: (dadosCursor.inciso && !dadosCursor.primeiroDoTipo) || dadosCursor.tipoAnterior === 'inciso' || dadosCursor.tipoAnterior === 'alinea',
+            alinea: (dadosCursor.inciso && !dadosCursor.primeiroDoTipo) || dadosCursor.tipoAnterior === 'inciso' || dadosCursor.tipoAnterior === 'alinea' || dadosCursor.tipoAnterior === 'item',
             item: (dadosCursor.alinea && !dadosCursor.primeiroDoTipo) || dadosCursor.tipoAnterior === 'alinea' || dadosCursor.tipoAnterior === 'item'
         };
 
@@ -81,7 +121,13 @@ function verificarPrimeiroDoTipo(dispositivo) {
     }
     
     let pontosParagem = ({
-        artigo: ['raiz'],
+        parte: [],
+        livro: [],
+        titulo: [],
+        capitulo: ['titulo'],
+        secao: ['capitulo', 'titulo'],
+        subsecao: ['secao', 'capitulo', 'titulo'],
+        artigo: [],
         paragrafo: ['artigo'],
         inciso: ['paragrafo', 'artigo'],
         alinea: ['inciso'],
@@ -108,9 +154,9 @@ function verificarPrimeiroDoTipo(dispositivo) {
  * Obtém o tipo de dispositivo anterior.
  * 
  * @param {Element} dipositivo 
- * @returns {String} Tipo do dispositivo anterior.
+ * @returns {Element} Elemento do dispositivo anterior.
  */
-function obterTipoAnterior(dipositivo) {
+function obterDispositivoAnterior(dipositivo) {
     while (!dipositivo.hasAttribute('data-tipo')) {
         dipositivo = dipositivo.parentElement;
     }
@@ -120,7 +166,7 @@ function obterTipoAnterior(dipositivo) {
             let tipo = anterior.getAttribute('data-tipo');
 
             if (tipo !== 'continuacao') {
-                return tipo;
+                return anterior;
             }
         }
     }
