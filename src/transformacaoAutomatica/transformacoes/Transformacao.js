@@ -22,7 +22,7 @@ class TransformacaoDoProximo extends Transformacao {
         let novoTipo = this.proximoTipo(editor, ctrl, contexto);
 
         if (novoTipo) {
-            aoSelecionarOutroElemento(editor, contexto.cursor.elemento, function () { ctrl.alterarTipoDispositivoSelecionado(novoTipo); });
+            onKeyUp(editor, contexto.cursor.elemento, function () { ctrl.alterarTipoDispositivoSelecionado(novoTipo); });
         }
     }
 
@@ -31,15 +31,13 @@ class TransformacaoDoProximo extends Transformacao {
     }
 }
 
-function aoSelecionarOutroElemento(editor, elementoAtual, callback) {
+function onKeyUp(editor, elementoAtual, callback) {
     var handler = function(event) {
-        if (event.detail.cursor.elemento !== elementoAtual) {
-            callback(event);
-            editor.removeEventListener('contexto', handler);
-        }
+        callback(event);
+        editor.removeEventListener('keyup', handler);
     };
 
-    editor.addEventListener('contexto', handler);
+    editor.addEventListener('keyup', handler);
 }
 
 export { Transformacao, TransformacaoDoProximo };

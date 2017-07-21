@@ -46,7 +46,7 @@
         let botoes = document.querySelectorAll('button[data-tipo-destino]');
 
         for (let i = 0; i < botoes.length; i++) {
-            botoes[i].onclick = function (evenpt) {
+            botoes[i].onclick = function (event) {
                 articulacao.ctrlArticulacao.alterarTipoDispositivoSelecionado(event.target.getAttribute('data-tipo-destino'));
                 articulacao.focus();
             }
