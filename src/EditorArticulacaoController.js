@@ -1,5 +1,6 @@
 import ContextoArticulacaoAtualizadoEvent from './eventos/ContextoArticulacaoAtualizadoEvent';
 import ContextoArticulacao from './ContextoArticulacao';
+import adicionarTransformacaoAutomatica from './transformacaoAutomatica/transformacaoAutomatica';
 import hackChrome from './hacks/chrome';
 
 /**
@@ -27,6 +28,8 @@ class EditorArticulacaoController {
 
         this._registrarEventos();
         elemento.contentEditable = true;
+
+        adicionarTransformacaoAutomatica(this, elemento);
     }
 
     /**
@@ -191,10 +194,9 @@ class EditorArticulacaoController {
         let anterior = encontrarDispositivoAnteriorDoTipo(dispositivo, ['artigo', 'paragrafo']);
         let posterior = encontrarDispositivoPosteriorDoTipo(dispositivo, ['artigo', 'paragrafo']);
 
-        if (dispositivo.getAttribute('data-tipo') === 'paragrafo') {
+        if (dispositivo.getAttribute('data-tipo') === 'paragrafo' || dispositivo.getAttribute('data-tipo') === 'continuacao') {
             dispositivo.classList.toggle('unico', ((!anterior || anterior.getAttribute('data-tipo') !== 'paragrafo') &&
                 (!posterior || posterior.getAttribute('data-tipo') !== 'paragrafo')))
-
             if (anterior && anterior.getAttribute('data-tipo') === 'paragrafo') {
                 anterior.classList.remove('unico');
             }

@@ -13,7 +13,7 @@ module.exports = function(grunt) {
 		},
 		"webpack-dev-server": {
 			options: {
-				webpack: webpackConfig,
+				webpack: webpackConfig.desenv(),
 				contentBase: 'build'
 			},
 			start: {

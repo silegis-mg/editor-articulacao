@@ -24,3 +24,10 @@ module.exports = {
     },
     devtool: '#inline-source-map'
 }
+
+Object.defineProperty(module.exports, 'desenv', {
+    value: function () {
+        this.module.loaders.splice(1, 1);
+        return this;
+    }
+});

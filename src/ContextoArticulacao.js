@@ -19,7 +19,10 @@ class ContextoArticulacao {
             alinea: false,
             item: false,
             raiz: false,
-            elemento: dispositivo
+            elemento: dispositivo,
+            get tipo() {
+                return this.dispositivo.getAttribute('data-tipo');
+            }
         };
 
         while (dispositivo && dispositivo !== elementoArticulacao && !dispositivo.hasAttribute('data-tipo')) {

@@ -155,16 +155,16 @@ function exportarParaLexML(dispositivoDOM) {
     while (dispositivoDOM) {
         let tipo = dispositivoDOM.getAttribute('data-tipo').replace(/^[a-z]/, letra => letra.toUpperCase());
 
-        if (tipo === 'continuacao') {
-            let p = criarElementoP(dispositivoLexML.innerHTML);
-            contexto.adicionarP(p);
+        if (tipo === 'Continuacao') {
+            let p = criarElementoP(dispositivoDOM.innerHTML);
+            contexto.adicionarSubitem(p);
         } else {
             while (contexto && !contexto.possuiSubtipo(tipo)) {
                 contexto = contexto.contextoAnterior;
             }
 
             if (!contexto) {
-                throw new ArticulacaoInvalidaException(dispositivoDOM, 'Dispositivo do tipo "' + tipo.toLowerCase + '" inesperado neste ponto.');
+                throw new ArticulacaoInvalidaException(dispositivoDOM, 'Dispositivo do tipo "' + tipo.toLowerCase() + '" inesperado neste ponto.');
             }
 
             let dispositivoLexML = criarElementoLexML(tipo, dispositivoDOM.innerHTML, contexto.getIdReferencia(tipo), contexto.contarSubitens(tipo), dispositivoDOM.classList.contains('unico'));
