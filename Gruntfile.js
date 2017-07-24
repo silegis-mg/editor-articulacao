@@ -32,7 +32,7 @@ module.exports = function (grunt) {
 		},
 		"webpack-dev-server": {
 			options: {
-				webpack: webpackConfig.desenv(),
+				webpack: webpackConfig,
 				contentBase: 'build'
 			},
 			start: {

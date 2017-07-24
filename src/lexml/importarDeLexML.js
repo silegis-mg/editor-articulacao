@@ -47,7 +47,13 @@ function importarDeLexML(elemento, resultado) {
                 importarDeLexML(incisos, resultado);
 
                 let paragrafos = elemento.querySelectorAll('Paragrafo');
+                let dispositivoAtual = resultado.lastElementChild;
+
                 importarDeLexML(paragrafos, resultado);
+
+                if (paragrafos.length === 1) {
+                    dispositivoAtual.nextElementSibling.classList.add('unico');
+                }
                 break;
 
             case 'INCISO':
@@ -55,9 +61,7 @@ function importarDeLexML(elemento, resultado) {
             case 'ITEM':
             case 'PARAGRAFO':
                 let p = obterP(elemento)
-                
                 clonar(p, null, elemento.tagName.toLowerCase(), resultado);
-
                 importarDeLexML(elemento.children, resultado);
                 break;
 

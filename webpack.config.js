@@ -27,10 +27,10 @@ module.exports = {
     devtool: '#inline-source-map'
 }
 
-Object.defineProperty(module.exports, 'desenv', {
+/*Object.defineProperty(module.exports, 'desenv', {
     value: function () {
         var copia = JSON.parse(JSON.stringify(this));
         copia.module.loaders.splice(1, 1);
         return copia;
     }
-});
+});*/

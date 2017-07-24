@@ -1,3 +1,7 @@
+/* TODO: Suporte a emenda aditiva.
+ *       ^ content: 'Art. ' counter(artigo) '-' counter(aditivo)...
+ */
+ 
 .silegismg-articulacao {
   counter-reset: parte livro titulo capitulo secao subsecao artigo;
   margin: 1em 0;
