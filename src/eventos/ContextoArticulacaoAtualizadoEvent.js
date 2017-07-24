@@ -2,6 +2,8 @@
  * Evento de notificação de atualização do contexto de edição.
  * Útil para atualização da interface de usuário, habilitando ou
  * desabilitando botões.
+ * 
+ * @author Júlio César e Melo
  */
 class ContextoArticulacaoAtualizado extends CustomEvent {
     /**

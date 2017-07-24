@@ -1,6 +1,12 @@
 import { TransformacaoDoProximo } from './Transformacao';
 
-class AoIniciarAspas extends TransformacaoDoProximo {
+/**
+ * Quando usuário encerra as aspas na continuação do caput de um artigo,
+ * então cria-se um novo artigo.
+ * 
+ * @author Júlio César e Melo
+ */
+class AoFecharAspas extends TransformacaoDoProximo {
     constructor() {
         super('"\n', '"\n.');
     }
@@ -10,4 +16,4 @@ class AoIniciarAspas extends TransformacaoDoProximo {
     }
 }
 
-export default AoIniciarAspas;
+export default AoFecharAspas;

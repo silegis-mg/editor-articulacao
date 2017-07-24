@@ -2,6 +2,8 @@
  * Representa o contexto do usuário no editor de articulação.
  * Possui dois atributos: cursor, contendo o contexto no cursor,
  * e as permissões de alteração de dispositivo na seleção.
+ * 
+ * @author Júlio César e Melo
  */
 class ContextoArticulacao {
     constructor(elementoArticulacao, dispositivo) {

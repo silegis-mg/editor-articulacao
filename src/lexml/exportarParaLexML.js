@@ -8,6 +8,8 @@ import ArticulacaoInvalidaException from './ArticulacaoInvalidaException';
  * onde será iniciada a exportação para LexML, ou o próprio container (elemento raíz) do
  * editor de articulação.
  * @returns {Element} Articulação do LexML
+ * 
+ * @author Júlio César e Melo
  */
 function exportarParaLexML(dispositivoDOM) {
     var cntArtigos = 0;

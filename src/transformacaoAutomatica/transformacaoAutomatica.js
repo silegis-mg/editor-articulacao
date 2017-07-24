@@ -3,6 +3,14 @@ import PontoFinal from './transformacoes/PontoFinal';
 import AoIniciarAspas from './transformacoes/AoIniciarAspas';
 import AoFecharAspas from './transformacoes/AoFecharAspas';
 
+/**
+ * Adiciona a transformação automática ao editor de articulação.
+ * 
+ * @param {EditorArticulacaoController} editorArticulacaoCtrl 
+ * @param {Element} elemento 
+ * 
+ * @author Júlio César e Melo
+ */
 function adicionarTransformacaoAutomatica(editorArticulacaoCtrl, elemento) {
     var parser = {}, estado = [];
 
@@ -16,7 +24,14 @@ function adicionarTransformacaoAutomatica(editorArticulacaoCtrl, elemento) {
     elemento.addEventListener('touchend', event => estado = []);
 }
 
-
+/**
+ * Adiciona um transformador ao parser.
+ * 
+ * @param {Object} parser 
+ * @param {Transformacao} transformador 
+ * 
+ * @author Júlio César e Melo
+ */
 function adicionarParser(parser, transformador) {
     transformador.sequencias.forEach(function(sequencia) {
         var i, pAtual = parser, c;
@@ -47,6 +62,8 @@ function adicionarParser(parser, transformador) {
 
 /**
  * Realiza o parsing da edição.
+ * 
+ * @author Júlio César e Melo
  */
 function processarEstado(event, _parser, _estadoParser, controller, elemento) {
     var novoEstado = [],

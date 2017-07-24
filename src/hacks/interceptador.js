@@ -4,6 +4,8 @@
  * @param {Object} objeto Objeto ou classe a ser interceptada. Se o tipo for uma classe, a interceptação ocorrerá sobre o prototype.
  * @param {String} metodo Método a ser interceptado.
  * @param {function} interceptador Função interceptadora, que receberá o objeto, o valor retornado e os argumentos.
+ * 
+ * @author Júlio César e Melo
  */
 function interceptar(objeto, metodo, interceptador) {
     if (!objeto) throw 'Objeto não fornecido.';
@@ -31,6 +33,8 @@ function interceptar(objeto, metodo, interceptador) {
  * @param {Object} objeto Objeto ou classe a ser interceptada. Se o tipo for uma classe, a interceptação ocorrerá sobre o prototype.
  * @param {String} metodo Método a ser interceptado.
  * @param {function} interceptador Função interceptadora, que receberá o objeto, o valor retornado e os argumentos.
+ * 
+ * @author Júlio César e Melo
  */
 function interceptarApos(objeto, metodo, interceptador) {
     if (!objeto) throw 'Objeto não fornecido.';

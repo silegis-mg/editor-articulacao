@@ -11,6 +11,8 @@ function hackChrome(controller) {
  * @param {EditorArticulacaoController} ctrl 
  * @param {function} metodo
  * @param {*} argumentos 
+ * 
+ * @author Júlio César e Melo
  */
 function hackAlterarTipo(ctrl, metodo, argumentos) {
     let dispositivo = ctrl.contexto.cursor.dispositivo;
@@ -46,6 +48,8 @@ function hackAlterarTipo(ctrl, metodo, argumentos) {
  * 
  * @param {Element} dispositivo 
  * @param {Object} contadoresDesconsiderar Hash contendo os contadores que não deverão ser considerados.
+ * 
+ * @author Júlio César e Melo
  */
 function extrairContadores(dispositivo, contadoresDesconsiderar) {
     let counterReset = getComputedStyle(dispositivo).counterReset;
@@ -68,6 +72,8 @@ function extrairContadores(dispositivo, contadoresDesconsiderar) {
  * Efetua a redefinição do contador.
  * 
  * @param {Element} dispositivo 
+ * 
+ * @author Júlio César e Melo
  */
 function redefinirContador(dispositivo) {
     let tipo = dispositivo.getAttribute('data-tipo');

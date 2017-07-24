@@ -6,6 +6,8 @@
  * @param {Element} elemento
  * @param {DocumentFragment} resultado
  * @returns {DocumentFragment}
+ * 
+ * @author Júlio César e Melo
  */
 function importarDeLexML(elemento, resultado) {
     if (!resultado) {

@@ -1,5 +1,13 @@
 import { TransformacaoDoProximo } from './Transformacao';
 
+/**
+ * Ao terminar um dispositivo com dois pontos (:), assume-se
+ * que será feita uma enumeração e, portanto, transforma
+ * o próximo dispositivo em inciso, alínea ou item, conforme
+ * contexto.
+ * 
+ * @author Júlio César e Melo
+ */
 class DoisPontos extends TransformacaoDoProximo {
     constructor() {
         super(':\n');

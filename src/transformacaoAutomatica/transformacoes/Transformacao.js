@@ -1,3 +1,9 @@
+/**
+ * Definição abstrata de uma transformação a ser realizada na
+ * seleção da articulação.
+ * 
+ * @author Júlio César e Melo
+ */
 class Transformacao {
     constructor(/*sequencias*/) {
         this.sequencias = [];
@@ -17,6 +23,14 @@ class Transformacao {
     }
 }
 
+/**
+ * Definição abstrata de uma transformação a ser realizada no
+ * próximo dispositivo selecionado, após o disparo do evento
+ * 'keyup'. Útil para transformações a ser executadas após
+ * a criação de um novo dispositivo.
+ * 
+ * @author Júlio César e Melo
+ */
 class TransformacaoDoProximo extends Transformacao {
     transformar(editor, ctrl, contexto) {
         let novoTipo = this.proximoTipo(editor, ctrl, contexto);
