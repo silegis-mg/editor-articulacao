@@ -12,12 +12,14 @@ module.exports = {
             },
             {
                 test: /\.js$/,
-                loader: 'babel-loader',
-                options: {
-                    presets: ['es2016', 'es2015'],
-                    plugins: [["babel-plugin-transform-builtin-extend", {
-                        globals: ["CustomEvent"]
-                    }]]
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['es2016', 'es2015'],
+                        plugins: [["babel-plugin-transform-builtin-extend", {
+                            globals: ["CustomEvent"]
+                        }]]
+                    }
                 }
             }
         ]
@@ -27,7 +29,8 @@ module.exports = {
 
 Object.defineProperty(module.exports, 'desenv', {
     value: function () {
-        this.module.loaders.splice(1, 1);
-        return this;
+        var copia = JSON.parse(JSON.stringify(this));
+        copia.module.loaders.splice(1, 1);
+        return copia;
     }
 });

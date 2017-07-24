@@ -1,8 +1,27 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 	require("matchdep").filterAll("grunt-*").forEach(grunt.loadNpmTasks);
 	var webpack = require("webpack");
 	var webpackConfig = require("./webpack.config.js");
+
 	grunt.initConfig({
+		karma: {
+			unit: {
+				configFile: 'karma.conf.js',
+				background: true,
+				singleRun: false
+			},
+			continuous: {
+				configFile: 'karma.conf.js',
+				background: false,
+				singleRun: true/*,
+				browsers: ['PhantomJS']*/
+			},
+			debug: {
+				configFile: 'karma.conf.js',
+				background: false,
+				singleRun: false
+			},
+		},
 		webpack: {
 			options: webpackConfig,
 			build: {
@@ -43,5 +62,9 @@ module.exports = function(grunt) {
 	grunt.registerTask("dev", ["webpack:build-dev", "watch:app"]);
 
 	// Production build
-	grunt.registerTask("build", ["webpack:build"]);
+	grunt.registerTask("build", ['karma:continuous', "webpack:build"]);
+
+	grunt.registerTask('test', ['karma:continuous']);
+
+	grunt.registerTask('debug', ['karma:debug']);
 };

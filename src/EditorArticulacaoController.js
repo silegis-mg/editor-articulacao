@@ -2,6 +2,8 @@ import ContextoArticulacaoAtualizadoEvent from './eventos/ContextoArticulacaoAtu
 import ContextoArticulacao from './ContextoArticulacao';
 import adicionarTransformacaoAutomatica from './transformacaoAutomatica/transformacaoAutomatica';
 import hackChrome from './hacks/chrome';
+import importarDeLexML from './lexml/importarDeLexML';
+import exportarParaLexML from './lexml/exportarParaLexML';
 
 /**
  * Controlador do editor de articulação.
@@ -28,8 +30,20 @@ class EditorArticulacaoController {
 
         this._registrarEventos();
         elemento.contentEditable = true;
+        elemento.classList.add('silegismg-articulacao');
 
         adicionarTransformacaoAutomatica(this, elemento);
+    }
+
+    get lexml() {
+        return exportarParaLexML(this._elemento);
+    }
+
+    set lexml(valor) {
+        let articulacao = importarDeLexML(valor);
+
+        this._elemento.innerHTML = '';
+        this._elemento.appendChild(articulacao);
     }
 
     /**
@@ -86,7 +100,7 @@ class EditorArticulacaoController {
 
         var novoCalculo = new ContextoArticulacao(this._elemento, selecao);
 
-        if (!this.contexto || this.contexto.elemento !== selecao || this.contexto.comparar(novoCalculo)) {
+        if (!this.contexto || this.contexto.cursor.elemento !== selecao || this.contexto.comparar(novoCalculo)) {
             this.contexto = novoCalculo;
             this._elemento.dispatchEvent(new ContextoArticulacaoAtualizadoEvent(novoCalculo));
         }

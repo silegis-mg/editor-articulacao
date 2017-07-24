@@ -94,7 +94,7 @@ class ContextoArticulacao {
     }
 
     comparar(obj2) {
-        for (let i in dadosCursor) {
+        for (let i in this.dadosCursor) {
             if (this.dadosCursor[i] !== obj2.dadosCursor[i]) {
                 return true;
             }

@@ -15,6 +15,8 @@ function prepararEditorArticulacao(elemento) {
             return exportarParaLexML(elemento);
         }
     });
+
+    return elemento.ctrlArticulacao;
 }
 
 // Adiciona CSS
