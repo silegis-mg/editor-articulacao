@@ -170,7 +170,7 @@ class EditorArticulacaoController {
             dispositivo.setAttribute('data-tipo', novoTipo);
             this._cursorEventHandler();
 
-            if (tipoAnterior === 'paragrafo') {
+            if (tipoAnterior === 'paragrafo' || novoTipo === 'paragrafo') {
                 this._normalizarParagrafo(dispositivo);
             }
         }
