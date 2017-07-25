@@ -14,7 +14,9 @@
   ],
   "author": "Assembleia Legislativa de Minas Gerais (ALMG)",
   "license": "Não licenciado ainda",
-  "dependencies": {},
+  "dependencies": {
+    "grunt-contrib-jshint": "^1.1.0"
+  },
   "devDependencies": {
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
@@ -27,6 +29,7 @@
     "grunt-karma": "^2.0.0",
     "grunt-webpack": "^3.0.2",
     "jasmine": "^2.6.0",
+    "jshint": "^2.9.5",
     "karma": "^1.7.0",
     "karma-chrome-launcher": "^2.2.0",
     "karma-firefox-launcher": "^1.0.1",

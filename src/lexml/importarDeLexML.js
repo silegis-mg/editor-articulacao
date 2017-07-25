@@ -62,7 +62,7 @@ function importarDeLexML(elemento, resultado) {
             case 'ALINEA':
             case 'ITEM':
             case 'PARAGRAFO':
-                let p = obterP(elemento)
+                let p = obterP(elemento);
                 clonar(p, null, elemento.tagName.toLowerCase(), resultado);
                 importarDeLexML(elemento.children, resultado);
                 break;

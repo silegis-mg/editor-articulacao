@@ -23,7 +23,7 @@ function interceptar(objeto, metodo, interceptador) {
 
         objeto[metodo] = function() {
             return interceptador(this, metodoOriginal, arguments);
-        }
+        };
     }
 }
 
@@ -54,7 +54,7 @@ function interceptarApos(objeto, metodo, interceptador) {
             var resultado = metodoOriginal.apply(this, arguments);
 
             return interceptador(this, resultado, arguments);
-        }
+        };
     }
 }
 

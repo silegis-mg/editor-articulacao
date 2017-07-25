@@ -217,6 +217,7 @@ function criarElementoLexML(tipo, conteudo, idPai, idxFilho, unico) {
         case 'Secao':
         case 'Subsecao':
             elemento.appendChild(criarNomeAgrupador(conteudo));
+            break;
 
         default:
             elemento.appendChild(criarElementoP(conteudo));

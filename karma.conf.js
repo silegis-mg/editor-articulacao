@@ -1,10 +1,10 @@
 let webpackConfig = Object.create(require("./webpack.config.js"));
 
-webpackConfig.entry = './test/karma/entry.js'
+webpackConfig.entry = './test/karma/entry.js';
 
 module.exports = function (config) {
     config.set({
-        files: ['test/karma/**/*.js'],
+        files: ['test/karma/entry.js', 'test/karma/**/*.spec.js'],
         frameworks: ['jasmine'],
         preprocessors: {
             'test/karma/entry.js': ['webpack']

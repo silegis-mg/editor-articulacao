@@ -58,7 +58,7 @@ function adicionarParser(parser, transformador) {
             pAtual.$handler = [objHandler];
         }
     });
-};
+}
 
 /**
  * Realiza o parsing da edição.
@@ -86,6 +86,6 @@ function processarEstado(event, _parser, _estadoParser, controller, elemento) {
     });
 
     return novoEstado;
-};
+}
 
 export default adicionarTransformacaoAutomatica;

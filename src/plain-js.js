@@ -1,5 +1,5 @@
 import EditorArticulacaoController from './EditorArticulacaoController';
-import exportarParaLexML from './lexml/exportarParaLexML'
+import exportarParaLexML from './lexml/exportarParaLexML';
 import css from './editor-articulacao.css';
 
 /**

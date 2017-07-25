@@ -44,10 +44,17 @@ module.exports = function (grunt) {
 		watch: {
 			app: {
 				files: ["src/**/*"],
-				tasks: ["webpack:build-dev"],
+				tasks: ["webpack:build-dev", "jshint", "karma:continuous"],
 				options: {
 					spawn: false,
 				}
+			}
+		},
+		jshint: {
+			all: ['*.js', 'src/**/*.js'],
+			options: {
+				browser: true,
+				esversion: 6
 			}
 		}
 	});
@@ -59,12 +66,12 @@ module.exports = function (grunt) {
 	// Advantage: No server required, can run app from filesystem
 	// Disadvantage: Requests are not blocked until bundle is available,
 	//               can serve an old app on too fast refresh
-	grunt.registerTask("dev", ["webpack:build-dev", "watch:app"]);
+	grunt.registerTask("dev", ["jshint", "webpack:build-dev", "watch:app"]);
 
 	// Production build
-	grunt.registerTask("build", ['karma:continuous', "webpack:build"]);
+	grunt.registerTask("build", ['jshit', 'karma:continuous', "webpack:build"]);
 
-	grunt.registerTask('test', ['karma:continuous']);
+	grunt.registerTask('test', ['jshint', 'karma:continuous']);
 
 	grunt.registerTask('debug', ['karma:debug']);
 };

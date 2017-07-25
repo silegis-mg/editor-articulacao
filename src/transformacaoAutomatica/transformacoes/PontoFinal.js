@@ -21,7 +21,7 @@ class PontoFinal extends TransformacaoDoProximo {
 
                 do {
                     dispositivo = dispositivo.previousElementSibling;
-                    tipo = dispositivo.getAttribute('data-tipo')
+                    tipo = dispositivo.getAttribute('data-tipo');
                 } while (tipo !== 'artigo' && tipo !== 'paragrafo');
 
                 return tipo;
