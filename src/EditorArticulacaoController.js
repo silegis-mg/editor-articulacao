@@ -4,9 +4,13 @@ import adicionarTransformacaoAutomatica from './transformacaoAutomatica/transfor
 import hackChrome from './hacks/chrome';
 import importarDeLexML from './lexml/importarDeLexML';
 import exportarParaLexML from './lexml/exportarParaLexML';
+import { interpretarArticulacao } from './interpretadorArticulacao';
+import ClipboardController from './ClipboardController';
 
 /**
  * Controlador do editor de articulação.
+ * 
+ * @author Júlio César e Melo
  */
 class EditorArticulacaoController {
 
@@ -33,6 +37,8 @@ class EditorArticulacaoController {
         elemento.classList.add('silegismg-articulacao');
 
         adicionarTransformacaoAutomatica(this, elemento);
+
+        this.clipboardCtrl = new ClipboardController(this, elemento);
     }
 
     get lexml() {
@@ -60,9 +66,18 @@ class EditorArticulacaoController {
 
         eventos.forEach(evento => this._elemento.addEventListener(evento, eventHandler));
 
+        let focusHandler = function() {
+            if (!this._elemento.firstElementChild) {
+                this._elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
+            }
+        }.bind(this);
+
+        this._elemento.addEventListener('focus', focusHandler, true);
+
         this.desregistrar = function () {
             eventos.forEach(evento => this._elemento.removeEventListener(evento, eventHandler));
-        }
+            this._elemento.removeEventListener('focus', focusHandler);
+        };
     }
 
     /**
@@ -130,6 +145,7 @@ class EditorArticulacaoController {
         let selecao = document.getSelection();
         let range = selecao && document.getSelection().rangeCount > 0 ? selecao.getRangeAt(0) : null;
         let endContainer = range ? range.endContainer : null;
+        range.detach();
 
         while (endContainer.nodeType !== Node.ELEMENT_NODE || !endContainer.hasAttribute('data-tipo')) {
             endContainer = endContainer.parentElement;
@@ -167,12 +183,12 @@ class EditorArticulacaoController {
      * @param {ContextoArticulacao} contexto 
      */
     _normalizarDispositivo(dispositivo, contexto) {
-        if (!dispositivo) {
-            return;
+        while (dispositivo && !dispositivo.hasAttribute('data-tipo')) {
+            dispositivo = dispositivo.parentElement;
         }
 
-        while (!dispositivo.hasAttribute('data-tipo')) {
-            dispositivo = dispositivo.parentElement;
+        if (!dispositivo) {
+            return;
         }
 
         if (!contexto) {
@@ -209,8 +225,11 @@ class EditorArticulacaoController {
         let posterior = encontrarDispositivoPosteriorDoTipo(dispositivo, ['artigo', 'paragrafo']);
 
         if (dispositivo.getAttribute('data-tipo') === 'paragrafo' || dispositivo.getAttribute('data-tipo') === 'continuacao') {
-            dispositivo.classList.toggle('unico', ((!anterior || anterior.getAttribute('data-tipo') !== 'paragrafo') &&
-                (!posterior || posterior.getAttribute('data-tipo') !== 'paragrafo')))
+
+            dispositivo.classList.toggle('unico',
+                ((!anterior || anterior.getAttribute('data-tipo') !== 'paragrafo') &&
+                    (!posterior || posterior.getAttribute('data-tipo') !== 'paragrafo')));
+
             if (anterior && anterior.getAttribute('data-tipo') === 'paragrafo') {
                 anterior.classList.remove('unico');
             }
@@ -231,6 +250,7 @@ function obterSelecao() {
     var selecao = document.getSelection();
     var range = selecao && document.getSelection().rangeCount > 0 ? selecao.getRangeAt(0) : null;
     var startContainer = range ? range.startContainer : null;
+    range.detach();
 
     if (!startContainer) {
         return null;
@@ -268,7 +288,7 @@ function encontrarDispositivoAnteriorDoTipo(dispositivo, tipoDispositivoDesejado
         }
     }
 
-    return true;
+    return null;
 }
 
 /**

@@ -109,7 +109,7 @@ function parseTexto(textoOriginal) {
     }).replace(/\s*\n+\s*/g, '\n');
 
     texto.split('\n').forEach(function (linha) {
-        var i, regexp, m, atendePrequisito;
+        var i, regexp, m, atendeRequisito;
 
         for (i = 0; i < regexpLinhas.length; i++) {
             regexp = regexpLinhas[i];
@@ -118,19 +118,19 @@ function parseTexto(textoOriginal) {
             if (regexp.requisito) {
                 var j;
 
-                atendePrequisito = false;
+                atendeRequisito = false;
 
                 for (j = 0; j < regexp.requisito.length; j++) {
                     if (contexto.ultimoItem instanceof regexp.requisito[j]) {
-                        atendePrequisito = true;
+                        atendeRequisito = true;
                         break;
                     }
                 }
             } else {
-                atendePrequisito = true;
+                atendeRequisito = true;
             }
 
-            if (atendePrequisito) {
+            if (atendeRequisito) {
                 m = regexp.regexp.exec(linha);
 
                 if (m) {
@@ -148,8 +148,10 @@ function parseTexto(textoOriginal) {
 
         if (contexto.ultimoItem) {
             contexto.ultimoItem.descricao += '\n' + linha;
+        } else if (contexto.textoAnterior.length === 0) {
+            contexto.textoAnterior = linha;
         } else {
-            contexto.textoAnterior += linha;
+            contexto.textoAnterior += '\n' + linha;
         }
     });
 
@@ -160,12 +162,85 @@ function parseTexto(textoOriginal) {
 }
 
 
+/**
+ * Transforma as quebras de linha em elementos P.
+ * 
+ * @param {String} texto 
+ * @returns {String}
+ */
+function transformarQuebrasDeLinhaEmP(texto) {
+    var fragmento = document.createDocumentFragment();
+
+    if (texto.indexOf('\n') === -1) {
+        let p = document.createElement('p');
+        p.textContent = texto;
+        fragmento.appendChild(p);
+    } else {
+        let novoTexto = texto
+            .replace(/\n/g, '</p><p>')                  // Substitui quebras de linha em parágrafo.
+            .replace(/^(?!<p)(.*?<\/p>)/i, '<p>$1')    // Corrige fechamento de parágrafo sem abertura.
+            .replace(/(<p>.*?)(?:<\/p>)?$/i, '$1</p>')  // Garante o fechamento ao final da linha.
+            .replace(/<p><\/p>/g, '');                  // Remove as linhas vazias.
+
+        let container = document.createElement("div");
+        container.innerHTML = novoTexto;
+
+        while (container.firstChild) {
+            fragmento.appendChild(container.firstChild);
+        }
+    }
+    
+    return fragmento;
+}
+
 // Definição de classes
 
-class Artigo {
-    constructor(numero, caput) {
+class Dispositivo {
+    constructor(tipo, numero, descricao, derivacoes) {
         this.numero = numero;
-        this.descricao = caput;
+        this.descricao = descricao;
+
+        Object.defineProperty(this, 'tipo', {
+            value: tipo
+        });
+
+        Object.defineProperty(this, 'subitens', {
+            get: function() {
+                return derivacoes.reduce((prev, item) => prev.concat(this[item]), []);
+            }
+        });
+    }
+
+    /**
+     * Adiciona um dispositivo a este.
+     * 
+     * @param {*} dispositivo 
+     */
+    adicionar(dispositivo) {
+        throw 'Não implementado';
+    }
+
+    /**
+     * Transforma o dispositivo no formato do editor.
+     */
+    paraEditor() {
+        let fragmento = transformarQuebrasDeLinhaEmP(this.descricao);
+
+        fragmento.firstElementChild.setAttribute('data-tipo', this.tipo);
+
+        for (let item = fragmento.children[1]; item; item = item.nextElementSibling) {
+            item.setAttribute('data-tipo', 'continuacao');
+        }
+
+        this.subitens.forEach(subItem => fragmento.appendChild(subItem.paraEditor()));
+
+        return fragmento;
+    }
+}
+
+class Artigo extends Dispositivo {
+    constructor(numero, caput) {
+        super('artigo', numero, caput, ['incisos', 'paragrafos']);
         this.incisos = [];
         this.paragrafos = [];
     }
@@ -187,12 +262,21 @@ class Artigo {
             throw 'Tipo não suportado.';
         }
     }
+
+    paraEditor() {
+        var fragmento = super.paraEditor();
+
+        if (this.paragrafos.length === 1) {
+            fragmento.querySelector('p[data-tipo="paragrafo"]').classList.add('unico');
+        }
+
+        return fragmento;
+    }
 }
 
-class Paragrafo {
+class Paragrafo extends Dispositivo {
     constructor(numero, descricao) {
-        this.numero = numero;
-        this.descricao = descricao;
+        super('paragrafo', numero, descricao, ['incisos']);
         this.incisos = [];
     }
 
@@ -213,10 +297,9 @@ class Paragrafo {
     }
 }
 
-class Inciso {
+class Inciso extends Dispositivo {
     constructor(numero, descricao) {
-        this.numero = numero;
-        this.descricao = descricao;
+        super('inciso', numero, descricao, ['alineas']);
         this.alineas = [];
     }
 
@@ -237,10 +320,9 @@ class Inciso {
     }
 }
 
-class Alinea {
+class Alinea extends Dispositivo {
     constructor(numero, descricao) {
-        this.numero = numero;
-        this.descricao = descricao;
+        super('alinea', numero, descricao, ['itens']);
         this.itens = [];
     }
 
@@ -261,10 +343,9 @@ class Alinea {
     }
 }
 
-class Item {
+class Item extends Dispositivo {
     constructor(numero, descricao) {
-        this.numero = numero;
-        this.descricao = descricao;
+        super('item', numero, descricao, []);
     }
 }
 
@@ -363,7 +444,7 @@ function interpretarArticulacao(texto, formato) {
             div.innerHTML = texto;
             json = parseTexto(div.innerHTML.replace(/<P>(.+?)<\/P>/gi, '$1\n'));
         } else {
-            throw 'Formato não suportado.'
+            throw 'Formato não suportado.';
         }
 
         switch ((formato || 'lexml').toLowerCase()) {
@@ -384,7 +465,7 @@ function interpretarArticulacao(texto, formato) {
             erroOriginal: e
         };
     }
-};
+}
 
 export default {
     Artigo: Artigo,
@@ -392,7 +473,8 @@ export default {
     Inciso: Inciso,
     Alinea: Alinea,
     Item: Item,
-    interpretar: interpretarArticulacao
-}
+    interpretar: interpretarArticulacao,
+    transformarQuebrasDeLinhaEmP: transformarQuebrasDeLinhaEmP
+};
 
-export { Artigo, Paragrafo, Inciso, Alinea, Item, interpretarArticulacao };
+export { Artigo, Paragrafo, Inciso, Alinea, Item, interpretarArticulacao, transformarQuebrasDeLinhaEmP };

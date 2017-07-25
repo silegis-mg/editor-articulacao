@@ -1,7 +1,7 @@
-var importarDeLexML = window.importarDeLexML;
-
 describe('Importação do LexML', function() {
     'use strict';
+
+    var importarDeLexML = window.importarDeLexML;
 
     it('Deve importar os artigos 1 a 3 da constituição federal', function() {
         var articulacao = `<Articulacao>

@@ -60,7 +60,7 @@ class ContextoArticulacao {
             }
         });
 
-        dadosCursor.dispositivoAnterior = obterDispositivoAnterior(dispositivo);
+        dadosCursor.dispositivoAnterior = dispositivo && obterDispositivoAnterior(dispositivo);
         dadosCursor.tipoAnterior = dadosCursor.dispositivoAnterior && dadosCursor.dispositivoAnterior.getAttribute('data-tipo');
 
         let matches = Element.prototype.matches || Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.onMatchesSelector || function() { return true; };
@@ -71,7 +71,7 @@ class ContextoArticulacao {
              * 
              * Cuidado pois esta implementação não pode ser cara!
              */
-            return matches.call(dispositivo, 'p[data-tipo="' + tipo + '"] ~ *');
+            return dispositivo && matches.call(dispositivo, 'p[data-tipo="' + tipo + '"] ~ *');
         }
 
         let permissoes = {
@@ -158,15 +158,19 @@ function verificarPrimeiroDoTipo(dispositivo) {
 /**
  * Obtém o tipo de dispositivo anterior.
  * 
- * @param {Element} dipositivo 
+ * @param {Element} dispositivo 
  * @returns {Element} Elemento do dispositivo anterior.
  */
-function obterDispositivoAnterior(dipositivo) {
-    while (!dipositivo.hasAttribute('data-tipo')) {
-        dipositivo = dipositivo.parentElement;
+function obterDispositivoAnterior(dispositivo) {
+    while (dispositivo && !dispositivo.hasAttribute('data-tipo')) {
+        dispositivo = dispositivo.parentElement;
     }
 
-    for (let anterior = dipositivo.previousElementSibling; anterior; anterior = anterior.previousElementSibling) {
+    if (!dispositivo) {
+        return null;
+    }
+
+    for (let anterior = dispositivo.previousElementSibling; anterior; anterior = anterior.previousElementSibling) {
         if (anterior.hasAttribute('data-tipo')) {
             let tipo = anterior.getAttribute('data-tipo');
 
