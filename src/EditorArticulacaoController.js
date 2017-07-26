@@ -41,6 +41,11 @@ class EditorArticulacaoController {
         adicionarTransformacaoAutomatica(this, elemento);
 
         this.clipboardCtrl = new ClipboardController(this);
+
+        // Executa hack se necessário.
+        if (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {
+            hackChrome(this);
+        }
     }
 
     get lexml() {
@@ -325,11 +330,6 @@ function encontrarDispositivoPosteriorDoTipo(elemento, pontoParada) {
     }
 
     return null;
-}
-
-// Executa hack se necessário.
-if (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {
-    hackChrome(EditorArticulacaoController);
 }
 
 export default EditorArticulacaoController;

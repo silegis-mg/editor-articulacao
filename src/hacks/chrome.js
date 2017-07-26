@@ -2,6 +2,8 @@ import { interceptar } from './interceptador';
 
 function hackChrome(controller) {
     interceptar(controller, 'alterarTipoDispositivoSelecionado', hackAlterarTipo);
+    
+    controller.registrarEventListener('keydown', event => hackInterceptarKeydown(event, controller));
 }
 
 /**
@@ -10,7 +12,7 @@ function hackChrome(controller) {
  * 
  * @param {EditorArticulacaoController} ctrl 
  * @param {function} metodo
- * @param {*} argumentos 
+ * @param {Array} argumentos 
  * 
  * @author Júlio César e Melo
  */
@@ -79,6 +81,105 @@ function redefinirContador(dispositivo) {
     let tipo = dispositivo.getAttribute('data-tipo');
     dispositivo.setAttribute('data-tipo', '');
     setTimeout(() => dispositivo.setAttribute('data-tipo', tipo));
+}
+
+/**
+ * O Chrome tem um problema de desempenho que fica evidente ao importar
+ * o LexML da Constituição Federal, selecionar todo o texto no editor
+ * de articulação, e pressionar qualquer tecla que iria remover o texto
+ * selecionado (seja por exclusão ou substituição).
+ * 
+ * Para cada elemento no DOM a ser excluído ou substituído, o navegador
+ * processa os estilos do próximo elemento (conforme ferramenta de profile
+ * do próprio navegador), tornando a operação O(n²). Para contornar o problema,
+ * realizamos a exclusão do conteúdo via API, interceptando o keydown.
+ * 
+ * @param {KeyboardEvent} keyboardEvent 
+ * @param {EditorArticulacaoController} editorCtrl 
+ * 
+ * @author Júlio César e Melo
+ */
+function hackInterceptarKeydown(keyboardEvent, editorCtrl) {
+    /* Somente serão tratadas as alterações de conteúdo. Portanto,
+     * se houver qualquer tecla modificativa (ctrl, alt ou meta),
+     * o evento será ignorado. O evento só será tratado se a tecla for
+     * de conteúdo (letra, número ou enter), ou remoção (delete, backspace).
+     */
+    if (!keyboardEvent.ctrlKey && !keyboardEvent.altKey && !keyboardEvent.metaKey &&
+        keyboardEvent.key.length === 1 || keyboardEvent.key === 'Delete' || keyboardEvent.key === 'Backspace' ||
+        keyboardEvent.key === 'Enter') {
+
+        let selection = document.getSelection();
+        let range = selection.getRangeAt(0);
+
+        try {
+            // Se não houver nada selecionado, então não há problema de desempenho.
+            if (!range.collapsed) {
+                let inicio = range.startContainer.parentElement;
+                let final = range.endContainer.parentElement;
+
+                range.deleteContents();
+
+                /* Se a tecla for de remoção, então evitamos a ação padrão.
+                 * Entretanto, se for de conteúdo, então deixamos que a ação
+                 * padrão seja executada, para que o novo conteúdo seja inserido
+                 * no lugar do conteúdo excluído.
+                 */
+                if (keyboardEvent.key === 'Delete' || keyboardEvent.key === 'Backspace') {
+                    keyboardEvent.preventDefault();
+                }
+
+                /* O range da seleção, ainda que seja de todo o conteúdo, não abrange
+                 * o elemento inicial e o final. Isto é, se o usuário selecionar tudo
+                 * usando Ctrl+A e prosseguir com a exclusão com a tecla Delete, 
+                 * o conteúdo selecionado correpsonderá ao primeiro nó textual do primeiro
+                 * P até o último nó textual do útlimo P.
+                 * 
+                 *        <p><!-- início da seleção -->nó textual</p>
+                 *        <p>nó textual intermediário</p>
+                 *        <p>último nó textual<-- final da seleção --></p>
+                 * 
+                 * Assim, a exclusão irá remover todos os nós textuais e os elementos intermediários,
+                 * mantendo, entretanto, o primeiro e último elemento (veja ilustração acima,
+                 * em que a seleção foi demarcada em comentário).
+                 * 
+                 * Para contornar esta situação, realizamos manualmente a exclusão dos elementos,
+                 * se o elemento inicial da seleção for diferente do final, condicionando
+                 * a exclusão à presença de conteúdo. Deve-se executar o procedimento somente
+                 * se o início for diferente do final, pois a seleção pode ser apenas de
+                 * conteúdo intermediário, como ilustrado a seguir:
+                 * 
+                 *      <p>este <!-- início da seleção -->é um <!-- final da seleção -->exemplo.</p>
+                 */
+                if (inicio !== final) {
+                    if (inicio.textContent.length === 0) {
+                        inicio.remove();
+                    }
+
+                    if (final.textContent.length === 0) {
+                        final.remove();
+                    }
+
+                    /* Caso todo o conteúdo estivesse selecionado, o editor de articulação
+                     * passará a ter nenhum elemento neste momento. Neste caso,
+                     * deve-se recriar o conteúdo mínimo.
+                     */
+                    if (editorCtrl._elemento.children.length === 0) {
+                        editorCtrl._elemento.innerHTML = '<p data-tipo="artigo"><br></p>'
+                    }
+                }
+                // ... mas se a seleção for todo o conteúdo de um único elemento...
+                else if (inicio.textContent.length === 0 && inicio.children.length === 0) {
+                    /* então deve-se garantir o conteúdo mínimo, para que o cursor do parágrafo
+                     * fique posicionado corretamente.
+                     */
+                    inicio.innerHTML = '<br>';
+                }
+            }
+        } finally {
+            range.detach();
+        }
+    }
 }
 
 export default hackChrome;
