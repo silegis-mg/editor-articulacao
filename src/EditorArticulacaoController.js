@@ -118,19 +118,38 @@ class EditorArticulacaoController {
      * Atualiza a variável de análise do contexto do cursor.
      */
     atualizarContexto() {
-        var selecao = obterSelecao();
+        var elementoSelecionado = obterSelecao();
 
-        if (!selecao) {
+        if (!elementoSelecionado) {
             if (!this.contexto) {
                 return;
             }
 
-            selecao = this.contexto.cursor.elemento;
+            elementoSelecionado = this.contexto.cursor.elemento;
         }
 
-        var novoCalculo = new ContextoArticulacao(this._elemento, selecao);
+        /* Se a seleção estiver no container e não houver nenhum conteúdo,
+         * então devemos recriar o conteúdo mínimo.
+         */
+        if (elementoSelecionado === this._elemento && (!this._elemento.firstElementChild || this._elemento.firstElementChild === this._elemento.lastElementChild && this._elemento.firstElementChild.tagName === 'BR')) {
+            this._elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
+            elementoSelecionado = this._elemento.firstElementChild;
 
-        if (!this.contexto || this.contexto.cursor.elemento !== selecao || this.contexto.comparar(novoCalculo)) {
+            let selecao = document.getSelection();
+            selecao.removeAllRanges();
+            let range = document.createRange();
+
+            try {
+                range.selectNodeContents(elementoSelecionado);
+                selecao.addRange(range);
+            } finally {
+                range.detach();
+            }
+        }
+
+        var novoCalculo = new ContextoArticulacao(this._elemento, elementoSelecionado);
+
+        if (!this.contexto || this.contexto.cursor.elemento !== elementoSelecionado || this.contexto.comparar(novoCalculo)) {
             this.contexto = novoCalculo;
             this._elemento.dispatchEvent(new ContextoArticulacaoAtualizadoEvent(novoCalculo));
         }
