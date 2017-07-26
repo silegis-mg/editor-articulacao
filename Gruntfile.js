@@ -23,16 +23,13 @@ module.exports = function (grunt) {
 			},
 		},
 		webpack: {
-			options: webpackConfig('plain-js'),
-			build: {
-			},
-			"build-dev": {
-				devtool: "source-map",
-			}
+			buildPlain: webpackConfig('plain-js'),
+			buildAngular1: webpackConfig('angular1'),
+			"build-dev": webpackConfig('plain-js', true)
 		},
 		"webpack-dev-server": {
 			options: {
-				webpack: webpackConfig('plain-js'),
+				webpack: webpackConfig('plain-js', true),
 				contentBase: 'build'
 			},
 			start: {
@@ -69,7 +66,7 @@ module.exports = function (grunt) {
 	grunt.registerTask("dev", ["jshint", "webpack:build-dev", "watch:app"]);
 
 	// Production build
-	grunt.registerTask("build", ['jshit', 'karma:continuous', "webpack:build"]);
+	grunt.registerTask("build", ['jshint', 'karma:continuous', "webpack:buildPlain", "webpack:buildAngular1"]);
 
 	grunt.registerTask('test', ['jshint', 'karma:continuous']);
 

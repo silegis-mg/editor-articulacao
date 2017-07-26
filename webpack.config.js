@@ -1,9 +1,11 @@
-module.exports = function (empacotamento) {
+const webpack = require('webpack');
+
+module.exports = function (empacotamento, debug) {
     return {
         entry: './empacotamento/' + empacotamento + '.js',
         output: {
             path: __dirname + '/build',
-            filename: 'silegismg-editor-articulacao.js'
+            filename: 'silegismg-editor-articulacao-' + empacotamento + '.js'
         },
         module: {
             loaders: [
@@ -25,6 +27,11 @@ module.exports = function (empacotamento) {
                 }
             ]
         },
-        devtool: '#inline-source-map'
+        devtool: 'source-map',
+        plugins: debug ? [] : [
+            new webpack.optimize.UglifyJsPlugin({
+                sourceMap: true
+            })
+        ]
     };
 };

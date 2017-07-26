@@ -1,11 +1,11 @@
-let webpackConfig = require("./webpack.config.js")(karma);
+let webpackConfig = require("./webpack.config.js")('karma');
 
 module.exports = function (config) {
     config.set({
-        files: ['test/karma/entry.js', 'test/karma/**/*.spec.js'],
+        files: ['empacotamento/karma.js', 'test/karma/**/*.js'],
         frameworks: ['jasmine'],
         preprocessors: {
-            'test/karma/entry.js': ['webpack']
+            'empacotamento/karma.js': ['webpack']
         },
         webpack: webpackConfig,
         // test results reporter to use 
