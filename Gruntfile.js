@@ -23,7 +23,7 @@ module.exports = function (grunt) {
 			},
 		},
 		webpack: {
-			options: webpackConfig,
+			options: webpackConfig('plain-js'),
 			build: {
 			},
 			"build-dev": {
@@ -32,7 +32,7 @@ module.exports = function (grunt) {
 		},
 		"webpack-dev-server": {
 			options: {
-				webpack: webpackConfig,
+				webpack: webpackConfig('plain-js'),
 				contentBase: 'build'
 			},
 			start: {

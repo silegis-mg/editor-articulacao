@@ -1,6 +1,4 @@
-let webpackConfig = Object.create(require("./webpack.config.js"));
-
-webpackConfig.entry = './test/karma/entry.js';
+let webpackConfig = require("./webpack.config.js")(karma);
 
 module.exports = function (config) {
     config.set({

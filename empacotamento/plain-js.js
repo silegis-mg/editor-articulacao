@@ -1,6 +1,5 @@
-import EditorArticulacaoController from './EditorArticulacaoController';
-import exportarParaLexML from './lexml/exportarParaLexML';
-import css from './editor-articulacao.css';
+import EditorArticulacaoController from '../src/EditorArticulacaoController';
+import exportarParaLexML from '../src/lexml/exportarParaLexML';
 
 /**
  * Prepara um elemento do DOM como um editor de articulação.
@@ -17,18 +16,6 @@ function prepararEditorArticulacao(elemento) {
     });
 
     return elemento.ctrlArticulacao;
-}
-
-// Adiciona CSS
-let style = document.createElement('style');
-style.innerHTML = css.toString();
-
-let head = document.querySelector('head');
-
-if (head) {
-    head.appendChild(style);
-} else {
-    document.body.appendChild(style);
 }
 
 window.silegismgEditorArticulacao = prepararEditorArticulacao;
