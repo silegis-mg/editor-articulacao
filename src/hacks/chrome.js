@@ -109,7 +109,7 @@ function hackInterceptarKeydown(keyboardEvent, editorCtrl) {
         keyboardEvent.key.length === 1 || keyboardEvent.key === 'Delete' || keyboardEvent.key === 'Backspace' ||
         keyboardEvent.key === 'Enter') {
 
-        let selection = document.getSelection();
+        let selection = editorCtrl.getSelection();
         let range = selection.getRangeAt(0);
 
         try {

@@ -19,8 +19,8 @@ class ClipboardController {
      * @param {String} texto 
      */
     colarTexto(texto) {
-        let selecao = document.getSelection();
-        let range = document.getSelection().getRangeAt(0);
+        let selecao = this.editorCtrl.getSelection();
+        let range = selecao.getRangeAt(0);
 
         try {
             if (!range.collapsed) {
@@ -103,8 +103,8 @@ function aoColar(event, clipboardCtrl) {
  * @param {EditorArticulacaoController} editorCtrl 
  */
 function colarFragmento(fragmento, editorCtrl) {
-    let selecao = document.getSelection();
-    let range = document.getSelection().getRangeAt(0);
+    let selecao = editorCtrl.getSelection();
+    let range = selecao.getRangeAt(0);
 
     try {
         let proximaSelecao = fragmento.lastChild;

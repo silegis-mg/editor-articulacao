@@ -6,6 +6,7 @@ import importarDeLexML from './lexml/importarDeLexML';
 import exportarParaLexML from './lexml/exportarParaLexML';
 import { interpretarArticulacao } from './interpretadorArticulacao';
 import ClipboardController from './ClipboardController';
+import css from './editor-articulacao.css';
 
 /**
  * Controlador do editor de articulação.
@@ -17,12 +18,16 @@ class EditorArticulacaoController {
     /**
      * Elemento do DOM que será utilizado como editor de articulação.
      * 
-     * @param {Element} elemento 
+     * @param {Element} elemento Elemento que receberá o editor de articulação.
+     * @param {Object} opcoes Opções do editor de articulação:
+     *      - {Boolean} shadowDOM: Utiliza shadow-dom, se disponível (padrão: true).
      */
-    constructor(elemento) {
+    constructor(elemento, opcoes) {
         if (!(elemento instanceof Element)) {
             throw 'Elemento não é um elemento do DOM.';
         }
+
+        elemento = transformarEmEditor(elemento, this, opcoes || {});
 
         Object.defineProperty(this, '_elemento', {
             value: elemento
@@ -30,22 +35,27 @@ class EditorArticulacaoController {
 
         this._handlers = [];
 
+        // Realiza a normalização do conteúdo inicial, se houver.
         for (let filho = elemento.firstElementChild; filho; filho = filho.nextElementSibling) {
             this._normalizarDispositivo(filho);
         }
 
         this._registrarEventos();
-        elemento.contentEditable = true;
-        elemento.classList.add('silegismg-articulacao');
-
         adicionarTransformacaoAutomatica(this, elemento);
-
         this.clipboardCtrl = new ClipboardController(this);
 
         // Executa hack se necessário.
         if (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {
             hackChrome(this);
         }
+    }
+
+    dispatchEvent() {
+        this._elemento.dispatchEvent.apply(this, arguments);
+    }
+
+    getSelection() {
+        return document.getSelection();
     }
 
     get lexml() {
@@ -69,7 +79,7 @@ class EditorArticulacaoController {
 
         eventos.forEach(evento => this.registrarEventListener(evento, eventHandler));
 
-        let focusHandler = function() {
+        let focusHandler = function () {
             if (!this._elemento.firstElementChild) {
                 this._elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
             }
@@ -118,7 +128,7 @@ class EditorArticulacaoController {
      * Atualiza a variável de análise do contexto do cursor.
      */
     atualizarContexto() {
-        var elementoSelecionado = obterSelecao();
+        var elementoSelecionado = obterSelecao(this);
 
         if (!elementoSelecionado) {
             if (!this.contexto) {
@@ -135,7 +145,7 @@ class EditorArticulacaoController {
             this._elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
             elementoSelecionado = this._elemento.firstElementChild;
 
-            let selecao = document.getSelection();
+            let selecao = this.getSelection();
             selecao.removeAllRanges();
             let range = document.createRange();
 
@@ -151,7 +161,7 @@ class EditorArticulacaoController {
 
         if (!this.contexto || this.contexto.cursor.elemento !== elementoSelecionado || this.contexto.comparar(novoCalculo)) {
             this.contexto = novoCalculo;
-            this._elemento.dispatchEvent(new ContextoArticulacaoAtualizadoEvent(novoCalculo));
+            this.dispatchEvent(new ContextoArticulacaoAtualizadoEvent(novoCalculo));
         }
 
         return novoCalculo;
@@ -176,10 +186,13 @@ class EditorArticulacaoController {
         this._definirTipo(dispositivo, novoTipo);
 
         // Se a seleção incluir mais de um dispositivo, vamos alterá-los também.
-        let selecao = document.getSelection();
-        let range = selecao && document.getSelection().rangeCount > 0 ? selecao.getRangeAt(0) : null;
+        let selecao = this.getSelection();
+        let range = selecao && selecao.rangeCount > 0 ? selecao.getRangeAt(0) : null;
         let endContainer = range ? range.endContainer : null;
-        range.detach();
+        
+        if (range) {
+            range.detach();
+        }
 
         while (endContainer.nodeType !== Node.ELEMENT_NODE || !endContainer.hasAttribute('data-tipo')) {
             endContainer = endContainer.parentElement;
@@ -284,21 +297,26 @@ class EditorArticulacaoController {
  * 
  * @returns {Element} Elemento selecionado.
  */
-function obterSelecao() {
-    var selecao = document.getSelection();
-    var range = selecao && document.getSelection().rangeCount > 0 ? selecao.getRangeAt(0) : null;
-    var startContainer = range ? range.startContainer : null;
-    range.detach();
+function obterSelecao(ctrl) {
+    var selecao = ctrl.getSelection();
+    var range = selecao && selecao.rangeCount > 0 ? selecao.getRangeAt(0) : null;
 
-    if (!startContainer) {
+    if (range) {
+        let startContainer = range ? range.startContainer : null;
+        range.detach();
+
+        if (!startContainer) {
+            return null;
+        }
+
+        if (startContainer.nodeType !== Node.ELEMENT_NODE || startContainer.nodeName === 'BR') {
+            startContainer = startContainer.parentElement;
+        }
+
+        return startContainer;
+    } else {
         return null;
     }
-
-    if (startContainer.nodeType !== Node.ELEMENT_NODE || startContainer.nodeName === 'BR') {
-        startContainer = startContainer.parentElement;
-    }
-
-    return startContainer;
 }
 
 /**
@@ -353,6 +371,47 @@ function encontrarDispositivoPosteriorDoTipo(elemento, pontoParada) {
     }
 
     return null;
+}
+
+function transformarEmEditor(elemento, editorCtrl, opcoes) {
+    let style = document.createElement('style');
+    style.innerHTML = css.toString();
+
+    /* Se houver suporte ao shadow-dom, então vamos usá-lo
+     * para garantir o isolamento da árvore interna do componente
+     * e possíveis problemas com CSS.
+     */
+    if (opcoes.shadowDOM !== false && 'attachShadow' in elemento) {
+        let shadow = elemento.attachShadow({ mode: 'closed' });
+
+        editorCtrl.dispatchEvent = elemento.dispatchEvent.bind(elemento);
+        editorCtrl.getSelection = () => shadow.getSelection();
+
+        let novoElemento = document.createElement('div');
+        novoElemento.contentEditable = true;
+        novoElemento.classList.add('silegismg-articulacao');
+        novoElemento.innerHTML = '<p data-tipo="artigo"><br></p>';
+
+        shadow.appendChild(style);
+        shadow.appendChild(novoElemento);
+
+        elemento.addEventListener('focus', focusEvent => novoElemento.focus());
+
+        return novoElemento;
+    } else {
+        elemento.contentEditable = true;
+        elemento.classList.add('silegismg-articulacao');
+
+        let head = document.querySelector('head');
+
+        if (head) {
+            head.appendChild(style);
+        } else {
+            document.body.appendChild(style);
+        }
+        
+        return elemento;
+    }
 }
 
 export default EditorArticulacaoController;
