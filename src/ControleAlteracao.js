@@ -7,8 +7,6 @@ import ArticulacaoChangeEvent from './eventos/ArticulacaoChangeEvent';
  */
 class ControleAlteracao {
     constructor(editorCtrl) {
-        this.alterado = false;
-
         editorCtrl.registrarEventListener('focus', event => {
             if (!this.alterado) {
                 this.iniciar(event.target, editorCtrl);
@@ -19,10 +17,18 @@ class ControleAlteracao {
             this.finalizar(event.target, editorCtrl);
 
             if (this.alterado) {
-                this.alterado = false;
                 editorCtrl.dispatchEvent(new ArticulacaoChangeEvent(editorCtrl));
+                this.alterado = false;
             }
         }, true);
+    }
+
+    get alterado() {
+        throw 'Não implementado.';
+    }
+
+    set alterado(valor) {
+        throw 'Não implementado.';
     }
 
     /**
@@ -55,7 +61,22 @@ class ControleAlteracaoMutationObserver extends ControleAlteracao {
     constructor(editorCtrl) {
         super(editorCtrl);
 
+        this._editorCtrl = editorCtrl;
         this._observer = new MutationObserver(this._mutationCallback.bind(this));
+        this._iniciado = false;
+        this._alterado = false;
+    }
+
+    get alterado() {
+        return this._alterado;
+    }
+
+    set alterado(valor) {
+        this._alterado = valor;
+
+        if (!valor && !this._conectado && this._iniciado) {
+            this.iniciar(this._editorCtrl._elemento, editorCtrl);
+        }
     }
 
     /**
@@ -72,6 +93,7 @@ class ControleAlteracaoMutationObserver extends ControleAlteracao {
             subtree: true
         });
         this._conectado = true;
+        this._iniciado = true;
     }
 
     /**
@@ -84,6 +106,8 @@ class ControleAlteracaoMutationObserver extends ControleAlteracao {
         if (this._conectado) {
             this._observer.disconnect();
         }
+
+        this._iniciado = false;
     }
 
     _mutationCallback() {

@@ -8,7 +8,7 @@ import { TransformacaoDoProximo } from './Transformacao';
  */
 class AoFecharAspas extends TransformacaoDoProximo {
     constructor() {
-        super('"\n', '"\n.');
+        super('"\n', '".\n');
     }
 
     proximoTipo(editor, ctrl, contexto) {

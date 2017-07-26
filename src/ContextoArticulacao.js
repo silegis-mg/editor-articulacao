@@ -102,6 +102,12 @@ class ContextoArticulacao {
             }
         }
 
+        for (let i in this.permissoes) {
+            if (this.permissoes[i] !== obj2.permissoes[i]) {
+                return true;
+            }
+        }
+
         return false;
     }
 

@@ -53,8 +53,8 @@ class EditorArticulacaoController {
         }
     }
 
-    dispatchEvent() {
-        this._elemento.dispatchEvent.apply(this, arguments);
+    dispatchEvent(evento) {
+        this._elemento.dispatchEvent(evento);
     }
 
     getSelection() {
@@ -70,6 +70,8 @@ class EditorArticulacaoController {
 
         this._elemento.innerHTML = '';
         this._elemento.appendChild(articulacao);
+
+        this.controleAlteracao.alterado = false;
     }
 
     get alterado() {
