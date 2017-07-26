@@ -248,6 +248,10 @@ class EditorArticulacaoController {
             if (anterior && anterior.getAttribute('data-tipo') === 'paragrafo') {
                 anterior.classList.remove('unico');
             }
+
+            if (posterior && posterior.getAttribute('data-tipo') === 'paragrafo') {
+                posterior.classList.remove('unico');
+            }
         } else if (anterior && anterior.getAttribute('data-tipo') === 'paragrafo' && (!posterior || posterior.getAttribute('data-tipo') !== 'paragrafo')) {
             anterior.classList.add('unico');
         } else if ((!anterior || anterior.getAttribute('data-tipo') !== 'paragrafo') && posterior && posterior.getAttribute('data-tipo') === 'paragrafo') {
