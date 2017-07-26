@@ -7,13 +7,10 @@ import { interpretarArticulacao, transformarQuebrasDeLinhaEmP } from './interpre
  * @author Júlio César e Melo
  */
 class ClipboardController {
-    constructor(editorCtrl, elemento) {
+    constructor(editorCtrl) {
         this.editorCtrl = editorCtrl;
 
-        let colagemEventHandler = (event) => aoColar(event, this);
-
-        elemento.addEventListener('paste', colagemEventHandler);
-        interceptarApos(editorCtrl, 'desregistrar', () => elemento.removeEventListener('paste', colagemEventHandler));
+        editorCtrl.registrarEventListener('paste', (event) => aoColar(event, this));
     }
 
     /**
@@ -27,7 +24,7 @@ class ClipboardController {
 
         if (!range.collapsed) {
             range.deleteContents();
-            editorCtrl.atualizarContexto();
+            this.editorCtrl.atualizarContexto();
         }
 
         for (let brs = (range.endContainer.nodeType === Node.TEXT_NODE ? range.endContainer.parentElement : range.endContainer).querySelectorAll('br'), i = 0; i < brs.length; i++) {

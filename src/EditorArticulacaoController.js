@@ -28,6 +28,8 @@ class EditorArticulacaoController {
             value: elemento
         });
 
+        this._handlers = [];
+
         for (let filho = elemento.firstElementChild; filho; filho = filho.nextElementSibling) {
             this._normalizarDispositivo(filho);
         }
@@ -38,7 +40,7 @@ class EditorArticulacaoController {
 
         adicionarTransformacaoAutomatica(this, elemento);
 
-        this.clipboardCtrl = new ClipboardController(this, elemento);
+        this.clipboardCtrl = new ClipboardController(this);
     }
 
     get lexml() {
@@ -60,11 +62,7 @@ class EditorArticulacaoController {
         let eventHandler = this._cursorEventHandler.bind(this);
         let eventos = ['focus', 'keypress', 'keyup', 'mouseup', 'touchend'];
 
-        if (this.desregistrar) {
-            this.desregistrar();
-        }
-
-        eventos.forEach(evento => this._elemento.addEventListener(evento, eventHandler));
+        eventos.forEach(evento => this.registrarEventListener(evento, eventHandler));
 
         let focusHandler = function() {
             if (!this._elemento.firstElementChild) {
@@ -72,12 +70,24 @@ class EditorArticulacaoController {
             }
         }.bind(this);
 
-        this._elemento.addEventListener('focus', focusHandler, true);
+        this.registrarEventListener('focus', focusHandler, true);
+    }
 
-        this.desregistrar = function () {
-            eventos.forEach(evento => this._elemento.removeEventListener(evento, eventHandler));
-            this._elemento.removeEventListener('focus', focusHandler);
-        };
+    /**
+     * Adiciona um tratamento de evento no elemento do editor no DOM.
+     * 
+     * @param {*} evento Evento a ser capturado.
+     * @param {*} listener
+     * @param {*} useCapture 
+     */
+    registrarEventListener(evento, listener, useCapture) {
+        this._handlers.push({ evento: evento, handler: listener });
+        this._elemento.addEventListener(evento, listener, useCapture);
+    }
+
+    _desregistrar() {
+        this._handlers.forEach(registro => this._elemento.removeEventListener(registro.evento, registro.handler));
+        this._handlers = [];
     }
 
     /**

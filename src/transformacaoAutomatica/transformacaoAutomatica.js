@@ -19,9 +19,9 @@ function adicionarTransformacaoAutomatica(editorArticulacaoCtrl, elemento) {
     adicionarParser(parser, new AoIniciarAspas());
     adicionarParser(parser, new AoFecharAspas());
 
-    elemento.addEventListener('keypress', event => estado = processarEstado(event, parser, estado, editorArticulacaoCtrl, elemento));
-    elemento.addEventListener('mouseup', event => estado = []);
-    elemento.addEventListener('touchend', event => estado = []);
+    editorArticulacaoCtrl.registrarEventListener('keypress', event => estado = processarEstado(event, parser, estado, editorArticulacaoCtrl, elemento));
+    editorArticulacaoCtrl.registrarEventListener('mouseup', event => estado = []);
+    editorArticulacaoCtrl.registrarEventListener('touchend', event => estado = []);
 }
 
 /**
