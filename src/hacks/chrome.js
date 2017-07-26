@@ -165,7 +165,7 @@ function hackInterceptarKeydown(keyboardEvent, editorCtrl) {
                      * deve-se recriar o conteúdo mínimo.
                      */
                     if (editorCtrl._elemento.children.length === 0) {
-                        editorCtrl._elemento.innerHTML = '<p data-tipo="artigo"><br></p>'
+                        editorCtrl._elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
                     }
                 }
                 // ... mas se a seleção for todo o conteúdo de um único elemento...

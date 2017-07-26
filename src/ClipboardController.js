@@ -22,16 +22,18 @@ class ClipboardController {
         let selecao = document.getSelection();
         let range = document.getSelection().getRangeAt(0);
 
-        if (!range.collapsed) {
-            range.deleteContents();
-            this.editorCtrl.atualizarContexto();
-        }
+        try {
+            if (!range.collapsed) {
+                range.deleteContents();
+                this.editorCtrl.atualizarContexto();
+            }
 
-        for (let brs = (range.endContainer.nodeType === Node.TEXT_NODE ? range.endContainer.parentElement : range.endContainer).querySelectorAll('br'), i = 0; i < brs.length; i++) {
-            brs[i].remove();
+            for (let brs = (range.endContainer.nodeType === Node.TEXT_NODE ? range.endContainer.parentElement : range.endContainer).querySelectorAll('br'), i = 0; i < brs.length; i++) {
+                brs[i].remove();
+            }
+        } finally {
+            range.detach();
         }
-
-        range.detach();
 
         let fragmento = transformar(texto, this.editorCtrl.contexto.cursor.tipo, this.editorCtrl.contexto.cursor.continuacao);
 
@@ -103,46 +105,54 @@ function aoColar(event, clipboardCtrl) {
 function colarFragmento(fragmento, editorCtrl) {
     let selecao = document.getSelection();
     let range = document.getSelection().getRangeAt(0);
-    let proximaSelecao = fragmento.lastChild;
 
-    // Se a seleção estiver no container, então devemos inserir elementos filhos...
-    if (range.collapsed && range.startContainer === editorCtrl._elemento) {
-        // Remove as quebras de linha, usada como placeholder pelos contentEditable.
-        for (let itens = editorCtrl._elemento.querySelectorAll('br'), i = 0; i < itens.length; i++) {
-            itens[i].remove();
+    try {
+        let proximaSelecao = fragmento.lastChild;
+
+        // Se a seleção estiver no container, então devemos inserir elementos filhos...
+        if (range.collapsed && range.startContainer === editorCtrl._elemento) {
+            // Remove as quebras de linha, usada como placeholder pelos contentEditable.
+            for (let itens = editorCtrl._elemento.querySelectorAll('br'), i = 0; i < itens.length; i++) {
+                itens[i].remove();
+            }
+
+            // Remove os elementos vazios.
+            for (let itens = editorCtrl._elemento.querySelectorAll('*:empty'), i = 0; i < itens.length; i++) {
+                itens[i].remove();
+            }
+
+            // Transforma os nós textuais em parágrafos.
+            for (let item = fragmento.firstChild; item && item.nodeType === Node.TEXT_NODE; item = fragmento.firstChild) {
+                let p = document.createElement('p');
+                p.appendChild(item);
+                p.setAttribute('data-tipo', 'artigo');
+                fragmento.insertBefore(p, fragmento.firstElementChild);
+            }
+
+            range.insertNode(fragmento);
+        } else {
+            // Insere os primeiros nós textuais na própria seleção.
+            for (let item = fragmento.firstChild; item && item.nodeType === Node.TEXT_NODE; item = fragmento.firstChild) {
+                range.insertNode(item);
+            }
+
+            // Insere os elementos em seguida, pois não podem estar aninhados ao elemento da seleção.
+            range.endContainer.parentElement.insertBefore(fragmento, range.endContainer.nextSibling);
         }
-
-        // Remove os elementos vazios.
-        for (let itens = editorCtrl._elemento.querySelectorAll('*:empty'), i = 0; i < itens.length; i++) {
-            itens[i].remove();
-        }
-
-        // Transforma os nós textuais em parágrafos.
-        for (let item = fragmento.firstChild; item && item.nodeType === Node.TEXT_NODE; item = fragmento.firstChild) {
-            let p = document.createElement('p');
-            p.appendChild(item);
-            p.setAttribute('data-tipo', 'artigo');
-            fragmento.insertBefore(p, fragmento.firstElementChild);
-        }
-
-        range.insertNode(fragmento);
-    } else {
-        // Insere os primeiros nós textuais na própria seleção.
-        for (let item = fragmento.firstChild; item && item.nodeType === Node.TEXT_NODE; item = fragmento.firstChild) {
-            range.insertNode(item);
-        }
-
-        // Insere os elementos em seguida, pois não podem estar aninhados ao elemento da seleção.
-        range.endContainer.parentElement.insertBefore(fragmento, range.endContainer.nextSibling);
+    } finally {
+        range.detach();
     }
 
     // Altera a seleção.
-    range.detach();
     selecao.removeAllRanges();
     range = document.createRange();
-    range.setStartAfter(proximaSelecao);
-    selecao.addRange(range);
-    range.detach();
+
+    try {
+        range.setStartAfter(proximaSelecao);
+        selecao.addRange(range);
+    } finally {
+        range.detach();
+    }
     
     editorCtrl.atualizarContexto();
 }
