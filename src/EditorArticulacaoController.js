@@ -6,6 +6,7 @@ import importarDeLexML from './lexml/importarDeLexML';
 import exportarParaLexML from './lexml/exportarParaLexML';
 import { interpretarArticulacao } from './interpretadorArticulacao';
 import ClipboardController from './ClipboardController';
+import criarControleAlteracao from './ControleAlteracao';
 import css from './editor-articulacao.css';
 import cssShadow from './editor-articulacao-shadow.css';
 
@@ -44,6 +45,7 @@ class EditorArticulacaoController {
         this._registrarEventos();
         adicionarTransformacaoAutomatica(this, elemento);
         this.clipboardCtrl = new ClipboardController(this);
+        this.controleAlteracao = criarControleAlteracao(this);
 
         // Executa hack se necessário.
         if (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {
@@ -68,6 +70,10 @@ class EditorArticulacaoController {
 
         this._elemento.innerHTML = '';
         this._elemento.appendChild(articulacao);
+    }
+
+    get alterado() {
+        return this.controleAlteracao.alterado;
     }
 
     /**

@@ -29,7 +29,6 @@
     <pre id="contexto" style="position: fixed; top: 3.8em; right: 0; background: black; box-shadow: 0px 0px 20px gray; margin: 0; opacity: .3; font-size: 75%; color: white"></pre>
     <div id="articulacao"></div>
     <hr>
-    <button onclick="lexml.textContent = ctrl.lexml.outerHTML.replace(/(<\/.+?>)/g, '$1\n');">Exportar LexML</button>
     <button id="importarConstituicao">Importar LexML da Constituição Federal</button>
     <pre id="lexml"></pre>
     <script>
@@ -51,6 +50,10 @@
             }
 
             document.getElementById('contexto').innerText = 'Permissões: ' + JSON.stringify(evento.detail.permissoes, null, 4) + '\nCursor: ' + JSON.stringify(evento.detail.cursor, null, 4);
+        });
+
+        document.getElementById('articulacao').addEventListener('change', function () {
+            lexml.textContent = ctrl.lexml.outerHTML.replace(/(<\/.+?>)/g, '$1\n');
         });
 
         importarConstituicao.onclick = function () {
