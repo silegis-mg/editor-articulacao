@@ -1,0 +1,13 @@
+:host {
+    display: block;
+}
+
+:host([disabled]) {
+    color: gray;
+}
+
+.silegismg-articulacao p:before {
+    color: var(--rotulo-cor, currentColor);
+    font-weight: var(--rotulo-peso, bolder);
+    background: var(--rotulo-background, inherit);
+}

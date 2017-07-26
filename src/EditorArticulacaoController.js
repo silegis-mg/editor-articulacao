@@ -7,6 +7,7 @@ import exportarParaLexML from './lexml/exportarParaLexML';
 import { interpretarArticulacao } from './interpretadorArticulacao';
 import ClipboardController from './ClipboardController';
 import css from './editor-articulacao.css';
+import cssShadow from './editor-articulacao-shadow.css';
 
 /**
  * Controlador do editor de articulação.
@@ -382,7 +383,10 @@ function transformarEmEditor(elemento, editorCtrl, opcoes) {
      * e possíveis problemas com CSS.
      */
     if (opcoes.shadowDOM !== false && 'attachShadow' in elemento) {
-        let shadow = elemento.attachShadow({ mode: 'closed' });
+        let shadowStyle = document.createElement('style');
+        shadowStyle.innerHTML = cssShadow.toString();
+
+       let shadow = elemento.attachShadow({ mode: 'closed' });
 
         editorCtrl.dispatchEvent = elemento.dispatchEvent.bind(elemento);
         editorCtrl.getSelection = () => shadow.getSelection();
@@ -393,6 +397,7 @@ function transformarEmEditor(elemento, editorCtrl, opcoes) {
         novoElemento.innerHTML = '<p data-tipo="artigo"><br></p>';
 
         shadow.appendChild(style);
+        shadow.appendChild(shadowStyle);
         shadow.appendChild(novoElemento);
 
         elemento.addEventListener('focus', focusEvent => novoElemento.focus());
