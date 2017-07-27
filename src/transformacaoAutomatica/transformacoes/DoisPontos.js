@@ -13,6 +13,10 @@ class DoisPontos extends TransformacaoDoProximo {
         super(':\n');
     }
 
+    get tipoTransformacao() {
+        return 'DoisPontos';
+    }
+
     proximoTipo(editor, ctrl, contexto) {
         return {
             artigo: 'inciso',

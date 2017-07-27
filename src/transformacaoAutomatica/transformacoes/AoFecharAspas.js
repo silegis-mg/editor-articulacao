@@ -11,6 +11,10 @@ class AoFecharAspas extends TransformacaoDoProximo {
         super('"\n', '".\n');
     }
 
+    get tipoTransformacao() {
+        return 'AoFecharAspas';
+    }
+
     proximoTipo(editor, ctrl, contexto) {
         return contexto.cursor.artigo && contexto.cursor.continuacao ? 'artigo' : null;
     }

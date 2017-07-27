@@ -13,6 +13,10 @@ class PontoFinal extends TransformacaoDoProximo {
         super('.\n');
     }
 
+    get tipoTransformacao() {
+        return 'PontoFinal';
+    }
+
     proximoTipo(editor, ctrl, contexto) {
         return {
             get inciso() {

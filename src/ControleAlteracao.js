@@ -7,13 +7,19 @@ import ArticulacaoChangeEvent from './eventos/ArticulacaoChangeEvent';
  */
 class ControleAlteracao {
     constructor(editorCtrl) {
+        this._editorCtrl = editorCtrl;
+
         editorCtrl.registrarEventListener('focus', event => {
+            this._comFoco = true;
+
             if (!this.alterado) {
                 this.iniciar(event.target, editorCtrl);
             }
         }, true);
 
         editorCtrl.registrarEventListener('blur', event => {
+            this._comFoco = false;
+
             this.finalizar(event.target, editorCtrl);
 
             if (this.alterado) {
@@ -61,7 +67,6 @@ class ControleAlteracaoMutationObserver extends ControleAlteracao {
     constructor(editorCtrl) {
         super(editorCtrl);
 
-        this._editorCtrl = editorCtrl;
         this._observer = new MutationObserver(this._mutationCallback.bind(this));
         this._iniciado = false;
         this._alterado = false;
@@ -76,6 +81,10 @@ class ControleAlteracaoMutationObserver extends ControleAlteracao {
 
         if (!valor && !this._conectado && this._iniciado) {
             this.iniciar(this._editorCtrl._elemento, editorCtrl);
+        }
+
+        if (valor && !this._comFoco) {
+            this._editorCtrl.dispatchEvent(new ArticulacaoChangeEvent(this._editorCtrl));
         }
     }
 
@@ -124,7 +133,6 @@ class ControleAlteracaoComparativo extends ControleAlteracao {
     constructor(editorCtrl) {
         super(editorCtrl);
 
-        this._editorCtrl = editorCtrl;
         this._alteradoCache = false;
     }
 
@@ -140,6 +148,10 @@ class ControleAlteracaoComparativo extends ControleAlteracao {
     set alterado(valor) {
         this._lexml = !!valor;
         this._alteradoCache = !!valor;
+
+        if (valor && !this._comFoco) {
+            this._editorCtrl.dispatchEvent(new ArticulacaoChangeEvent(this._editorCtrl));
+        }
     }
 
      /**

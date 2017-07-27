@@ -5,7 +5,7 @@
  * 
  * @author Júlio César e Melo
  */
-class ContextoArticulacaoAtualizado extends CustomEvent {
+class ContextoArticulacaoAtualizadoEvent extends CustomEvent {
     /**
      * Constrói o evento.
      * 
@@ -18,4 +18,4 @@ class ContextoArticulacaoAtualizado extends CustomEvent {
     }
 }
 
-export default ContextoArticulacaoAtualizado;
+export default ContextoArticulacaoAtualizadoEvent;

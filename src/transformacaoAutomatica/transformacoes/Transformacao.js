@@ -1,3 +1,5 @@
+import TransformacaoAutomaticaEvent from '../../eventos/TransformacaoAutomaticaEvent'
+
 /**
  * Definição abstrata de uma transformação a ser realizada na
  * seleção da articulação.
@@ -18,6 +20,11 @@ class Transformacao {
         }
     }
 
+    get tipoTransformacao() {
+        // Deve-se sobrescrever este getter, pois na minificação de js, perde-se o nome do construtor!
+        return this.constructor.name;
+    }
+
     transformar(editor, ctrl, contexto, sequencia) {
         throw 'Método não implementado';
     }
@@ -36,7 +43,11 @@ class TransformacaoDoProximo extends Transformacao {
         let novoTipo = this.proximoTipo(editor, ctrl, contexto);
 
         if (novoTipo) {
-            onKeyUp(editor, contexto.cursor.elemento, function () { ctrl.alterarTipoDispositivoSelecionado(novoTipo); });
+            onKeyUp(editor, contexto.cursor.elemento, () => {
+                let tipoAnterior = ctrl.contexto.cursor.tipo;
+                ctrl.alterarTipoDispositivoSelecionado(novoTipo);
+                ctrl.dispatchEvent(new TransformacaoAutomaticaEvent(ctrl, tipoAnterior, novoTipo, this.tipoTransformacao));
+            });
         }
     }
 
