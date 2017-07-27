@@ -56,6 +56,13 @@ class ControleAlteracao {
     finalizar(elemento, editorCtrl) {
         throw 'Não implementado';
     }
+
+    comprometer() {
+        if (this.alterado) {
+            this._editorCtrl.dispatchEvent(new ArticulacaoChangeEvent(this._editorCtrl));
+            this.alterado = false;
+        }
+    }
 }
 
 /**
@@ -80,7 +87,7 @@ class ControleAlteracaoMutationObserver extends ControleAlteracao {
         this._alterado = valor;
 
         if (!valor && !this._conectado && this._iniciado) {
-            this.iniciar(this._editorCtrl._elemento, editorCtrl);
+            this.iniciar(this._editorCtrl._elemento, this._editorCtrl);
         }
 
         if (valor && !this._comFoco) {
