@@ -1,5 +1,5 @@
 import { Transformacao } from './Transformacao';
-import TransformacaoAutomaticaEvent from '../../eventos/TransformacaoAutomaticaEvent'
+import TransformacaoAutomaticaEvent from '../../eventos/TransformacaoAutomaticaEvent';
 
 /**
  * Quando usuário cria um novo artigo e o inicia com aspas,

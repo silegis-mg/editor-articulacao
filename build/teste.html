@@ -53,7 +53,7 @@
         });
 
         document.getElementById('articulacao').addEventListener('change', function () {
-            lexml.textContent = ctrl.lexml.outerHTML.replace(/(<\/.+?>)/g, '$1\n');
+            lexml.textContent = !ctrl.vazio ? ctrl.lexml.outerHTML.replace(/(<\/.+?>)/g, '$1\n') : '';
         });
 
         importarConstituicao.onclick = function () {

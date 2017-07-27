@@ -1,12 +1,17 @@
 :host {
     display: block;
+    text-indent: 4ex;
 }
 
 :host([disabled]) {
     color: gray;
 }
 
-.silegismg-articulacao p:before {
+.silegismg-editor-articulacao p {
+    text-indent: inherit !important;
+}
+
+.silegismg-editor-articulacao p:before {
     color: var(--rotulo-cor, currentColor);
     font-weight: var(--rotulo-peso, bolder);
     background: var(--rotulo-background, inherit);

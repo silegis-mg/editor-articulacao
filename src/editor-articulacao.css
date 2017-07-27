@@ -6,31 +6,37 @@
  *       ^ content: 'Art. ' counter(artigo) '-' counter(aditivo)...
  */
  
-.silegismg-articulacao {
+.silegismg-editor-articulacao {
   counter-reset: parte livro titulo capitulo secao subsecao artigo;
-  margin: 1em 0;
+  outline: none;
 }
 
-.silegismg-articulacao p[data-tipo]:before {
+.silegismg-editor-articulacao p:before {
+  font-weight: bolder;
+  animation: .25s ease-in rotulo;
+}
+
+.silegismg-editor-articulacao p[data-tipo]:before {
   display: inline-block; /* Resolve problema de cursor antes do rótulo no chrome */
   margin-right: 1ex;
-  font-weight: bolder;
 }
 
-.silegismg-articulacao p {
+.silegismg-editor-articulacao p {
   min-height: 1em;
   text-indent: 4ex;
   text-align: justify;
 }
 
-.silegismg-articulacao p[data-tipo="titulo"]:before {
+.silegismg-editor-articulacao p[data-tipo="titulo"]:before {
   content: 'Título ' counter(titulo, upper-roman);
   counter-increment: titulo;
   display: block;
   text-align: center;
+  margin-right: 0;
+  text-indent: 0;
 }
 
-.silegismg-articulacao p[data-tipo="titulo"] {
+.silegismg-editor-articulacao p[data-tipo="titulo"] {
   counter-reset: capitulo;
   text-transform: uppercase;
   font-weight: bolder;
@@ -39,15 +45,17 @@
   text-indent: 0;
 }
 
-.silegismg-articulacao p[data-tipo="capitulo"]:before {
+.silegismg-editor-articulacao p[data-tipo="capitulo"]:before {
   content: 'Capítulo ' counter(capitulo, upper-roman);
   counter-increment: capitulo;
   display: block;
   text-align: center;
   font-weight: normal;
+  margin-right: 0;
+  text-indent: 0;
 }
 
-.silegismg-articulacao p[data-tipo="capitulo"] {
+.silegismg-editor-articulacao p[data-tipo="capitulo"] {
   counter-reset: secao;
   text-transform: uppercase;
   font-size: 110%;
@@ -55,14 +63,16 @@
   text-indent: 0;
 }
 
-.silegismg-articulacao p[data-tipo="secao"]:before {
+.silegismg-editor-articulacao p[data-tipo="secao"]:before {
   content: 'Seção ' counter(secao, upper-roman);
   counter-increment: secao;
   display: block;
   text-align: center;
+  margin-right: 0;
+  text-indent: 0;
 }
 
-.silegismg-articulacao p[data-tipo="secao"] {
+.silegismg-editor-articulacao p[data-tipo="secao"] {
   counter-reset: subsecao;
   font-weight: bolder;
   font-size: 110%;
@@ -70,14 +80,16 @@
   text-indent: 0;
 }
 
-.silegismg-articulacao p[data-tipo="subsecao"]:before {
+.silegismg-editor-articulacao p[data-tipo="subsecao"]:before {
   content: 'Subseção ' counter(subsecao, upper-roman);
   counter-increment: subsecao;
   display: block;
   text-align: center;
+  margin-right: 0;
+  text-indent: 0;
 }
 
-.silegismg-articulacao p[data-tipo="subsecao"] {
+.silegismg-editor-articulacao p[data-tipo="subsecao"] {
   font-weight: bolder;
   font-size: 110%;
   text-align: center;
@@ -85,58 +97,58 @@
 }
 
 
-.silegismg-articulacao p[data-tipo="artigo"]:before {
+.silegismg-editor-articulacao p[data-tipo="artigo"]:before {
   content: 'Art. ' counter(artigo) 'º – ';
   counter-increment: artigo;
 }
 
 /* A partir do artigo 10, não se usa "º" */
 
-.silegismg-articulacao p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"]:before {
+.silegismg-editor-articulacao p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"]:before {
   content: 'Art. ' counter(artigo) ' – ';
 }
 
-.silegismg-articulacao p[data-tipo='artigo'] {
+.silegismg-editor-articulacao p[data-tipo='artigo'] {
   counter-reset: paragrafo inciso;
 }
 
-.silegismg-articulacao p[data-tipo='paragrafo'] {
+.silegismg-editor-articulacao p[data-tipo='paragrafo'] {
   counter-reset: inciso;
 }
 
-.silegismg-articulacao p[data-tipo='paragrafo']:before {
+.silegismg-editor-articulacao p[data-tipo='paragrafo']:before {
   content: '§ ' counter(paragrafo) 'º – ';
   counter-increment: paragrafo;
 }
 
-.silegismg-articulacao p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo']:before {
+.silegismg-editor-articulacao p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo']:before {
   content: '§ ' counter(paragrafo) ' – ';
   counter-increment: paragrafo;
 }
 
-.silegismg-articulacao p[data-tipo='paragrafo'].unico:before {
+.silegismg-editor-articulacao p[data-tipo='paragrafo'].unico:before {
   content: 'Parágrafo único – ';
 }
 
-.silegismg-articulacao p[data-tipo='inciso'] {
+.silegismg-editor-articulacao p[data-tipo='inciso'] {
   counter-reset: alinea;
 }
 
-.silegismg-articulacao p[data-tipo='inciso']:before {
+.silegismg-editor-articulacao p[data-tipo='inciso']:before {
   content: counter(inciso, upper-roman) ' – ';
   counter-increment: inciso;
 }
 
-.silegismg-articulacao p[data-tipo='alinea'] {
+.silegismg-editor-articulacao p[data-tipo='alinea'] {
   counter-reset: item;
 }
 
-.silegismg-articulacao p[data-tipo='alinea']:before {
+.silegismg-editor-articulacao p[data-tipo='alinea']:before {
   content: counter(alinea, lower-latin) ') ';
   counter-increment: alinea;
 }
 
-.silegismg-articulacao p[data-tipo='item']:before {
+.silegismg-editor-articulacao p[data-tipo='item']:before {
   content: counter(item) ') ';
   counter-increment: item;
 }
@@ -144,13 +156,25 @@
 
 /* O primeiro artigo não deve ter margem superior */
 
-.silegismg-articulacao > *:first-child {
+.silegismg-editor-articulacao > *:first-child {
   margin-top: 0;
 }
 
 
 /* O último artigo não deve ter margem inferior */
 
-.silegismg-articulacao > *:last-child {
+.silegismg-editor-articulacao > *:last-child {
   margin-bottom: 0;
+}
+
+@keyframes rotulo {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

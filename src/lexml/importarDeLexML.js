@@ -14,7 +14,9 @@ function importarDeLexML(elemento, resultado) {
         resultado = document.createDocumentFragment();
     }
 
-    if (elemento instanceof NodeList || elemento instanceof HTMLCollection) {
+    if (!elemento) {
+        return resultado;
+    } else if (elemento instanceof NodeList || elemento instanceof HTMLCollection) {
         for (let i = 0; i < elemento.length; i++) {
             importarDeLexML(elemento[i], resultado);
         }

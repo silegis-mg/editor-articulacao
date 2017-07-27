@@ -150,7 +150,7 @@ function exportarParaLexML(dispositivoDOM) {
     let contexto = new ContextoTransformacao(raiz);
 
     // Se for o container de edição, então movemos para o primeiro filho.
-    if (dispositivoDOM.classList.contains('silegismg-articulacao')) {
+    if (dispositivoDOM.classList.contains('silegismg-editor-articulacao')) {
         dispositivoDOM = dispositivoDOM.firstElementChild;
     }
 

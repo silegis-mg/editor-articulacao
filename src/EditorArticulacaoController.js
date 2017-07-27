@@ -10,6 +10,8 @@ import criarControleAlteracao from './ControleAlteracao';
 import css from './editor-articulacao.css';
 import cssShadow from './editor-articulacao-shadow.css';
 
+var cssImportado = false;
+
 /**
  * Controlador do editor de articulação.
  * 
@@ -61,8 +63,12 @@ class EditorArticulacaoController {
         return document.getSelection();
     }
 
+    get vazio() {
+        return !this._elemento.firstElementChild || this._elemento.firstElementChild === this._elemento.lastElementChild && this._elemento.textContent === '';
+    }
+
     get lexml() {
-        return exportarParaLexML(this._elemento);
+        return this.vazio ? document.createDocumentFragment() : exportarParaLexML(this._elemento);
     }
 
     set lexml(valor) {
@@ -93,7 +99,6 @@ class EditorArticulacaoController {
                 this._elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
             }
         }.bind(this);
-
         this.registrarEventListener('focus', focusHandler, true);
     }
 
@@ -109,7 +114,7 @@ class EditorArticulacaoController {
         this._elemento.addEventListener(evento, listener, useCapture);
     }
 
-    _desregistrar() {
+    desregistrar() {
         this._handlers.forEach(registro => this._elemento.removeEventListener(registro.evento, registro.handler));
         this._handlers = [];
     }
@@ -224,6 +229,7 @@ class EditorArticulacaoController {
 
         if (tipoAnterior !== novoTipo) {
             dispositivo.setAttribute('data-tipo', novoTipo);
+            this.controleAlteracao.alterado = true;
             this._cursorEventHandler();
 
             if (tipoAnterior === 'paragrafo' || novoTipo === 'paragrafo') {
@@ -257,7 +263,7 @@ class EditorArticulacaoController {
             try {
                 let anterior = dispositivo.previousElementSibling;
                 this._normalizarDispositivo(anterior);
-                dispositivo.setAttribute('data-tipo', anterior.getAttribute('data-tipo') || 'continuacao');
+                dispositivo.setAttribute('data-tipo', obterTipoValido(anterior.getAttribute('data-tipo') || 'continuacao', contexto.permissoes));
                 this._normalizarDispositivo(dispositivo.nextElementSibling);
             } catch (e) {
                 dispositivo.setAttribute('data-tipo', 'artigo');
@@ -382,6 +388,19 @@ function encontrarDispositivoPosteriorDoTipo(elemento, pontoParada) {
     return null;
 }
 
+function obterTipoValido(tipo, permissoes) {
+    if (tipo && !permissoes[tipo]) {
+        return obterTipoValido({
+            titulo: 'capitulo',
+            capitulo: 'artigo',
+            secao: 'artigo',
+            subsecao: 'artigo'
+        }[tipo], permissoes);
+    }
+
+    return tipo || 'artigo';
+}
+
 function transformarEmEditor(elemento, editorCtrl, opcoes) {
     let style = document.createElement('style');
     style.innerHTML = css.toString();
@@ -401,7 +420,8 @@ function transformarEmEditor(elemento, editorCtrl, opcoes) {
 
         let novoElemento = document.createElement('div');
         novoElemento.contentEditable = true;
-        novoElemento.classList.add('silegismg-articulacao');
+        novoElemento.spellcheck = elemento.spellcheck;
+        novoElemento.classList.add('silegismg-editor-articulacao');
         novoElemento.innerHTML = '<p data-tipo="artigo"><br></p>';
 
         shadow.appendChild(style);
@@ -409,18 +429,23 @@ function transformarEmEditor(elemento, editorCtrl, opcoes) {
         shadow.appendChild(novoElemento);
 
         elemento.addEventListener('focus', focusEvent => novoElemento.focus());
+        elemento.focus = function() { novoElemento.focus(); };
 
         return novoElemento;
     } else {
         elemento.contentEditable = true;
-        elemento.classList.add('silegismg-articulacao');
+        elemento.classList.add('silegismg-editor-articulacao');
 
-        let head = document.querySelector('head');
+        if (!cssImportado) {
+            let head = document.querySelector('head');
 
-        if (head) {
-            head.appendChild(style);
-        } else {
-            document.body.appendChild(style);
+            if (head) {
+                head.appendChild(style);
+            } else {
+                document.body.appendChild(style);
+            }
+
+            cssImportado = true;
         }
         
         return elemento;

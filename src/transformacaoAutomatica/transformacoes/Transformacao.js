@@ -1,4 +1,4 @@
-import TransformacaoAutomaticaEvent from '../../eventos/TransformacaoAutomaticaEvent'
+import TransformacaoAutomaticaEvent from '../../eventos/TransformacaoAutomaticaEvent';
 
 /**
  * Definição abstrata de uma transformação a ser realizada na
