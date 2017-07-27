@@ -8,17 +8,24 @@ function editorArticulacaoConteudoDirective() {
     return {
         restrict: 'EAC',
         require: 'ngModel',
-        scope: {},
+        scope: {
+            opcoes: '<?'
+        },
         link: function(scope, element, attrs, ngModel) {
             ngModel.$render = () => {
                 scope.ctrl.lexml = ngModel.$viewValue;
             };
 
             element[0].addEventListener('change', () => {
-                ngModel.$setViewValue(scope.ctrl.lexml.outerHTML, 'change');
+                try {
+                    ngModel.$setViewValue(scope.ctrl.lexml.outerHTML, 'change');
+                    ngModel.$setValidity('lexml', true);
+                } catch (e) {
+                    ngModel.$setValidity('lexml', false);
+                }
             })
         },
-        controller: ['$element', $element => new EditorArticulacaoController($element[0])],
+        controller: ['$element', '$scope', ($element, $scope) => new EditorArticulacaoController($element[0], $scope.opcoes)],
         controllerAs: 'ctrl'
     }
 }

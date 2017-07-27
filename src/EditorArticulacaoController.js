@@ -11,6 +11,21 @@ import css from './editor-articulacao.css';
 import cssShadow from './editor-articulacao-shadow.css';
 import ArticulacaoInvalidaException from './lexml/ArticulacaoInvalidaException';
 
+/**
+ * Definição padrão das opções do editor de articulação.
+ */
+var padrao =  {
+    /**
+     * Determina se deve adotar o Shadow DOM, se suportado pelo navegador.
+     */
+    shadowDOM: false,
+
+    /**
+     * Determina se o editor de articulação deve aplicar transformação automática.
+     */
+    transformacaoAutomatica: true
+};
+
 var cssImportado = false;
 
 /**
@@ -32,7 +47,10 @@ class EditorArticulacaoController {
             throw 'Elemento não é um elemento do DOM.';
         }
 
-        elemento = transformarEmEditor(elemento, this, opcoes || {});
+        let opcoesEfetivas = Object.create(padrao);
+        Object.assign(opcoesEfetivas, opcoes);        
+
+        elemento = transformarEmEditor(elemento, this, opcoesEfetivas);
 
         Object.defineProperty(this, '_elemento', {
             value: elemento
@@ -46,7 +64,11 @@ class EditorArticulacaoController {
         }
 
         this._registrarEventos();
-        adicionarTransformacaoAutomatica(this, elemento);
+
+        if (opcoesEfetivas.transformacaoAutomatica) {
+            adicionarTransformacaoAutomatica(this, elemento);
+        }
+
         this.clipboardCtrl = new ClipboardController(this);
         this.controleAlteracao = criarControleAlteracao(this);
 
@@ -405,17 +427,24 @@ function encontrarDispositivoPosteriorDoTipo(elemento, pontoParada) {
     return null;
 }
 
-function obterTipoValido(tipo, permissoes) {
-    if (tipo && !permissoes[tipo]) {
+/**
+ * Obtém um tipo válido, a partir de um tipo desejado.
+ * 
+ * @param {String} tipoDesejado 
+ * @param {Object} permissoes Permissões do contexto atual.
+ * @returns {String} Tipo válido.
+ */
+function obterTipoValido(tipoDesejado, permissoes) {
+    if (tipoDesejado && !permissoes[tipoDesejado]) {
         return obterTipoValido({
             titulo: 'capitulo',
             capitulo: 'artigo',
             secao: 'artigo',
             subsecao: 'artigo'
-        }[tipo], permissoes);
+        }[tipoDesejado], permissoes);
     }
 
-    return tipo || 'artigo';
+    return tipoDesejado || 'artigo';
 }
 
 function transformarEmEditor(elemento, editorCtrl, opcoes) {
@@ -426,7 +455,7 @@ function transformarEmEditor(elemento, editorCtrl, opcoes) {
      * para garantir o isolamento da árvore interna do componente
      * e possíveis problemas com CSS.
      */
-    if (opcoes.shadowDOM !== false && 'attachShadow' in elemento) {
+    if (opcoes.shadowDOM && 'attachShadow' in elemento) {
         let shadowStyle = document.createElement('style');
         shadowStyle.innerHTML = cssShadow.toString();
 

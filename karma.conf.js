@@ -17,7 +17,7 @@ module.exports = function (config) {
         colors: true,
         // level of logging 
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG 
-        logLevel: config.LOG_DEBUG,
+        logLevel: config.LOG_WARN,
         autoWatch: true,
         browsers: ['ChromeNoSandbox', 'Firefox'],
         customLaunchers: { // https://github.com/karma-runner/karma-chrome-launcher/issues/73
