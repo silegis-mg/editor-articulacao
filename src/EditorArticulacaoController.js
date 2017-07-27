@@ -9,6 +9,7 @@ import ClipboardController from './ClipboardController';
 import criarControleAlteracao from './ControleAlteracao';
 import css from './editor-articulacao.css';
 import cssShadow from './editor-articulacao-shadow.css';
+import ArticulacaoInvalidaException from './lexml/ArticulacaoInvalidaException';
 
 var cssImportado = false;
 
@@ -68,7 +69,19 @@ class EditorArticulacaoController {
     }
 
     get lexml() {
-        return this.vazio ? document.createDocumentFragment() : exportarParaLexML(this._elemento);
+        try {
+            return this.vazio ? document.createDocumentFragment() : exportarParaLexML(this._elemento);
+        } catch (e) {
+            if (e instanceof ArticulacaoInvalidaException) {
+                for (let filho = this._elemento.firstElementChild; filho; filho = filho.nextElementSibling) {
+                    this._normalizarDispositivo(filho);
+                }
+
+                return exportarParaLexML(this._elemento);
+            }
+
+            throw e;
+        }
     }
 
     set lexml(valor) {
@@ -76,6 +89,10 @@ class EditorArticulacaoController {
 
         this._elemento.innerHTML = '';
         this._elemento.appendChild(articulacao);
+
+        if (this.vazio) {
+            this._elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
+        }
 
         this.controleAlteracao.alterado = false;
     }
@@ -203,7 +220,7 @@ class EditorArticulacaoController {
         let selecao = this.getSelection();
         let range = selecao && selecao.rangeCount > 0 ? selecao.getRangeAt(0) : null;
         let endContainer = range ? range.endContainer : null;
-        
+
         if (range) {
             range.detach();
         }
@@ -413,7 +430,7 @@ function transformarEmEditor(elemento, editorCtrl, opcoes) {
         let shadowStyle = document.createElement('style');
         shadowStyle.innerHTML = cssShadow.toString();
 
-       let shadow = elemento.attachShadow({ mode: 'closed' });
+        let shadow = elemento.attachShadow({ mode: 'closed' });
 
         editorCtrl.dispatchEvent = elemento.dispatchEvent.bind(elemento);
         editorCtrl.getSelection = () => shadow.getSelection();
@@ -429,7 +446,7 @@ function transformarEmEditor(elemento, editorCtrl, opcoes) {
         shadow.appendChild(novoElemento);
 
         elemento.addEventListener('focus', focusEvent => novoElemento.focus());
-        elemento.focus = function() { novoElemento.focus(); };
+        elemento.focus = function () { novoElemento.focus(); };
 
         return novoElemento;
     } else {
@@ -447,7 +464,9 @@ function transformarEmEditor(elemento, editorCtrl, opcoes) {
 
             cssImportado = true;
         }
-        
+
+        elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
+
         return elemento;
     }
 }
