@@ -74,19 +74,21 @@ class ContextoArticulacao {
             return dispositivo && matches.call(dispositivo, 'p[data-tipo="' + tipo + '"] ~ *');
         }
 
+        let anteriorAgrupador = dadosCursor.tipoAnterior === 'titulo' || dadosCursor.tipoAnterior === 'capitulo' || dadosCursor.tipoAnterior === 'secao' || dadosCursor.tipoAnterior === 'subsecao';
+
         let permissoes = {
-            titulo: true,
-            capitulo: true,
+            titulo: !anteriorAgrupador,
+            capitulo: !anteriorAgrupador || dadosCursor.tipoAnterior === 'titulo',
             get secao() {
-                return possuiAnterior(dadosCursor.dispositivo, 'capitulo');
+                return (!anteriorAgrupador || dadosCursor.tipoAnterior === 'capitulo') && possuiAnterior(dadosCursor.dispositivo, 'capitulo');
             },
             get subsecao() {
-                return possuiAnterior(dadosCursor.dispositivo, 'secao');
+                return (!anteriorAgrupador || dadosCursor.tipoAnterior === 'secao') && possuiAnterior(dadosCursor.dispositivo, 'secao');
             },
-            artigo: true,
+            artigo: dadosCursor.tipoAnterior !== 'titulo',
             continuacao: dadosCursor.tipoAnterior === 'artigo' || dadosCursor.continuacao,
-            inciso: (dadosCursor.tipoAnterior !== 'titulo' && dadosCursor.tipoAnterior !== 'capitulo' && dadosCursor.tipoAnterior !== 'secao' && dadosCursor.tipoAnterior !== 'subsecao') && !dadosCursor.artigo || !dadosCursor.primeiroDoTipo,
-            paragrafo: !dadosCursor.artigo || !dadosCursor.primeiroDoTipo,
+            inciso: !anteriorAgrupador && (!dadosCursor.artigo || (dadosCursor.artigo && !dadosCursor.primeiroDoTipo)),
+            paragrafo: !dadosCursor.artigo || (dadosCursor.artigo && !dadosCursor.primeiroDoTipo),
             alinea: (dadosCursor.inciso && !dadosCursor.primeiroDoTipo) || dadosCursor.tipoAnterior === 'inciso' || dadosCursor.tipoAnterior === 'alinea' || dadosCursor.tipoAnterior === 'item',
             item: (dadosCursor.alinea && !dadosCursor.primeiroDoTipo) || dadosCursor.tipoAnterior === 'alinea' || dadosCursor.tipoAnterior === 'item'
         };
