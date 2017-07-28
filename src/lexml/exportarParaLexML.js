@@ -61,6 +61,10 @@ function exportarParaLexML(dispositivoDOM) {
             this.dispositivoLexML.appendChild(dispositivoLexML);
         }
 
+        adicionarSubitemEmendado(dispositivoLexML) {
+            this.dispositivoLexML.appendChild(dispositivoLexML);
+        }
+
         adicionarProximo(dispositivoLexML) {
             this.dispositivoLexML.parentElement.appendChild(dispositivoLexML);
         }
@@ -171,14 +175,25 @@ function exportarParaLexML(dispositivoDOM) {
                 throw new ArticulacaoInvalidaException(dispositivoDOM, 'Dispositivo do tipo "' + tipo.toLowerCase() + '" inesperado neste ponto.');
             }
 
-            let dispositivoLexML = criarElementoLexML(tipo, dispositivoDOM, contexto.getIdReferencia(tipo), contexto.contarSubitens(tipo), dispositivoDOM.classList.contains('unico'));
+            if (dispositivoDOM.classList.contains('emenda')) {
+                contexto.nEmenda++;
+            } else {
+                contexto.nEmenda = 0;
+            }
+
+            let dispositivoLexML = criarElementoLexML(tipo, dispositivoDOM, contexto.getIdReferencia(tipo), contexto.contarSubitens(tipo), dispositivoDOM.classList.contains('unico'), contexto.nEmenda);
 
             if (tipo === 'Paragrafo' && dispositivoDOM.classList.contains('unico')) {
                 // Adiciona o sufixo "u" ao identificador do parágrafo único
                 dispositivoLexML.id = dispositivoLexML.id + 'u';
             }
 
-            contexto.adicionarSubitem(dispositivoLexML);
+            if (contexto.nEmenda) {
+                contexto.adicionarSubitemEmendado(dispositivoLexML);
+            } else {
+                contexto.adicionarSubitem(dispositivoLexML);
+            }
+
             contexto = criarContexto(dispositivoLexML, contexto);
         }
 
@@ -188,15 +203,22 @@ function exportarParaLexML(dispositivoDOM) {
     return raiz;
 }
 
-function criarElementoLexML(tipo, conteudo, idPai, idxFilho, unico) {
+function criarElementoLexML(tipo, conteudo, idPai, idxFilho, unico, nEmenda) {
     var elemento, id;
 
     id = tipo.substr(0, 3).toLowerCase();
-    id = (idPai ? idPai + '_' + id : id) + (idxFilho + 1);
+    id = idPai ? idPai + '_' + id : id;
+
+    if (nEmenda) {
+        id += idxFilho + '-' + nEmenda;
+    } else {
+        id += idxFilho + 1;
+    }
 
     elemento = document.createElementNS('http://www.lexml.gov.br/1.0', tipo);
     elemento.setAttribute('id', id);
-    elemento.appendChild(criarRotuloLexML(tipo, idxFilho + 1, unico)); // O rótulo será preenchido depois
+
+    elemento.appendChild(criarRotuloLexML(tipo, nEmenda ? idxFilho : idxFilho + 1, unico, nEmenda));
 
     switch (tipo) {
         case 'Artigo':
@@ -221,12 +243,16 @@ function criarElementoLexML(tipo, conteudo, idPai, idxFilho, unico) {
     return elemento;
 }
 
-function criarRotuloLexML(tipo, numero, unico) {
+function criarRotuloLexML(tipo, numero, unico, nEmenda) {
     var elemento = document.createElementNS('http://www.lexml.gov.br/1.0', 'Rotulo');
 
     switch (tipo) {
         case 'Artigo':
-            elemento.innerHTML = 'Art. ' + numero + (numero < 10 ? 'º &ndash;' : '&ndash;');
+            if (nEmenda) {
+                elemento.innerHTML = 'Art. ' + numero + (numero < 10 ? 'º-' : '-') + transformarLetra(nEmenda, true) + ' &ndash';
+            } else {
+                elemento.innerHTML = 'Art. ' + numero + (numero < 10 ? 'º &ndash;' : '&ndash;');
+            }
             break;
 
         case 'Paragrafo':
@@ -374,12 +400,12 @@ function transformarNumeroRomano(numero) {
  * 
  * @param {Number} numero 
  */
-function transformarLetra(numero) {
+function transformarLetra(numero, maiuscula) {
     if (numero < 1) {
         throw "Número deve ser positivo.";
     }
 
-    return String.fromCharCode(96 /* a */ + numero);
+    return String.fromCharCode((maiuscula ? 64  : 96) + numero);
 }
 
 export default exportarParaLexML;
