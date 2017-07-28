@@ -25,7 +25,16 @@ class Transformacao {
         return this.constructor.name;
     }
 
-    transformar(editor, ctrl, contexto, sequencia) {
+    /**
+     * Efetua a transformação.
+     * 
+     * @param {Element} elementoEditor Elemento em que está o editor de articulação.
+     * @param {EditorArticulacaoController} ctrl Controlador do editor.
+     * @param {ContextoArticulacao} contexto Contexto atual.
+     * @param {String} sequencia Sequência que disparou a transformação.
+     * @param {KeyboardEvent} event Evento do teclado.
+     */
+    transformar(elementoEditor, ctrl, contexto, sequencia, event) {
         throw 'Método não implementado';
     }
 }

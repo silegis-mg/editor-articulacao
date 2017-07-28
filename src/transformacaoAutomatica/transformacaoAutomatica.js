@@ -2,6 +2,7 @@ import DoisPontos from './transformacoes/DoisPontos';
 import PontoFinal from './transformacoes/PontoFinal';
 import AoIniciarAspas from './transformacoes/AoIniciarAspas';
 import AoFecharAspas from './transformacoes/AoFecharAspas';
+import RecuarComEnterEmDispositivoVazio from './transformacoes/RecuarComEnterEmDispositivoVazio';
 
 /**
  * Adiciona a transformação automática ao editor de articulação.
@@ -18,6 +19,7 @@ function adicionarTransformacaoAutomatica(editorArticulacaoCtrl, elemento) {
     adicionarParser(parser, new PontoFinal());
     adicionarParser(parser, new AoIniciarAspas());
     adicionarParser(parser, new AoFecharAspas());
+    adicionarParser(parser, new RecuarComEnterEmDispositivoVazio());
 
     editorArticulacaoCtrl.registrarEventListener('keypress', event => estado = processarEstado(event, parser, estado, editorArticulacaoCtrl, elemento));
     editorArticulacaoCtrl.registrarEventListener('mouseup', event => estado = []);
@@ -81,7 +83,7 @@ function processarEstado(event, _parser, _estadoParser, controller, elemento) {
 
     novoEstado.forEach(function (estado) {
         if (estado.$handler) {
-            estado.$handler.forEach(objHandler => objHandler.handler(elemento, controller, controller.contexto, objHandler.sequencia.replace(/\r/g, '\n')));
+            estado.$handler.forEach(objHandler => objHandler.handler(elemento, controller, controller.contexto, objHandler.sequencia.replace(/\r/g, '\n'), event));
         }
     });
 
