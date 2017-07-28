@@ -102,13 +102,26 @@
   counter-increment: artigo;
 }
 
+.silegismg-editor-articulacao p[data-tipo="artigo"].emenda:before {
+  content: 'Art. ' counter(artigo) 'º-' counter(emenda, upper-latin) ' – ';
+  counter-increment: emenda;
+}
+
 /* A partir do artigo 10, não se usa "º" */
 
-.silegismg-editor-articulacao p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"] ~ p[data-tipo="artigo"]:before {
+.silegismg-editor-articulacao p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda):before {
   content: 'Art. ' counter(artigo) ' – ';
 }
 
+.silegismg-editor-articulacao p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) p[data-tipo="artigo"].emenda:before {
+  content: 'Art. ' counter(artigo) '-' counter(emenda, upper-latin) ' – ';
+}
+
 .silegismg-editor-articulacao p[data-tipo='artigo'] {
+  counter-reset: paragrafo inciso emenda;
+}
+
+.silegismg-editor-articulacao p[data-tipo='artigo'].emenda {
   counter-reset: paragrafo inciso;
 }
 

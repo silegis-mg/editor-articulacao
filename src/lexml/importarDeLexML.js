@@ -47,6 +47,10 @@ function importarDeLexML(elemento, resultado) {
             case 'ARTIGO':
                 clonar(elemento, 'Caput > p', 'artigo', resultado);
 
+                if (/\d+º?-[A-Z]/.test(elemento.querySelector('Rotulo').textContent)) {
+                    resultado.lastElementChild.classList.add('emenda');
+                }
+                
                 let incisos = elemento.querySelectorAll('Caput > Inciso');
                 importarDeLexML(incisos, resultado);
 
