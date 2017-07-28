@@ -1,5 +1,7 @@
 import ArticulacaoInvalidaException from './ArticulacaoInvalidaException';
 
+var htmlInline = new Set(['SPAN', 'B', 'I', 'A', 'SUB', 'SUP', 'INS', 'DEL', 'DFN']);
+
 /**
  * Exporta para o XML definido no LexML (http://projeto.lexml.gov.br/documentacao/Parte-3-XML-Schema.pdf),
  * a partir da estrutura do HTML do editor de articulação.
@@ -99,7 +101,7 @@ function exportarParaLexML(dispositivoDOM) {
                     return false;
 
                 case 'Paragrafo':
-                    return subtipo === 'Paragrafo';
+                    return subtipo === 'Inciso';
 
                 default:
                     throw 'Tipo desconhecido: ' + this.tipo;
@@ -122,7 +124,7 @@ function exportarParaLexML(dispositivoDOM) {
         }
 
         adicionarSubitem(dispositivoLexML) {
-            if (dispositivoLexML.tagName === 'P' || dispositivoLexML.tagName === 'Inciso') {
+            if (dispositivoLexML.tagName === 'p' || dispositivoLexML.tagName === 'Inciso') {
                 this.dispositivoLexML.querySelector('Caput').appendChild(dispositivoLexML);
             } else {
                 this.dispositivoLexML.appendChild(dispositivoLexML);
@@ -158,7 +160,7 @@ function exportarParaLexML(dispositivoDOM) {
         let tipo = dispositivoDOM.getAttribute('data-tipo').replace(/^[a-z]/, letra => letra.toUpperCase());
 
         if (tipo === 'Continuacao') {
-            let p = criarElementoP(dispositivoDOM.innerHTML);
+            let p = criarElementoP(dispositivoDOM);
             contexto.adicionarSubitem(p);
         } else {
             while (contexto && !contexto.possuiSubtipo(tipo)) {
@@ -169,7 +171,7 @@ function exportarParaLexML(dispositivoDOM) {
                 throw new ArticulacaoInvalidaException(dispositivoDOM, 'Dispositivo do tipo "' + tipo.toLowerCase() + '" inesperado neste ponto.');
             }
 
-            let dispositivoLexML = criarElementoLexML(tipo, dispositivoDOM.innerHTML, contexto.getIdReferencia(tipo), contexto.contarSubitens(tipo), dispositivoDOM.classList.contains('unico'));
+            let dispositivoLexML = criarElementoLexML(tipo, dispositivoDOM, contexto.getIdReferencia(tipo), contexto.contarSubitens(tipo), dispositivoDOM.classList.contains('unico'));
 
             if (tipo === 'Paragrafo' && dispositivoDOM.classList.contains('unico')) {
                 // Adiciona o sufixo "u" ao identificador do parágrafo único
@@ -184,14 +186,6 @@ function exportarParaLexML(dispositivoDOM) {
     }
 
     return raiz;
-}
-
-function forEach(elementos, callback) {
-    var i;
-
-    for (i = 0; i < elementos.length; i++) {
-        callback(elementos[i]);
-    }
 }
 
 function criarElementoLexML(tipo, conteudo, idPai, idxFilho, unico) {
@@ -232,15 +226,15 @@ function criarRotuloLexML(tipo, numero, unico) {
 
     switch (tipo) {
         case 'Artigo':
-            elemento.textContent = 'Art. ' + numero + (numero < 10 ? 'º &ndash;' : '&ndash;');
+            elemento.innerHTML = 'Art. ' + numero + (numero < 10 ? 'º &ndash;' : '&ndash;');
             break;
 
         case 'Paragrafo':
-            elemento.textContent = unico ? 'Parágrafo único &ndash;' : '§ ' + numero + (numero < 10 ? 'º &ndash;' : ' &ndash;');
+            elemento.innerHTML = unico ? 'Parágrafo único &ndash;' : '§ ' + numero + (numero < 10 ? 'º &ndash;' : ' &ndash;');
             break;
 
         case 'Inciso':
-            elemento.textContent = transformarNumeroRomano(numero) + ' &ndash;';
+            elemento.innerHTML = transformarNumeroRomano(numero) + ' &ndash;';
             break;
 
         case 'Alinea':
@@ -248,7 +242,7 @@ function criarRotuloLexML(tipo, numero, unico) {
             break;
 
         case 'Item':
-            elemento.textContent = numero + ' &ndash;';
+            elemento.innerHTML = numero + ' &ndash;';
             break;
 
         case 'Titulo':
@@ -286,14 +280,39 @@ function criarCaputLexML(caput, idPai) {
 }
 
 function criarElementoP(paragrafo) {
-    var elemento = document.createElement('p');
-    elemento.innerHTML = paragrafo;
+    var elemento = document.createElementNS('http://www.lexml.gov.br/1.0', 'p');
+    criarConteudoInline(paragrafo, elemento);
+    normalizarParagrafo(elemento);
     return elemento;
 }
 
-function criarNomeAgrupador(nome) {
+function criarConteudoInline(origem, destino) {
+    var arvore = document.createTreeWalker(origem, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
+    var atual = destino;
+    var pillha = [];
+
+    while (arvore.nextNode()) {
+        let item = arvore.currentNode;
+
+        if (item.nodeType === Node.TEXT_NODE) {
+            atual.appendChild(item.cloneNode());
+        } else if (htmlInline.has(item.tagName)) {
+            atual.appendChild(item.cloneNode());
+            pilha.push(atual);
+            atual = atual.lastElementChild;
+        } else if (item.tagName === 'BR') {
+            // Ignora
+        } else {
+            throw new ArticulacaoInvalidaException(origem, 'Elemento não permitido: ' + item.tagName);
+        }
+    }
+
+    return destino;
+}
+
+function criarNomeAgrupador(elementoAgrupador) {
     var elemento = document.createElementNS('http://www.lexml.gov.br/1.0', 'NomeAgrupador');
-    elemento.textContent = nome;
+    criarConteudoInline(elementoAgrupador, elemento);
     return elemento;
 }
 
@@ -309,7 +328,7 @@ function normalizarParagrafo(paragrafo) {
     }
 
     for (let i = 0; i < paragrafo.children.length; i++) {
-        if (paragrafo.children[i].tagName === 'P') {
+        if (paragrafo.children[i].tagName === 'p') {
             /* Tag P dentro de P. Isso não deveria ocorrer, então vamos tratar como continuação.
              * Neste caso, move-se todos os elementos a partir do índice 'i'
              * para novos parágrafos após o atual.
@@ -317,11 +336,11 @@ function normalizarParagrafo(paragrafo) {
             while (paragrafo.children.length > i) {
                 let item = paragrafo.children[i];
 
-                if (item.tagName === 'P') {
+                if (item.tagName === 'p') {
                     paragrafo.parentElement.insertBefore(item, paragrafo.nextSibling);
                     normalizarParagrafo(item);
                 } else {
-                    var novoParagrafo = document.createElement('P');
+                    var novoParagrafo = document.createElementNS('http://www.lexml.gov.br/1.0', 'p');
                     novoParagrafo.appendChild(item);
                     paragrafo.parentElement.insertBefore(novoParagrafo, paragrafo.nextSibling);
                     normalizarParagrafo(novoParagrafo);
