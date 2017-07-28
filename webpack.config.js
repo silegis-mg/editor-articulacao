@@ -1,11 +1,14 @@
 const webpack = require('webpack');
 
-module.exports = function (empacotamento, debug) {
+module.exports = function (empacotamento, debug, polyfill) {
+    var entry = './empacotamento/' + empacotamento + '.js';
+    var sufixo = polyfill ? empacotamento + '-polyfill' : empacotamento;
+
     return {
-        entry: './empacotamento/' + empacotamento + '.js',
+        entry: polyfill ? ['babel-polyfill', entry] : entry,
         output: {
             path: __dirname + '/build',
-            filename: 'silegismg-editor-articulacao-' + empacotamento + '.js'
+            filename: 'silegismg-editor-articulacao-' + sufixo + '.js'
         },
         module: {
             loaders: [
@@ -30,7 +33,8 @@ module.exports = function (empacotamento, debug) {
         devtool: 'source-map',
         plugins: debug ? [] : [
             new webpack.optimize.UglifyJsPlugin({
-                sourceMap: true
+                sourceMap: true,
+                keep_classnames: true
             })
         ]
     };

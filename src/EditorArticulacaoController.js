@@ -14,7 +14,7 @@ import ArticulacaoInvalidaException from './lexml/ArticulacaoInvalidaException';
 /**
  * Definição padrão das opções do editor de articulação.
  */
-var padrao =  {
+var padrao = {
     /**
      * Determina se deve adotar o Shadow DOM, se suportado pelo navegador.
      */
@@ -23,7 +23,13 @@ var padrao =  {
     /**
      * Determina se o editor de articulação deve aplicar transformação automática.
      */
-    transformacaoAutomatica: true
+    transformacaoAutomatica: true,
+
+    /**
+     * Determina o escapamento de caracteres de código alto unicode durante a exportação
+     * para lexmlString.
+     */
+    escaparXML: false
 };
 
 var cssImportado = false;
@@ -48,7 +54,9 @@ class EditorArticulacaoController {
         }
 
         let opcoesEfetivas = Object.create(padrao);
-        Object.assign(opcoesEfetivas, opcoes);        
+        Object.assign(opcoesEfetivas, opcoes);
+
+        this.opcoes = opcoesEfetivas;
 
         elemento = transformarEmEditor(elemento, this, opcoesEfetivas);
 
@@ -119,6 +127,18 @@ class EditorArticulacaoController {
         this.controleAlteracao.alterado = false;
     }
 
+    get lexmlString() {
+        var xml = this.lexml;
+        var xmlSerializer = new XMLSerializer();
+        var resultado = xmlSerializer.serializeToString(xml);
+
+        return this.opcoes.escaparXML ? escaparXml(resultado) : resultado;
+    }
+
+    set lexmlString(valor) {
+        this.lexml = valor;
+    }
+
     get alterado() {
         return this.controleAlteracao.alterado;
     }
@@ -129,7 +149,7 @@ class EditorArticulacaoController {
      */
     _registrarEventos() {
         let eventHandler = this._cursorEventHandler.bind(this);
-        let eventos = ['focus', 'keypress', 'keyup', 'mouseup', 'touchend'];
+        let eventos = ['focus', 'keydown', 'keyup', 'mousedown', 'touchstart', 'mouseup', 'touchend'];
 
         eventos.forEach(evento => this.registrarEventListener(evento, eventHandler));
 
@@ -255,6 +275,8 @@ class EditorArticulacaoController {
             dispositivo = dispositivo.nextElementSibling;
             this._definirTipo(dispositivo, novoTipo);
         }
+
+        this.atualizarContexto();
     }
 
     /**
@@ -268,11 +290,12 @@ class EditorArticulacaoController {
 
         if (tipoAnterior !== novoTipo) {
             dispositivo.setAttribute('data-tipo', novoTipo);
-            this.controleAlteracao.alterado = true;
-            this._cursorEventHandler();
-
-            if (tipoAnterior === 'paragrafo' || novoTipo === 'paragrafo') {
-                this._normalizarParagrafo(dispositivo);
+            dispositivo.classList.remove('unico');
+            
+            try {
+                this._cursorEventHandler();
+            } finally {
+                this.controleAlteracao.alterado = true;
             }
         }
     }
@@ -310,7 +333,7 @@ class EditorArticulacaoController {
             }
         }
 
-        if (contexto.cursor.paragrafo) {
+        if (dispositivo.getAttribute('data-tipo') === 'paragrafo') {
             this._normalizarParagrafo(dispositivo);
         }
     }
@@ -445,6 +468,19 @@ function obterTipoValido(tipoDesejado, permissoes) {
     }
 
     return tipoDesejado || 'artigo';
+}
+
+/**
+ * Substitui caracteres de código alto por códigos unicode.
+ * Substitui entidades não suportadas no XML por códigos unicode.
+ *
+ * @param {String} xml XML original.
+ * @returns {String} XML escapado.
+ */
+function escaparXml(xml) {
+    return xml.replace(/[\u00A0-\u9999]/gim, function (i) {
+        return '&#' + i.charCodeAt(0) + ';';    // Converte em unicode escapado.
+    });
 }
 
 function transformarEmEditor(elemento, editorCtrl, opcoes) {

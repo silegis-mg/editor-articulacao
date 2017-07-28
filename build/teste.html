@@ -53,11 +53,11 @@
         });
 
         document.getElementById('articulacao').addEventListener('change', function () {
-            lexml.textContent = !ctrl.vazio ? ctrl.lexml.outerHTML.replace(/(<\/.+?>)/g, '$1\n') : '';
+            lexml.textContent = !ctrl.vazio ? ctrl.lexmlString.replace(/(<\/.+?>)/g, '$1\n') : '';
         });
 
         importarConstituicao.onclick = function () {
-            ctrl.lexml = `<Articulacao><Titulo id="tit1">
+            ctrl.lexmlString = `<Articulacao><Titulo id="tit1">
                 <Rotulo>Título I</Rotulo>
                 <NomeAgrupador>Dos Princípios Fundamentais</NomeAgrupador>
                 <Artigo id="art1">

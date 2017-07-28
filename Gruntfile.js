@@ -25,6 +25,8 @@ module.exports = function (grunt) {
 		webpack: {
 			buildPlain: webpackConfig('plain-js'),
 			buildAngular1: webpackConfig('angular1'),
+			buildPlainPolyfill: webpackConfig('plain-js', false, true),
+			buildAngular1Polyfill: webpackConfig('angular1', false, true),
 			"build-dev": webpackConfig('plain-js', true)
 		},
 		"webpack-dev-server": {
@@ -66,7 +68,7 @@ module.exports = function (grunt) {
 	grunt.registerTask("dev", ["jshint", "webpack:build-dev", "watch:app"]);
 
 	// Production build
-	grunt.registerTask("build", ['jshint', 'karma:continuous', "webpack:buildPlain", "webpack:buildAngular1"]);
+	grunt.registerTask("build", ['jshint', 'karma:continuous', "webpack:buildPlain", "webpack:buildAngular1", "webpack:buildPlainPolyfill", "webpack:buildAngular1Polyfill"]);
 
 	grunt.registerTask('test', ['jshint', 'karma:continuous']);
 

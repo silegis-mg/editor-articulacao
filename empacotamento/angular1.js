@@ -22,6 +22,7 @@ function editorArticulacaoConteudoDirective() {
                     ngModel.$setValidity('lexml', true);
                 } catch (e) {
                     ngModel.$setValidity('lexml', false);
+                    throw e;
                 }
             })
         },

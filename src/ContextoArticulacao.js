@@ -7,7 +7,7 @@
  */
 class ContextoArticulacao {
     constructor(elementoArticulacao, dispositivo) {
-        let dadosCursor = {
+        let cursor = {
             italico: dispositivo.tagName === 'I',
             desconhecido: false,
             titulo: false,
@@ -23,7 +23,7 @@ class ContextoArticulacao {
             raiz: false,
             elemento: dispositivo,
             get tipo() {
-                return this.dispositivo.getAttribute('data-tipo');
+                return this.dispositivo ? this.dispositivo.getAttribute('data-tipo') : 'desconhecido';
             }
         };
 
@@ -31,26 +31,26 @@ class ContextoArticulacao {
             dispositivo = dispositivo.parentElement;
         }
 
-        dadosCursor.dispositivo = dispositivo;
+        cursor.dispositivo = dispositivo;
         
         while (dispositivo && dispositivo.getAttribute('data-tipo') === 'continuacao') {
             dispositivo = dispositivo.previousElementSibling;
-            dadosCursor.continuacao = true;
+            cursor.continuacao = true;
         }
 
         if (!dispositivo) {
-            dadosCursor.desconhecido = true;
+            cursor.desconhecido = true;
         } else if (dispositivo === elementoArticulacao) {
             dispositivo.raiz = true;
         } else if (dispositivo.hasAttribute('data-tipo')) {
-            dadosCursor[dispositivo.getAttribute('data-tipo')] = true;
+            cursor[dispositivo.getAttribute('data-tipo')] = true;
         } else {
-            dadosCursor.desconhecido = true;
+            cursor.desconhecido = true;
         }
 
         let primeiroDoTipo, tipoAnterior;
         
-        Object.defineProperty(dadosCursor, 'primeiroDoTipo', {
+        Object.defineProperty(cursor, 'primeiroDoTipo', {
             get: function() {
                 if (primeiroDoTipo === undefined) {
                     primeiroDoTipo = dispositivo && verificarPrimeiroDoTipo(dispositivo);
@@ -60,8 +60,8 @@ class ContextoArticulacao {
             }
         });
 
-        dadosCursor.dispositivoAnterior = dispositivo && obterDispositivoAnterior(dispositivo);
-        dadosCursor.tipoAnterior = dadosCursor.dispositivoAnterior && dadosCursor.dispositivoAnterior.getAttribute('data-tipo');
+        cursor.dispositivoAnterior = dispositivo && obterDispositivoAnterior(dispositivo);
+        cursor.tipoAnterior = cursor.dispositivoAnterior && cursor.dispositivoAnterior.getAttribute('data-tipo');
 
         let matches = Element.prototype.matches || Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.onMatchesSelector || function() { return true; };
 
@@ -74,32 +74,32 @@ class ContextoArticulacao {
             return dispositivo && matches.call(dispositivo, 'p[data-tipo="' + tipo + '"] ~ *');
         }
 
-        let anteriorAgrupador = dadosCursor.tipoAnterior === 'titulo' || dadosCursor.tipoAnterior === 'capitulo' || dadosCursor.tipoAnterior === 'secao' || dadosCursor.tipoAnterior === 'subsecao';
+        let anteriorAgrupador = cursor.tipoAnterior === 'titulo' || cursor.tipoAnterior === 'capitulo' || cursor.tipoAnterior === 'secao' || cursor.tipoAnterior === 'subsecao';
 
         let permissoes = {
             titulo: !anteriorAgrupador,
-            capitulo: !anteriorAgrupador || dadosCursor.tipoAnterior === 'titulo',
+            capitulo: !anteriorAgrupador || cursor.tipoAnterior === 'titulo',
             get secao() {
-                return (!anteriorAgrupador || dadosCursor.tipoAnterior === 'capitulo') && possuiAnterior(dadosCursor.dispositivo, 'capitulo');
+                return (!anteriorAgrupador || cursor.tipoAnterior === 'capitulo') && possuiAnterior(cursor.dispositivo, 'capitulo');
             },
             get subsecao() {
-                return (!anteriorAgrupador || dadosCursor.tipoAnterior === 'secao') && possuiAnterior(dadosCursor.dispositivo, 'secao');
+                return (!anteriorAgrupador || cursor.tipoAnterior === 'secao') && possuiAnterior(cursor.dispositivo, 'secao');
             },
-            artigo: dadosCursor.tipoAnterior !== 'titulo',
-            continuacao: dadosCursor.tipoAnterior === 'artigo' || dadosCursor.continuacao,
-            inciso: !anteriorAgrupador && (!dadosCursor.artigo || (dadosCursor.artigo && !dadosCursor.primeiroDoTipo)),
-            paragrafo: !dadosCursor.artigo || (dadosCursor.artigo && !dadosCursor.primeiroDoTipo),
-            alinea: (dadosCursor.inciso && !dadosCursor.primeiroDoTipo) || dadosCursor.tipoAnterior === 'inciso' || dadosCursor.tipoAnterior === 'alinea' || dadosCursor.tipoAnterior === 'item',
-            item: (dadosCursor.alinea && !dadosCursor.primeiroDoTipo) || dadosCursor.tipoAnterior === 'alinea' || dadosCursor.tipoAnterior === 'item'
+            artigo: cursor.tipoAnterior !== 'titulo',
+            continuacao: cursor.tipoAnterior === 'artigo' || cursor.continuacao,
+            inciso: !anteriorAgrupador && (!cursor.artigo || (cursor.artigo && !cursor.primeiroDoTipo)),
+            paragrafo: !cursor.artigo || (cursor.artigo && (!cursor.primeiroDoTipo || cursor.continuacao)),
+            alinea: (cursor.inciso && !cursor.primeiroDoTipo) || cursor.tipoAnterior === 'inciso' || cursor.tipoAnterior === 'alinea' || cursor.tipoAnterior === 'item',
+            item: (cursor.alinea && !cursor.primeiroDoTipo) || cursor.tipoAnterior === 'alinea' || cursor.tipoAnterior === 'item'
         };
 
-        Object.defineProperty(this, 'cursor', { value: dadosCursor });
+        Object.defineProperty(this, 'cursor', { value: cursor });
         Object.defineProperty(this, 'permissoes', { value: permissoes });
     }
 
     comparar(obj2) {
-        for (let i in this.dadosCursor) {
-            if (this.dadosCursor[i] !== obj2.dadosCursor[i]) {
+        for (let i in this.cursor) {
+            if (this.cursor[i] !== obj2.cursor[i]) {
                 return true;
             }
         }

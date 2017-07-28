@@ -12,20 +12,14 @@ class ControleAlteracao {
         editorCtrl.registrarEventListener('focus', event => {
             this._comFoco = true;
 
-            if (!this.alterado) {
-                this.iniciar(event.target, editorCtrl);
-            }
+            this.iniciar(event.target, editorCtrl);
         }, true);
 
         editorCtrl.registrarEventListener('blur', event => {
             this._comFoco = false;
 
             this.finalizar(event.target, editorCtrl);
-
-            if (this.alterado) {
-                editorCtrl.dispatchEvent(new ArticulacaoChangeEvent(editorCtrl));
-                this.alterado = false;
-            }
+            this.comprometer();
         }, true);
     }
 
@@ -59,8 +53,8 @@ class ControleAlteracao {
 
     comprometer() {
         if (this.alterado) {
-            this._editorCtrl.dispatchEvent(new ArticulacaoChangeEvent(this._editorCtrl));
             this.alterado = false;
+            this._editorCtrl.dispatchEvent(new ArticulacaoChangeEvent(this._editorCtrl));
         }
     }
 }
@@ -86,12 +80,16 @@ class ControleAlteracaoMutationObserver extends ControleAlteracao {
     set alterado(valor) {
         this._alterado = valor;
 
-        if (!valor && !this._conectado && this._iniciado) {
+        if (!this._alterado && !this._conectado && this._comFoco) {
             this.iniciar(this._editorCtrl._elemento, this._editorCtrl);
         }
 
-        if (valor && !this._comFoco) {
-            this._editorCtrl.dispatchEvent(new ArticulacaoChangeEvent(this._editorCtrl));
+        if (this._alterado && !this._comFoco) {
+            this.comprometer();
+        }
+
+        if (this._alterado) {
+            this.finalizar();
         }
     }
 
@@ -102,13 +100,15 @@ class ControleAlteracaoMutationObserver extends ControleAlteracao {
      * @param {EditorArticulacaoController} editorCtrl Editor de articulação 
      */
     iniciar(elemento, editorCtrl) {
-        this._observer.observe(elemento, {
-            childList: true,
-            attributes: true,
-            characterData: true,
-            subtree: true
-        });
-        this._conectado = true;
+        if (!this._conectado) {
+            this._observer.observe(elemento, {
+                childList: true,
+                attributes: true,
+                characterData: true,
+                subtree: true
+            });
+            this._conectado = true;
+        }
         this._iniciado = true;
     }
 
@@ -121,15 +121,19 @@ class ControleAlteracaoMutationObserver extends ControleAlteracao {
     finalizar(elemento, editorCtrl) {
         if (this._conectado) {
             this._observer.disconnect();
+            this._conectado = false;
         }
 
         this._iniciado = false;
     }
 
     _mutationCallback() {
-        this.alterado = true;
-        this._observer.disconnect();
-        this._conectado = false;
+        try {
+            this._conectado = false;
+            this._observer.disconnect();
+        } finally {
+            this.alterado = true;
+        }
     }
 }
 
@@ -147,17 +151,17 @@ class ControleAlteracaoComparativo extends ControleAlteracao {
         if (this._alteradoCache) {
             return true;
         } else {
-            this._alteradoCache = this._lexml && this._editorCtrl.lexml.outerHTML !== this._lexml;
+            this._alteradoCache = this._editorCtrl.lexmlString !== this._lexml;
             return this._alteradoCache;
         }
     }
 
     set alterado(valor) {
-        this._lexml = !!valor;
+        this._lexml = valor ? '' : this._editorCtrl.lexmlString;
         this._alteradoCache = !!valor;
 
         if (valor && !this._comFoco) {
-            this._editorCtrl.dispatchEvent(new ArticulacaoChangeEvent(this._editorCtrl));
+            this.comprometer();
         }
     }
 
@@ -168,7 +172,7 @@ class ControleAlteracaoComparativo extends ControleAlteracao {
      * @param {EditorArticulacaoController} editorCtrl Editor de articulação
      */
     iniciar(elemento, editorCtrl) {
-        this._lexml = editorCtrl.lexml.outerHTML;
+        this._lexml = editorCtrl.lexmlString;
     }
 
     /**
