@@ -134,7 +134,7 @@
   counter-increment: paragrafo;
 }
 
-.silegismg-editor-articulacao p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo'] ~ p[data-tipo='paragrafo']:before {
+.silegismg-editor-articulacao p.semOrdinal[data-tipo='paragrafo']:before {
   content: '§ ' counter(paragrafo) ' – ';
   counter-increment: paragrafo;
 }

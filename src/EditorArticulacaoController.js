@@ -349,7 +349,6 @@ class EditorArticulacaoController {
         let posterior = encontrarDispositivoPosteriorDoTipo(dispositivo, ['artigo', 'paragrafo']);
 
         if (dispositivo.getAttribute('data-tipo') === 'paragrafo' || dispositivo.getAttribute('data-tipo') === 'continuacao') {
-
             dispositivo.classList.toggle('unico',
                 ((!anterior || anterior.getAttribute('data-tipo') !== 'paragrafo') &&
                     (!posterior || posterior.getAttribute('data-tipo') !== 'paragrafo')));
@@ -360,6 +359,25 @@ class EditorArticulacaoController {
 
             if (posterior && posterior.getAttribute('data-tipo') === 'paragrafo') {
                 posterior.classList.remove('unico');
+            }
+
+            // Se o parágrafo anterior é sem ordinal, então este também é.
+            if (anterior.classList.contains('semOrdinal')) {
+                dispositivo.classList.add('semOrdinal');
+            } else {
+                /* Se o parágrafo anterior tem ordinal, então vamos contar quantos parágrafos tem
+                 * para decidir se este também deve ter. Esta contagem não é feita por artigo,
+                 * pois é possível resolver esta questão usando CSS. No caso de parágrafo,
+                 * a contagem de parágrafos usando o seletor ~ é influenciada por parágrafos
+                 * de outros artigos.
+                 */
+                let i, aux;
+
+                for (i = 1, aux = anterior; i < 10 && aux && aux.getAttribute('data-tipo') === 'paragrafo'; i++) {
+                    aux = encontrarDispositivoAnteriorDoTipo(aux, ['artigo', 'paragrafo']);
+                }
+
+                dispositivo.classList.toggle('semOrdinal', i >= 10);
             }
         } else if (anterior && anterior.getAttribute('data-tipo') === 'paragrafo' && (!posterior || posterior.getAttribute('data-tipo') !== 'paragrafo')) {
             anterior.classList.add('unico');
