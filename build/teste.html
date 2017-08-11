@@ -7,10 +7,6 @@
 
 <body>
     <h1 style="margin-top: 2em">Teste do editor de articulação</h1>
-    <h2>TO-DO</h2>
-    <ul>
-        <li>Suportar artigos provenientes de emendas aditivas (ex.: art. 29-A da constituição).
-    </ul>
     <h2>Editor</h2>
 
     <div style="position: fixed; top: 0; left: 0; right: 0; padding: 1ex; background: #ccc">
@@ -49,7 +45,12 @@
                 botoes[i].disabled = !evento.detail.permissoes[botoes[i].getAttribute('data-tipo-destino')];
             }
 
-            document.getElementById('contexto').innerText = 'Permissões: ' + JSON.stringify(evento.detail.permissoes, null, 4) + '\nCursor: ' + JSON.stringify(evento.detail.cursor, null, 4);
+            try {
+                document.getElementById('contexto').innerText = 'Permissões: ' + JSON.stringify(evento.detail.permissoes, null, 4) + '\nCursor: ' + JSON.stringify(evento.detail.cursor, null, 4);
+            } catch (e) {
+                console.error(e);
+                document.getElementById('contexto').innerText = '';
+            }
         });
 
         document.getElementById('articulacao').addEventListener('change', function () {

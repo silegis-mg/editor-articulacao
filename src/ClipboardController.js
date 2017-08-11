@@ -81,7 +81,8 @@ function transformar(texto, tipo, continuacao) {
  * @param {ClipboardController} clipboardCtrl 
  */
 function aoColar(event, clipboardCtrl) {
-    var itens = event.clipboardData.items;
+    var clipboardData = event.clipboardData || window.clipboardData;
+    var itens = clipboardData.items;
 
     if (itens) {
         for (let i = 0; i < itens.length; i++) {
@@ -90,8 +91,8 @@ function aoColar(event, clipboardCtrl) {
                 event.preventDefault();
             }
         }
-    } else if (event.clipboardData.getData) {
-        clipboardCtrl.colarTexto(event.clipboardData.getData('text/plain'));
+    } else if (clipboardData.getData) {
+        clipboardCtrl.colarTexto(clipboardData.getData('text/plain'));
         event.preventDefault();
     }
 }
@@ -103,12 +104,13 @@ function aoColar(event, clipboardCtrl) {
  * @param {EditorArticulacaoController} editorCtrl 
  */
 function colarFragmento(fragmento, editorCtrl) {
+    prepararDesfazer(fragmento, editorCtrl);
+
+    let proximaSelecao = fragmento.lastChild;
     let selecao = editorCtrl.getSelection();
     let range = selecao.getRangeAt(0);
 
     try {
-        let proximaSelecao = fragmento.lastChild;
-
         // Se a seleção estiver no container, então devemos inserir elementos filhos...
         if (range.collapsed && range.startContainer === editorCtrl._elemento) {
             // Remove as quebras de linha, usada como placeholder pelos contentEditable.
@@ -155,6 +157,77 @@ function colarFragmento(fragmento, editorCtrl) {
     }
     
     editorCtrl.atualizarContexto();
+}
+
+/**
+ * Realiza uma cópia do fragmento e monitora ctrl+z para remover fragmentos.
+ * 
+ * @param {DocumentFragment} fragmento 
+ * @param {EditorArticulacaoController} editorCtrl 
+ */
+function prepararDesfazer(fragmento, editorCtrl) {
+    var copia = [];
+
+    for (let i = 0, l = fragmento.childNodes.length; i < l; i++) {
+        copia.push(fragmento.childNodes[i]);
+    }
+
+    let desfazer = function() {
+        let anterior = copia[0].previousSibling;
+        let posterior = copia[copia.length - 1].nextSibling;
+
+        // Remove os elementos
+        for (let i = 0; i < copia.length; i++) {
+            copia[i].remove();
+        }
+
+        removerListeners();
+
+        // Restaura o cursor.
+        let selecao = document.getSelection();
+        let range = document.createRange();
+
+        try {
+            if (anterior) {
+                range.setStartAfter(anterior);
+                selecao.removeAllRanges();
+                selecao.addRange(range);
+            } else if (posterior) {
+                range.setStartBefore(posterior);
+                selecao.removeAllRanges();
+                selecao.addRange(range);
+            }
+        } finally {
+            range.detach();
+        }
+    }
+
+    let keyDownListener = function(keyboardEvent) {
+        // Desfaz se pressionar o ctrl+z
+        if (keyboardEvent.ctrlKey && (keyboardEvent.key === 'z' || keyboardEvent.key === 'Z')) {
+            desfazer();
+            keyboardEvent.preventDefault();
+        }
+    }
+
+    let bakExecCommand = document.execCommand;
+
+    let removerListeners = function() {
+        editorCtrl._elemento.removeEventListener('keydown', keyDownListener);
+        editorCtrl._elemento.removeEventListener('keypress', removerListeners);
+        document.execCommand = bakExecCommand;
+    }
+
+    editorCtrl._elemento.addEventListener('keydown', keyDownListener);
+    editorCtrl._elemento.addEventListener('keypress', removerListeners);
+
+    document.execCommand = function(comando) {
+        if (comando === 'undo') {
+            desfazer();
+        } else {
+            return bakExecCommand.apply(document, arguments);
+        }
+    }
 }
 
 /**
