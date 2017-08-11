@@ -25,6 +25,30 @@
   min-height: 1em;
   text-indent: 4ex;
   text-align: justify;
+  border-left: solid 2px transparent;
+  padding-left: 1ex;
+}
+
+.silegismg-editor-articulacao p[data-invalido] {
+  border-left-color: red;
+}
+
+.silegismg-editor-articulacao p[data-invalido]:after {
+  display: block;
+  content: attr(data-invalido);
+  color: red;
+  text-indent: 0;
+  margin-left: auto;
+  font-size: 90%;
+
+/*
+  white-space: nowrap;
+  text-overflow: clip;
+  overflow: hidden;
+  max-width: 2ex;
+  vertical-align: middle;
+  margin-left: 1ex;
+*/
 }
 
 .silegismg-editor-articulacao p[data-tipo="titulo"]:before {

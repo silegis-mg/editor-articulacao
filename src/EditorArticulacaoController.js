@@ -10,6 +10,8 @@ import criarControleAlteracao from './ControleAlteracao';
 import css from './editor-articulacao.css';
 import cssShadow from './editor-articulacao-shadow.css';
 import ArticulacaoInvalidaException from './lexml/ArticulacaoInvalidaException';
+import { encontrarDispositivoAnteriorDoTipo, encontrarDispositivoPosteriorDoTipo } from './util';
+import ValidacaoController from './validador/ValidacaoController';
 
 /**
  * Definição padrão das opções do editor de articulação.
@@ -29,7 +31,42 @@ var padrao = {
      * Determina o escapamento de caracteres de código alto unicode durante a exportação
      * para lexmlString.
      */
-    escaparXML: false
+    escaparXML: false,
+
+    /**
+     * Determina as validações que devem ocorrer.
+     */
+    validacao: {
+        /**
+         * Determina se deve validar o uso de caixa alta.
+         */
+        caixaAlta: true,
+
+        /**
+         * Determina se deve validar o uso de aspas em citações.
+         */
+        citacao: true,
+
+        /**
+         * Determina se deve validar o uso de letra maiúscula no caput do artigo e em parágrafos.
+         */
+        inicialMaiuscula: true,
+
+        /**
+         * Determina se deve validar as pontuações.
+         */
+        pontuacao: true,
+
+        /**
+         * Determina se deve validar enumeração.
+         */
+        enumeracao: true,
+
+        /**
+         * Determina se deve exigir sentença única no dispositivo.
+         */
+        sentencaUnica: true
+    }
 };
 
 var cssImportado = false;
@@ -57,6 +94,7 @@ class EditorArticulacaoController {
         Object.assign(opcoesEfetivas, opcoes);
 
         this.opcoes = opcoesEfetivas;
+        Object.freeze(this.opcoes);
 
         elemento = transformarEmEditor(elemento, this, opcoesEfetivas);
 
@@ -79,6 +117,7 @@ class EditorArticulacaoController {
 
         this.clipboardCtrl = new ClipboardController(this);
         this.controleAlteracao = criarControleAlteracao(this);
+        this.validacaoCtrl = new ValidacaoController(this);
 
         // Executa hack se necessário.
         if (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {
@@ -148,7 +187,7 @@ class EditorArticulacaoController {
      * por meio do método "desregistrar".
      */
     _registrarEventos() {
-        let eventHandler = this._cursorEventHandler.bind(this);
+        let eventHandler = this._eventHandler.bind(this);
         let eventos = ['focus', 'keydown', 'keyup', 'mousedown', 'touchstart', 'mouseup', 'touchend'];
 
         eventos.forEach(evento => this.registrarEventListener(evento, eventHandler));
@@ -181,9 +220,16 @@ class EditorArticulacaoController {
     /**
      * Trata evento de alteração de cursor.
      */
-    _cursorEventHandler() {
+    _eventHandler(event) {
         this.atualizarContexto();
+        this._normalizarContexto();
 
+        if (event instanceof KeyboardEvent && event.key && event.key.length === 1 && this.contexto.cursor.dispositivo && this.contexto.cursor.dispositivo.hasAttribute('data-invalido')) {
+            this.contexto.cursor.dispositivo.removeAttribute('data-invalido');
+        }
+    }
+
+    _normalizarContexto() {
         if (!this.contexto) {
             return;
         }
@@ -233,6 +279,11 @@ class EditorArticulacaoController {
         var novoCalculo = new ContextoArticulacao(this._elemento, elementoSelecionado);
 
         if (!this.contexto || this.contexto.cursor.elemento !== elementoSelecionado || this.contexto.comparar(novoCalculo)) {
+            // Realia a validação do cursor anterior.
+            if (this.contexto && this.contexto.cursor.dispositivo) {
+                this.validacaoCtrl.validar(this.contexto.cursor.dispositivo);
+            }
+
             this.contexto = novoCalculo;
             this.dispatchEvent(new ContextoArticulacaoAtualizadoEvent(novoCalculo));
         }
@@ -293,7 +344,7 @@ class EditorArticulacaoController {
             dispositivo.classList.remove('unico');
             
             try {
-                this._cursorEventHandler();
+                this._normalizarContexto();
             } finally {
                 this.controleAlteracao.alterado = true;
             }
@@ -412,60 +463,6 @@ function obterSelecao(ctrl) {
     } else {
         return null;
     }
-}
-
-/**
- * Obtém o dispositivo anterior, de determinado tipo.
- * 
- * @param {Element} dispositivo 
- * @param {String[]} tipoDispositivoDesejado Tipos de dispositivos desejados.
- * @returns {Element} Dispositivo, se encontrado, ou nulo.
- */
-function encontrarDispositivoAnteriorDoTipo(dispositivo, tipoDispositivoDesejado) {
-    while (!dispositivo.hasAttribute('data-tipo')) {
-        dispositivo = dispositivo.parentElement;
-    }
-
-    let hashPontosParagem = tipoDispositivoDesejado.reduce((prev, item) => {
-        prev[item] = true;
-        return prev;
-    }, {});
-
-    for (let prev = dispositivo.previousElementSibling; prev; prev = prev.previousElementSibling) {
-        let tipoAnterior = prev.getAttribute('data-tipo');
-
-        if (hashPontosParagem[tipoAnterior]) {
-            return prev;
-        }
-    }
-
-    return null;
-}
-
-/**
- * Obtém o dispositivo posterior, de determinado tipo.
- * 
- * @param {Element} dispositivo 
- * @param {String[]} tipoDispositivoDesejado Tipos de dispositivos desejados.
- * @returns {Element} Dispositivo, se encontrado, ou nulo.
- */
-function encontrarDispositivoPosteriorDoTipo(elemento, pontoParada) {
-    while (!elemento.hasAttribute('data-tipo')) {
-        elemento = elemento.parentElement;
-    }
-
-    let hashParada = pontoParada.reduce((prev, item) => {
-        prev[item] = true;
-        return prev;
-    }, {});
-
-    for (let proximo = elemento.nextElementSibling; proximo; proximo = proximo.nextElementSibling) {
-        if (hashParada[proximo.getAttribute('data-tipo')]) {
-            return proximo;
-        }
-    }
-
-    return null;
 }
 
 /**

@@ -95,6 +95,8 @@ class ContextoArticulacao {
 
         Object.defineProperty(this, 'cursor', { value: cursor });
         Object.defineProperty(this, 'permissoes', { value: permissoes });
+
+        Object.freeze(this);
     }
 
     comparar(obj2) {
