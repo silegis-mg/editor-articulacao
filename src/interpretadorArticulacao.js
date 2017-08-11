@@ -46,7 +46,7 @@ function parseTexto(textoOriginal) {
     var regexpLinhas = [
         {
             item: 'artigo',
-            regexp: /^Art\.\s*(\d+(?:-[a-z])?)\s*.\s*[-–]?\s*(.+)/i,
+            regexp: /^\s*Art\.\s*(\d+(?:-[a-z])?)\s*.\s*[-–]?\s*(.+)/i,
             onMatch: function (contexto, m) {
                 var item = new Artigo(m[1], m[2]);
 
@@ -56,7 +56,7 @@ function parseTexto(textoOriginal) {
             }
         }, {
             item: 'paragrafo',
-            regexp: /^(?:Parágrafo único|§\s*(\d+))\s*.?\s*[-–]?\s*(.+)/i,
+            regexp: /^\s*(?:Parágrafo único|§\s*(\d+))\s*.?\s*[-–]?\s*(.+)/i,
             onMatch: function (contexto, m) {
                 var item = new Paragrafo(m[1] || 'Parágrafo único', m[2]);
                 var container = contexto.getUltimoItemTipo(Artigo);
@@ -79,7 +79,7 @@ function parseTexto(textoOriginal) {
         }, {
             item: 'alinea',
             requisito: [Inciso, Alinea, Item],
-            regexp: /^([a-z])\)\s*(.*)/i,
+            regexp: /^\s*([a-z])\)\s*(.*)/i,
             onMatch: function (contexto, m) {
                 var item = new Alinea(m[1], m[2]);
                 var container = contexto.getUltimoItemTipo(Inciso);
@@ -91,7 +91,7 @@ function parseTexto(textoOriginal) {
         }, {
             item: 'item',
             requisito: [Alinea, Item],
-            regexp: /^(\d)\)\s*(.*)/,
+            regexp: /^\s*(\d)\)\s*(.*)/,
             onMatch: function (contexto, m) {
                 var item = new Item(m[1], m[2]);
                 var container = contexto.getUltimoItemTipo(Alinea);
