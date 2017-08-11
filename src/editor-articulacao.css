@@ -122,23 +122,23 @@
 
 
 .silegismg-editor-articulacao p[data-tipo="artigo"]:before {
-  content: 'Art. ' counter(artigo) 'º – ';
+  content: 'Art. ' counter(artigo) 'º' '${separadorArtigo}';
   counter-increment: artigo;
 }
 
 .silegismg-editor-articulacao p[data-tipo="artigo"].emenda:before {
-  content: 'Art. ' counter(artigo) 'º-' counter(emenda, upper-latin) ' – ';
+  content: 'Art. ' counter(artigo) 'º-' counter(emenda, upper-latin) '${separadorArtigo}';
   counter-increment: emenda;
 }
 
 /* A partir do artigo 10, não se usa "º" */
 
 .silegismg-editor-articulacao p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda):before {
-  content: 'Art. ' counter(artigo) ' – ';
+  content: 'Art. ' counter(artigo) '${separadorArtigoSemOrdinal}';
 }
 
-.silegismg-editor-articulacao p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) p[data-tipo="artigo"].emenda:before {
-  content: 'Art. ' counter(artigo) '-' counter(emenda, upper-latin) ' – ';
+.silegismg-editor-articulacao p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"].emenda:before {
+  content: 'Art. ' counter(artigo) '-' counter(emenda, upper-latin) '${separadorArtigoSemOrdinal}';
 }
 
 .silegismg-editor-articulacao p[data-tipo='artigo'] {
@@ -154,17 +154,17 @@
 }
 
 .silegismg-editor-articulacao p[data-tipo='paragrafo']:before {
-  content: '§ ' counter(paragrafo) 'º – ';
+  content: '§ ' counter(paragrafo) 'º' '${separadorParagrafo}';
   counter-increment: paragrafo;
 }
 
 .silegismg-editor-articulacao p.semOrdinal[data-tipo='paragrafo']:before {
-  content: '§ ' counter(paragrafo) ' – ';
+  content: '§ ' counter(paragrafo) '${separadorParagrafoSemOrdinal}';
   counter-increment: paragrafo;
 }
 
 .silegismg-editor-articulacao p[data-tipo='paragrafo'].unico:before {
-  content: 'Parágrafo único – ';
+  content: 'Parágrafo único${separadorParagrafoUnico}';
 }
 
 .silegismg-editor-articulacao p[data-tipo='inciso'] {
@@ -172,7 +172,7 @@
 }
 
 .silegismg-editor-articulacao p[data-tipo='inciso']:before {
-  content: counter(inciso, upper-roman) ' – ';
+  content: counter(inciso, upper-roman) '${separadorInciso}';
   counter-increment: inciso;
 }
 
@@ -181,12 +181,12 @@
 }
 
 .silegismg-editor-articulacao p[data-tipo='alinea']:before {
-  content: counter(alinea, lower-latin) ') ';
+  content: counter(alinea, lower-latin) '${separadorAlinea}';
   counter-increment: alinea;
 }
 
 .silegismg-editor-articulacao p[data-tipo='item']:before {
-  content: counter(item) ') ';
+  content: counter(item) '${separadorItem}';
   counter-increment: item;
 }
 

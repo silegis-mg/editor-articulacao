@@ -2,7 +2,7 @@ import Validador from './Validador';
 
 class ValidadorPontuacaoArtigoParagrafo extends Validador {
     constructor() {
-        super(['artigo', 'paragrafo'], 'Artigos e parágrafos devem ser terminados com ponto final (.) ou dois pontos (:), sem espaço entre a pontuação.');
+        super(['artigo', 'paragrafo'], 'Artigos e parágrafos devem ser terminados com ponto final (.) ou dois pontos (:), sem espaço antes da pontuação.');
     }
 
     validar(dispositivo) {

@@ -33,6 +33,17 @@ var padrao = {
      */
     escaparXML: false,
 
+    rotulo: {
+        separadorArtigo: ' \u2013',
+        separadorArtigoSemOrdinal: ' \u2013',
+        separadorParagrafo: ' \u2013',
+        separadorParagrafoSemOrdinal: ' \u2013',
+        separadorParagrafoUnico: ' \u2013',
+        separadorInciso: ' \u2013',
+        separadorAlinea: ')',
+        separadorItem: ')'
+    },
+
     /**
      * Determina as validações que devem ocorrer.
      */
@@ -93,8 +104,14 @@ class EditorArticulacaoController {
         let opcoesEfetivas = Object.create(padrao);
         Object.assign(opcoesEfetivas, opcoes);
 
+        if (opcoes.rotulo) {
+            Object.setPrototypeOf(opcoesEfetivas.rotulo, padrao.rotulo);
+        }
+
         this.opcoes = opcoesEfetivas;
-        Object.freeze(this.opcoes);
+        Object.freeze(opcoesEfetivas);
+        Object.freeze(opcoesEfetivas.rotulo);
+        Object.freeze(opcoesEfetivas.validacao);
 
         elemento = transformarEmEditor(elemento, this, opcoesEfetivas);
 
@@ -163,7 +180,7 @@ class EditorArticulacaoController {
             this._elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
         }
 
-        this.controleAlteracao.alterado = false;
+        this.controleAlteracao.comprometer();
     }
 
     get lexmlString() {
@@ -500,7 +517,7 @@ function escaparXml(xml) {
 
 function transformarEmEditor(elemento, editorCtrl, opcoes) {
     let style = document.createElement('style');
-    style.innerHTML = css.toString();
+    style.innerHTML = css.toString().replace(/\${(.+?)}/g, (m, valor) => opcoes.rotulo[valor]);
 
     /* Se houver suporte ao shadow-dom, então vamos usá-lo
      * para garantir o isolamento da árvore interna do componente

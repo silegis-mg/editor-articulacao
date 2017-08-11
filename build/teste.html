@@ -28,7 +28,14 @@
     <button id="importarConstituicao">Importar LexML da Constituição Federal</button>
     <pre id="lexml"></pre>
     <script>
-        var ctrl = silegismgEditorArticulacao(document.getElementById('articulacao'));
+        var ctrl = silegismgEditorArticulacao(document.getElementById('articulacao'), {
+            rotulo: {
+                separadorArtigo: '',
+                separadorArtigoSemOrdinal: '.',
+                separadorParagrafo: '',
+                separadorParagrafoSemOrdinal: '.'
+            }
+        });
 
         let botoes = document.querySelectorAll('button[data-tipo-destino]');
 

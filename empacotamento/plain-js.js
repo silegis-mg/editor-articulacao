@@ -9,8 +9,8 @@ import EditorArticulacaoController from '../src/EditorArticulacaoController';
  * 
  * @param {Element} elemento 
  */
-function prepararEditorArticulacao(elemento) {
-    elemento.ctrlArticulacao = new EditorArticulacaoController(elemento);
+function prepararEditorArticulacao(elemento, opcoes) {
+    elemento.ctrlArticulacao = new EditorArticulacaoController(elemento, opcoes);
     
     Object.defineProperty(elemento, 'lexml', {
         get: function() {
