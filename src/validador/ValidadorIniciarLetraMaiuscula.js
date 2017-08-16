@@ -1,8 +1,11 @@
 import Validador from './Validador';
 
+/**
+ * @author Júlio César e Melo
+ */
 class ValidadorIniciarLetraMaiuscula extends Validador {
     constructor() {
-        super('artigo', 'Artigos devem ser iniciados com letra maiúscula.');
+        super(['artigo', 'paragrafo'], 'Artigos e parágrafos devem ser iniciados com letra maiúscula.');
     }
 
     validar(dispositivo) {

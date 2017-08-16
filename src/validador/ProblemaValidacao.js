@@ -1,5 +1,7 @@
 /**
  * Representa um problema que descreve a invalidação de um dispositivo.
+ * 
+ * @author Júlio César e Melo
  */
 class ProblemaValidacao {
     /**

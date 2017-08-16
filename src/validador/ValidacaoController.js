@@ -1,6 +1,7 @@
 import ProblemaValidacao from './ProblemaValidacao';
 import ValidadorCaixaAlta from './ValidadorCaixaAlta';
 import ValidadorCitacao from './ValidadorCitacao';
+import ValidadorEnumeracaoElementos from './ValidadorEnumeracaoElementos';
 import ValidadorIniciarLetraMaiuscula from './ValidadorIniciarLetraMaiuscula';
 import ValidadorPontuacaoArtigoParagrafo from './ValidadorPontuacaoArtigoParagrafo';
 import ValidadorPontuacaoEnumeracao from './ValidadorPontuacaoEnumeracao';
@@ -22,9 +23,10 @@ class ValidacaoController {
         if (opcoes !== false) {
             habilitar(opcoes, 'caixaAlta', this.validadores, ValidadorCaixaAlta);
             habilitar(opcoes, 'citacao', this.validadores, ValidadorCitacao);
+            habilitar(opcoes, 'enumeracaoElementos', this.validadores, ValidadorEnumeracaoElementos);
             habilitar(opcoes, 'inicialMaiuscula', this.validadores, ValidadorIniciarLetraMaiuscula);
             habilitar(opcoes, 'pontuacao', this.validadores, ValidadorPontuacaoArtigoParagrafo);
-            habilitar(opcoes, 'enumeracao', this.validadores, ValidadorPontuacaoEnumeracao);
+            habilitar(opcoes, 'pontuacaoEnumeracao', this.validadores, ValidadorPontuacaoEnumeracao);
             habilitar(opcoes, 'sentencaUnica', this.validadores, ValidadorSentencaUnica);
         }
     }
@@ -36,7 +38,11 @@ class ValidacaoController {
      * @returns {ProblemaValidacao[]} Problemas encontrados.
      */
     validar(dispositivo) {
-        var problemas = [];
+        if (!dispositivo) {
+            return;
+        }
+
+        let problemas = [];
 
         if (dispositivo.textContent.length > 0) {
             this.validadores.forEach(validador => {

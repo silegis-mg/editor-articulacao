@@ -1,5 +1,8 @@
 import Validador from './Validador';
 
+/**
+ * @author Júlio César e Melo
+ */
 class ValidadorIniciarLetraMaiuscula extends Validador {
     constructor() {
         super(['artigo', 'paragrafo'], 'Artigos e parágrafos não devem ser escritos usando apenas caixa alta.');

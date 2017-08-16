@@ -45,6 +45,11 @@ var padrao = {
     },
 
     /**
+     * Determina se deve validar o conteúdo atribuído ao componente.
+     */
+    validarAoAtribuir: true,
+
+    /**
      * Determina as validações que devem ocorrer.
      */
     validacao: {
@@ -59,6 +64,11 @@ var padrao = {
         citacao: true,
 
         /**
+         * Determina se deve validar a presença de múltiplos elementos em uma enumeração.
+         */
+        enumeracaoElementos: true,
+
+        /**
          * Determina se deve validar o uso de letra maiúscula no caput do artigo e em parágrafos.
          */
         inicialMaiuscula: true,
@@ -69,9 +79,9 @@ var padrao = {
         pontuacao: true,
 
         /**
-         * Determina se deve validar enumeração.
+         * Determina se deve validar pontuação de enumeração.
          */
-        enumeracao: true,
+        pontuacaoEnumeracao: true,
 
         /**
          * Determina se deve exigir sentença única no dispositivo.
@@ -181,6 +191,12 @@ class EditorArticulacaoController {
         }
 
         this.controleAlteracao.comprometer();
+
+        if (this.opcoes.validarAoAtribuir) {
+            for (let dispositivo = this._elemento.firstElementChild; dispositivo; dispositivo = dispositivo.nextElementSibling) {
+                this.validacaoCtrl.validar(dispositivo);
+            }
+        }
     }
 
     get lexmlString() {
@@ -204,10 +220,11 @@ class EditorArticulacaoController {
      * por meio do método "desregistrar".
      */
     _registrarEventos() {
-        let eventHandler = this._eventHandler.bind(this);
-        let eventos = ['focus', 'keydown', 'keyup', 'mousedown', 'touchstart', 'mouseup', 'touchend'];
+        let eventHandler = this._cursorEventHandler.bind(this);
+        let eventos = ['focus', 'keyup', 'mousedown', 'touchstart', 'mouseup', 'touchend'];
 
         eventos.forEach(evento => this.registrarEventListener(evento, eventHandler));
+        this.registrarEventListener('keydown', this._keyDownEventHandler.bind(this));
 
         let focusHandler = function () {
             if (!this._elemento.firstElementChild) {
@@ -215,6 +232,14 @@ class EditorArticulacaoController {
             }
         }.bind(this);
         this.registrarEventListener('focus', focusHandler, true);
+
+        this.registrarEventListener('blur', e => {
+            let contexto = this.contexto;
+
+            if (contexto && contexto.cursor.dispositivo) {
+                this.validacaoCtrl.validar(this.contexto.cursor.dispositivo);
+            }
+        });
     }
 
     /**
@@ -237,12 +262,24 @@ class EditorArticulacaoController {
     /**
      * Trata evento de alteração de cursor.
      */
-    _eventHandler(event) {
+    _cursorEventHandler(event) {
         this.atualizarContexto();
         this._normalizarContexto();
 
         if (event instanceof KeyboardEvent && event.key && event.key.length === 1 && this.contexto.cursor.dispositivo && this.contexto.cursor.dispositivo.hasAttribute('data-invalido')) {
             this.contexto.cursor.dispositivo.removeAttribute('data-invalido');
+        }
+    }
+
+    _keyDownEventHandler(event) {
+        if (!this.contexto || !this.contexto.cursor.elemento) {
+            _cursorEventHandler(event);
+        }
+
+        let elementoSelecionado = obterSelecao(this);
+
+        if (elementoSelecionado !== this.contexto.cursor.elemento) {
+            _cursorEventHandler(event);
         }
     }
 
@@ -257,6 +294,9 @@ class EditorArticulacaoController {
             this._normalizarDispositivo(dispositivo.previousElementSibling);
             this._normalizarDispositivo(dispositivo, this.contexto);
             this._normalizarDispositivo(dispositivo.nextElementSibling);
+
+            this.validacaoCtrl.validar(dispositivo.previousElementSibling);
+            this.validacaoCtrl.validar(dispositivo.nextElementSibling);
         }
     }
 
@@ -296,7 +336,7 @@ class EditorArticulacaoController {
         var novoCalculo = new ContextoArticulacao(this._elemento, elementoSelecionado);
 
         if (!this.contexto || this.contexto.cursor.elemento !== elementoSelecionado || this.contexto.comparar(novoCalculo)) {
-            // Realia a validação do cursor anterior.
+            // Realiza a validação do cursor anterior.
             if (this.contexto && this.contexto.cursor.dispositivo) {
                 this.validacaoCtrl.validar(this.contexto.cursor.dispositivo);
             }

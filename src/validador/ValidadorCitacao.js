@@ -1,6 +1,9 @@
 import Validador from './Validador';
 import { encontrarDispositivoAnteriorDoTipo, encontrarDispositivoPosteriorDoTipo } from '../util';
 
+/**
+ * @author Júlio César e Melo
+ */
 class ValidadorCitacao extends Validador {
     constructor() {
         super('continuacao', 'Citações devem estar entre aspas e terminar com ponto final (.).');

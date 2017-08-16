@@ -79,7 +79,7 @@ function extrairContadores(dispositivo, contadoresDesconsiderar) {
  */
 function redefinirContador(dispositivo) {
     let tipo = dispositivo.getAttribute('data-tipo');
-    dispositivo.setAttribute('data-tipo', '');
+    dispositivo.removeAttribute('data-tipo');
     setTimeout(() => dispositivo.setAttribute('data-tipo', tipo));
 }
 
