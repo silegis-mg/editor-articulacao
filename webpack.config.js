@@ -34,7 +34,9 @@ module.exports = function (empacotamento, debug, polyfill) {
         plugins: debug ? [] : [
             new webpack.optimize.UglifyJsPlugin({
                 sourceMap: true,
-                keep_classnames: true
+                uglifyOptions: {
+                    keep_classnames: true
+                }
             })
         ]
     };

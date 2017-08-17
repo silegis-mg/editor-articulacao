@@ -19,7 +19,7 @@ class AoIniciarAspas extends Transformacao {
     transformar(editor, ctrl, contexto) {
         if (contexto.cursor.tipoAnterior === 'artigo') {
             ctrl.alterarTipoDispositivoSelecionado('continuacao');
-            ctrl.dispatchEvent(new TransformacaoAutomaticaEvent(ctrl, 'artigo', 'continuacao', this.constructor.name));
+            ctrl.dispatchEvent(new TransformacaoAutomaticaEvent(ctrl, 'artigo', 'continuacao', this.tipoTransformacao));
         }
 
         return null;
