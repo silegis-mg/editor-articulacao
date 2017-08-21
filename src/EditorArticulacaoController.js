@@ -11,7 +11,7 @@ import css from './editor-articulacao.css';
 import cssShadow from './editor-articulacao-shadow.css';
 import ArticulacaoInvalidaException from './lexml/ArticulacaoInvalidaException';
 import { encontrarDispositivoAnteriorDoTipo, encontrarDispositivoPosteriorDoTipo } from './util';
-import ValidacaoController from './validador/ValidacaoController';
+import ValidacaoController from './validacao/ValidacaoController';
 
 /**
  * Definição padrão das opções do editor de articulação.
@@ -144,7 +144,7 @@ class EditorArticulacaoController {
 
         this.clipboardCtrl = new ClipboardController(this);
         this.controleAlteracao = criarControleAlteracao(this);
-        this.validacaoCtrl = new ValidacaoController(this);
+        this.validacaoCtrl = new ValidacaoController(this.opcoes.validacao);
 
         // Executa hack se necessário.
         if (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {

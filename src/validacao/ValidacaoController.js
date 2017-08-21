@@ -13,11 +13,7 @@ import ValidadorSentencaUnica from './ValidadorSentencaUnica';
  * @author Júlio César e Melo
  */
 class ValidacaoController {
-    constructor(elaboracaoCtrl) {
-        this.elaboracaoCtrl = elaboracaoCtrl;
-
-        let opcoes = elaboracaoCtrl.opcoes.validacao;
-
+    constructor(opcoes) {
         this.validadores = [];
 
         if (opcoes !== false) {
@@ -45,9 +41,12 @@ class ValidacaoController {
         let problemas = [];
 
         if (dispositivo.textContent.length > 0) {
-            this.validadores.forEach(validador => {
+            this.validadores.forEach(item => {
+                var validador = item.validador;
+                var opcao = item.opcao;
+
                 if (validador.aplicaSeA(dispositivo) && !validador.validar(dispositivo)) {
-                    problemas.push(new ProblemaValidacao(dispositivo, validador.constructor.name, validador.descricao));
+                    problemas.push(new ProblemaValidacao(dispositivo, opcao, validador.descricao));
                 }
             });
 
@@ -72,7 +71,7 @@ class ValidacaoController {
  */
 function habilitar(opcoes, nomeOpcao, validadores, Validador) {
     if (opcoes === true || opcoes[nomeOpcao] !== false) {
-        validadores.push(new Validador());
+        validadores.push({ validador: new Validador(), opcao: nomeOpcao });
     }
 }
 

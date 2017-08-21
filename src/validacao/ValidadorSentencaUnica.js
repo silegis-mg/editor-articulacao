@@ -10,9 +10,15 @@ class ValidadorSentencaUnica extends Validador {
 
     validar(dispositivo) {
         let texto = dispositivo.textContent;
-        let m = /[.;:]\s*(\S)/.exec(texto);
+        let regexp = /[.;:]\s*(\S)/g;
+        let m;
+        let valido = true;
+        
+        for (let m = regexp.exec(texto); m && valido; m = regexp.exec(texto)) {
+            valido = m[1].toLowerCase() === m[1];
+        }
 
-        return !m || m[1].toLowerCase() === m[1];
+        return valido;
     }
 }
 
