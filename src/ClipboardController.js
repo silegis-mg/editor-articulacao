@@ -200,7 +200,7 @@ function prepararDesfazer(fragmento, editorCtrl) {
         } finally {
             range.detach();
         }
-    }
+    };
 
     let keyDownListener = function(keyboardEvent) {
         // Desfaz se pressionar o ctrl+z
@@ -208,7 +208,7 @@ function prepararDesfazer(fragmento, editorCtrl) {
             desfazer();
             keyboardEvent.preventDefault();
         }
-    }
+    };
 
     let bakExecCommand = document.execCommand;
 
@@ -216,7 +216,7 @@ function prepararDesfazer(fragmento, editorCtrl) {
         editorCtrl._elemento.removeEventListener('keydown', keyDownListener);
         editorCtrl._elemento.removeEventListener('keypress', removerListeners);
         document.execCommand = bakExecCommand;
-    }
+    };
 
     editorCtrl._elemento.addEventListener('keydown', keyDownListener);
     editorCtrl._elemento.addEventListener('keypress', removerListeners);
@@ -227,7 +227,7 @@ function prepararDesfazer(fragmento, editorCtrl) {
         } else {
             return bakExecCommand.apply(document, arguments);
         }
-    }
+    };
 }
 
 /**

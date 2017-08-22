@@ -114,7 +114,7 @@ class EditorArticulacaoController {
         let opcoesEfetivas = Object.create(padrao);
         Object.assign(opcoesEfetivas, opcoes);
 
-        if (opcoes.rotulo) {
+        if (opcoes && opcoes.rotulo) {
             Object.setPrototypeOf(opcoesEfetivas.rotulo, padrao.rotulo);
         }
 

@@ -4,6 +4,9 @@ module.exports = function (grunt) {
 	var webpackConfig = require("./webpack.config.js");
 
 	grunt.initConfig({
+		exec: {
+			updateWebdriver: 'node node_modules/protractor/bin/webdriver-manager --proxy http://proxy.almg.uucp:3128/ update'
+		},
 		karma: {
 			unit: {
 				configFile: 'karma.conf.js',
@@ -22,6 +25,17 @@ module.exports = function (grunt) {
 				singleRun: false
 			},
 		},
+		protractor: {
+			options: {
+				configFile: 'protractor-conf.js',
+				noColor: false
+			},
+			e2e: {
+				options: {
+					keepAlive: false
+				}
+			}
+		},
 		webpack: {
 			buildPlain: webpackConfig('plain-js'),
 			buildAngular1: webpackConfig('angular1'),
@@ -32,9 +46,15 @@ module.exports = function (grunt) {
 		"webpack-dev-server": {
 			options: {
 				webpack: webpackConfig('plain-js', true),
-				contentBase: 'build'
+				contentBase: ['exemplo', 'test']
 			},
 			start: {
+				webpack: {
+					devtool: "inline-source-map",
+				}
+			},
+			e2e: {
+				keepalive: false,
 				webpack: {
 					devtool: "inline-source-map",
 				}
@@ -70,7 +90,8 @@ module.exports = function (grunt) {
 	// Production build
 	grunt.registerTask("build", ['jshint', 'karma:continuous', "webpack:buildPlain", "webpack:buildAngular1", "webpack:buildPlainPolyfill", "webpack:buildAngular1Polyfill"]);
 
-	grunt.registerTask('test', ['jshint', 'karma:continuous']);
+	grunt.registerTask('e2e', ['exec:updateWebdriver', 'webpack-dev-server:e2e', 'protractor:e2e']);
+	grunt.registerTask('test', ['jshint', 'karma:continuous', 'e2e']);
 
 	grunt.registerTask('debug', ['karma:debug']);
 };
