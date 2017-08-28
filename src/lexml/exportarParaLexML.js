@@ -315,7 +315,7 @@ function criarElementoP(paragrafo) {
 function criarConteudoInline(origem, destino) {
     var arvore = document.createTreeWalker(origem, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
     var atual = destino;
-    var pillha = [];
+    var pilha = [];
 
     while (arvore.nextNode()) {
         let item = arvore.currentNode;

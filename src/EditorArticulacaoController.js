@@ -470,7 +470,7 @@ class EditorArticulacaoController {
             }
 
             // Se o parágrafo anterior é sem ordinal, então este também é.
-            if (anterior.classList.contains('semOrdinal')) {
+            if (anterior && anterior.classList.contains('semOrdinal')) {
                 dispositivo.classList.add('semOrdinal');
             } else {
                 /* Se o parágrafo anterior tem ordinal, então vamos contar quantos parágrafos tem
