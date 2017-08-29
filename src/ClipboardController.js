@@ -109,6 +109,8 @@ function colarFragmento(fragmento, editorCtrl) {
     let proximaSelecao = fragmento.lastChild;
     let selecao = editorCtrl.getSelection();
     let range = selecao.getRangeAt(0);
+    let noInicial = range.startContainer;
+    let excluirNoAtual = fragmento.firstChild.nodeType !== Node.TEXT_NODE && range.startContainer.textContent.trim().length === 0;
 
     try {
         // Se a seleção estiver no container, então devemos inserir elementos filhos...
@@ -143,6 +145,10 @@ function colarFragmento(fragmento, editorCtrl) {
         }
     } finally {
         range.detach();
+    }
+
+    if (excluirNoAtual) {
+        noInicial.remove();
     }
 
     // Altera a seleção.
