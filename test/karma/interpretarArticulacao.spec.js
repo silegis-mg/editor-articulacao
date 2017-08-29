@@ -148,6 +148,61 @@ describe('Parser de articulação', function () {
         });
     });
 
+    it('Deve suportar título, capítulo, seção e subseção', function () {
+        var texto = `TÍTULO I
+        DISPOSIÇÕES PRELIMINARES
+        
+        Art. 1º – O Estado de Minas Gerais integra, com autonomia político-administrativa, a República Federativa do Brasil.
+        
+        TÍTULO II
+        DO ESTADO
+        
+        CAPÍTULO I
+        DA ORGANIZAÇÃO DO ESTADO
+        
+        Seção I
+        Disposições Gerais
+
+        Subseção I
+        Teste
+        
+        Art. 2º – São Poderes do Estado, independentes e harmônicos entre si, o Legislativo, o Executivo e o Judiciário.`;
+
+        expect(parser.interpretar(texto, 'json')).toEqual({
+            textoAnterior: '',
+            articulacao: [
+                novo(parser.Titulo, {
+                        numero: 'I',
+                        descricao: 'DISPOSIÇÕES PRELIMINARES'
+                }),
+                novo(parser.Artigo, {
+                    numero: '1',
+                    descricao: 'O Estado de Minas Gerais integra, com autonomia político-administrativa, a República Federativa do Brasil.'
+                }),
+                novo(parser.Titulo, {
+                    numero: 'II',
+                    descricao: 'DO ESTADO'
+                }),
+                novo(parser.Capitulo, {
+                    numero: 'I',
+                    descricao: 'DA ORGANIZAÇÃO DO ESTADO'
+                }),
+                novo(parser.Secao, {
+                    numero: 'I',
+                    descricao: 'Disposições Gerais'
+                }),
+                novo(parser.Subsecao, {
+                    numero: 'I',
+                    descricao: 'Teste'
+                }),
+                novo(parser.Artigo, {
+                    numero: '2',
+                    descricao: 'São Poderes do Estado, independentes e harmônicos entre si, o Legislativo, o Executivo e o Judiciário.'
+                })
+            ]
+        });
+    });
+
     describe('transfomarQuebrasDeLinhaEmP', function () {
         var transformarQuebrasDeLinhaEmP = window.interpretadorArticulacao.transformarQuebrasDeLinhaEmP;
 

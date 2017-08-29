@@ -1,6 +1,8 @@
 Editor de Articulação
 =====================
 
+O editor de articulação é uma biblioteca javascript elaborada pela Assembleia Legislativa de Minas Gerais, como parte do Sistema de Informação Legislativa de Minas Gerais (Silegis-MG).
+
 Funcionalidades
 ---------------
 * Criação de **rótulo e numeração automática** para dispositivos (artigo, parágrafo, inciso, alínea e item);
@@ -26,11 +28,15 @@ Funcionalidades
 * Articulação pode ser importada/exportada de/para XML, seguindo especificação do **LexML**;
 * Interpretação de conteúdo colado, de forma a permitir a formatação e numeração automática em dispositivos estruturados.
 
-Limitações conhecidas
----------------------
-* Copiar do editor de articulação e colar em editor externo omite os rótulos.
-
 Contribuições desejadas
 -----------------------
 * Identificação de remissões;
-* Renumeração automática de remissões, em caso de alterações nos dispositivos.
+* Renumeração automática de remissões, em caso de alterações nos dispositivos;
+* Modo de edição de norma, em que alterações a um texto original são consideradas emendas.
+
+Limitações conhecidas (aceita-se contribuições)
+-----------------------------------------------
+As limitações conhecidas correspondem a um conjunto de funcionalidade que não funciona como deveria, mas seu comportamento é aceitável para a proposta do editor. Contribuições são bem-vindas.
+
+* Copiar do editor de articulação e colar em editor externo omite os rótulos;
+* Interpretação de artigo com emenda (exemplo: Art. 283-A da Constituição do Estado de Minas Gerais), apesar de haver suporte para importação de LexML com este tipo de dispositivo.

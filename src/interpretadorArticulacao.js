@@ -45,6 +45,34 @@ function parseTexto(textoOriginal) {
     var regexpAspas = /(“[\s\S]*?”|"[\s\S]*?")/g;
     var regexpLinhas = [
         {
+            item: 'parentesis',
+            regexp: /^\(.+\)$/,
+            onMatch: function (contexto, m) {
+                if (contexto.ultimoItem) {
+                    if (!contexto.ultimoItem.descricao) {
+                        contexto.ultimoItem.descricao = m[0];
+                    } else {
+                        contexto.ultimoItem.descricao += m[0];
+                    }
+                }
+                
+                return contexto.ultimoItem;
+            }
+        }, {
+            item: 'continuacao-divisao',
+            regexp: /^\s*(.*)?\s*$/,
+            requisito: [Titulo, Capitulo, Secao, Subsecao],
+            onMatch: function (contexto, m) {
+                if (!contexto.ultimoItem.descricao) {
+                    contexto.ultimoItem.descricao = m[1];
+                } else {
+                    contexto.ultimoItem.descricao += m[1];
+                }
+
+                return contexto.ultimoItem;
+            },
+            reiniciar: true
+        }, {
             item: 'artigo',
             regexp: /^\s*Art\.\s*(\d+(?:-[a-z])?)\s*.\s*[-–]?\s*(.+)/i,
             onMatch: function (contexto, m) {
@@ -100,7 +128,48 @@ function parseTexto(textoOriginal) {
 
                 return item;
             }
-        }
+        }, {
+            item: 'titulo',
+            regexp: /^\s*T[ÍI]TULO\s*([IXVDLM]+)(?:\s*[-–]\s*(.+))?/i,
+            onMatch: function (contexto, m) {
+                var item = new Titulo(m[1], m[2] ||'');
+
+                contexto.artigos.push(item);
+                
+                return item;
+            }
+        }, {
+            item: 'capitulo',
+            regexp: /^\s*CAP[ÍI]TULO\s*([IXVDLM]+)(?:\s*[-–]\s*(.+))?/i,
+            onMatch: function (contexto, m) {
+                var item = new Capitulo(m[1], m[2] || '');
+
+                contexto.artigos.push(item);
+                
+                return item;
+            }
+        }, {
+            item: 'secao',
+            regexp: /^\s*SE[ÇC][ÃA]O\s*([IXVDLM]+)(?:\s*[-–]\s*(.+))?/i,
+            onMatch: function (contexto, m) {
+                var item = new Secao(m[1], m[2] || '');
+
+                contexto.artigos.push(item);
+                
+                return item;
+            }
+        }, {
+            item: 'subsecao',
+            regexp: /^\s*SUBSE[ÇC][ÃA]O\s*([IXVDLM]+)(?:\s*[-–]\s*(.+))?/i,
+            onMatch: function (contexto, m) {
+                var item = new Subsecao(m[1], m[2] || '');
+
+                contexto.artigos.push(item);
+                
+                return item;
+            }
+        },
+        
     ];
     var aspas = [];
     var texto = textoOriginal.replace(regexpAspas, function (aspa) {
@@ -135,7 +204,14 @@ function parseTexto(textoOriginal) {
 
                 if (m) {
                     contexto.ultimoItem = regexp.onMatch(contexto, m);
-                    contexto.ultimoItem.descricao = contexto.ultimoItem.descricao.replace(/\0/g, aspas.shift.bind(aspas));
+
+                    if (contexto.ultimoItem) {
+                        contexto.ultimoItem.descricao = contexto.ultimoItem.descricao.replace(/\0/g, aspas.shift.bind(aspas));
+
+                        if (regexp.reiniciar) {
+                            contexto.ultimoItem = null;
+                        }
+                    }
 
                     return;
                 }
@@ -148,6 +224,8 @@ function parseTexto(textoOriginal) {
 
         if (contexto.ultimoItem) {
             contexto.ultimoItem.descricao += '\n' + linha;
+        } else if (contexto.artigos.length > 0 && contexto.artigos[contexto.artigos.length - 1] instanceof Divisao) {
+            contexto.artigos[contexto.artigos.length - 1].descricao += '\n' + linha;
         } else if (contexto.textoAnterior.length === 0) {
             contexto.textoAnterior = linha;
         } else {
@@ -204,11 +282,13 @@ class Dispositivo {
             value: tipo
         });
 
-        Object.defineProperty(this, 'subitens', {
-            get: function() {
-                return derivacoes.reduce((prev, item) => prev.concat(this[item]), []);
-            }
-        });
+        if (derivacoes) {
+            Object.defineProperty(this, 'subitens', {
+                get: function() {
+                    return derivacoes.reduce((prev, item) => prev.concat(this[item]), []);
+                }
+            });
+        }
     }
 
     /**
@@ -349,6 +429,41 @@ class Item extends Dispositivo {
     }
 }
 
+class Divisao extends Dispositivo {
+    constructor(tipo, numero, descricao) {
+        super(tipo, numero, descricao);
+        this.subitens = []
+    }
+    
+    adicionar(item) {
+        this.subitens.push(item);
+    }
+}
+
+class Titulo extends Divisao {
+    constructor(numero, descricao) {
+        super('titulo', numero, descricao);
+    }
+}
+
+class Capitulo extends Divisao {
+    constructor(numero, descricao) {
+        super('capitulo', numero, descricao);
+    }
+}
+
+class Secao extends Divisao {
+    constructor(numero, descricao) {
+        super('secao', numero, descricao);
+    }
+}
+
+class Subsecao extends Divisao {
+    constructor(numero, descricao) {
+        super('subsecao', numero, descricao);
+    }
+}
+
 /**
  * Extrai o agrupador no formato "Nome Número - Descrição".
  * 
@@ -473,8 +588,12 @@ export default {
     Inciso: Inciso,
     Alinea: Alinea,
     Item: Item,
+    Titulo: Titulo,
+    Capitulo: Capitulo,
+    Secao: Secao,
+    Subsecao: Subsecao,
     interpretar: interpretarArticulacao,
     transformarQuebrasDeLinhaEmP: transformarQuebrasDeLinhaEmP
 };
 
-export { Artigo, Paragrafo, Inciso, Alinea, Item, interpretarArticulacao, transformarQuebrasDeLinhaEmP };
+export { Artigo, Paragrafo, Inciso, Alinea, Item, Titulo, Capitulo, Secao, Subsecao, interpretarArticulacao, transformarQuebrasDeLinhaEmP };
