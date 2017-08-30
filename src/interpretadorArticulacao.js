@@ -445,7 +445,7 @@ class Item extends Dispositivo {
 class Divisao extends Dispositivo {
     constructor(tipo, numero, descricao) {
         super(tipo, numero, descricao);
-        this.subitens = []
+        this.subitens = [];
     }
     
     adicionar(item) {

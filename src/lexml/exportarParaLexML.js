@@ -16,6 +16,7 @@
  */
 
 import ArticulacaoInvalidaException from './ArticulacaoInvalidaException';
+import padrao from '../opcoesPadrao';
 
 var htmlInline = new Set(['SPAN', 'B', 'I', 'A', 'SUB', 'SUP', 'INS', 'DEL', 'DFN']);
 
@@ -28,8 +29,12 @@ var htmlInline = new Set(['SPAN', 'B', 'I', 'A', 'SUB', 'SUP', 'INS', 'DEL', 'DF
  * editor de articulação.
  * @returns {Element} Articulação do LexML
  */
-function exportarParaLexML(dispositivoDOM) {
+function exportarParaLexML(dispositivoDOM, rotulos) {
     var cntArtigos = 0;
+
+    if (!rotulos) {
+        rotulos = padrao.rotulo;
+    }
 
     /**
      * Representa o contexto da transformação,
@@ -196,7 +201,7 @@ function exportarParaLexML(dispositivoDOM) {
                 contexto.nEmenda = 0;
             }
 
-            let dispositivoLexML = criarElementoLexML(tipo, dispositivoDOM, contexto.getIdReferencia(tipo), contexto.contarSubitens(tipo), dispositivoDOM.classList.contains('unico'), contexto.nEmenda);
+            let dispositivoLexML = criarElementoLexML(tipo, dispositivoDOM, contexto.getIdReferencia(tipo), contexto.contarSubitens(tipo), dispositivoDOM.classList.contains('unico'), contexto.nEmenda, rotulos);
 
             if (tipo === 'Paragrafo' && dispositivoDOM.classList.contains('unico')) {
                 // Adiciona o sufixo "u" ao identificador do parágrafo único
@@ -218,7 +223,7 @@ function exportarParaLexML(dispositivoDOM) {
     return raiz;
 }
 
-function criarElementoLexML(tipo, conteudo, idPai, idxFilho, unico, nEmenda) {
+function criarElementoLexML(tipo, conteudo, idPai, idxFilho, unico, nEmenda, rotulos) {
     var elemento, id;
 
     id = tipo.substr(0, 3).toLowerCase();
@@ -233,7 +238,7 @@ function criarElementoLexML(tipo, conteudo, idPai, idxFilho, unico, nEmenda) {
     elemento = document.createElementNS('http://www.lexml.gov.br/1.0', tipo);
     elemento.setAttribute('id', id);
 
-    elemento.appendChild(criarRotuloLexML(tipo, nEmenda ? idxFilho : idxFilho + 1, unico, nEmenda));
+    elemento.appendChild(criarRotuloLexML(tipo, nEmenda ? idxFilho : idxFilho + 1, unico, nEmenda, rotulos));
 
     switch (tipo) {
         case 'Artigo':
@@ -258,32 +263,32 @@ function criarElementoLexML(tipo, conteudo, idPai, idxFilho, unico, nEmenda) {
     return elemento;
 }
 
-function criarRotuloLexML(tipo, numero, unico, nEmenda) {
+function criarRotuloLexML(tipo, numero, unico, nEmenda, rotulos) {
     var elemento = document.createElementNS('http://www.lexml.gov.br/1.0', 'Rotulo');
 
     switch (tipo) {
         case 'Artigo':
             if (nEmenda) {
-                elemento.innerHTML = 'Art. ' + numero + (numero < 10 ? 'º-' : '-') + transformarLetra(nEmenda, true) + ' &ndash';
+                elemento.innerHTML = 'Art. ' + numero + (numero < 10 ? 'º-' : '-') + transformarLetra(nEmenda, true) + (numero < 10 ? rotulos.separadorArtigo : rotulos.separadorArtigoSemOrdinal);
             } else {
-                elemento.innerHTML = 'Art. ' + numero + (numero < 10 ? 'º &ndash;' : '&ndash;');
+                elemento.innerHTML = 'Art. ' + numero + (numero < 10 ? 'º' + rotulos.separadorArtigo : rotulos.separadorArtigoSemOrdinal);
             }
             break;
 
         case 'Paragrafo':
-            elemento.innerHTML = unico ? 'Parágrafo único &ndash;' : '§ ' + numero + (numero < 10 ? 'º &ndash;' : ' &ndash;');
+            elemento.innerHTML = unico ? 'Parágrafo único' + rotulos.separadorParagrafoUnico : '§ ' + numero + (numero < 10 ? 'º' + rotulos.separadorParagrafo : rotulos.separadorParagrafoSemOrdinal);
             break;
 
         case 'Inciso':
-            elemento.innerHTML = transformarNumeroRomano(numero) + ' &ndash;';
+            elemento.innerHTML = transformarNumeroRomano(numero) + rotulos.separadorInciso;
             break;
 
         case 'Alinea':
-            elemento.textContent = transformarLetra(numero) + ')';
+            elemento.textContent = transformarLetra(numero) + rotulos.separadorAlinea;
             break;
 
         case 'Item':
-            elemento.innerHTML = numero + ' &ndash;';
+            elemento.innerHTML = numero + rotulos.separadorItem;
             break;
 
         case 'Titulo':

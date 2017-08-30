@@ -29,86 +29,7 @@ import cssShadow from './editor-articulacao-shadow.css';
 import ArticulacaoInvalidaException from './lexml/ArticulacaoInvalidaException';
 import { encontrarDispositivoAnteriorDoTipo, encontrarDispositivoPosteriorDoTipo } from './util';
 import ValidacaoController from './validacao/ValidacaoController';
-
-/**
- * Definição padrão das opções do editor de articulação.
- */
-var padrao = {
-    /**
-     * Determina se deve adotar o Shadow DOM, se suportado pelo navegador.
-     */
-    shadowDOM: false,
-
-    /**
-     * Determina se o editor de articulação deve aplicar transformação automática.
-     */
-    transformacaoAutomatica: true,
-
-    /**
-     * Determina o escapamento de caracteres de código alto unicode durante a exportação
-     * para lexmlString.
-     */
-    escaparXML: false,
-
-    /**
-     * Determina o sufixo para os rótulos dos dispositivos.
-     */
-    rotulo: {
-        separadorArtigo: ' \u2013',
-        separadorArtigoSemOrdinal: ' \u2013',
-        separadorParagrafo: ' \u2013',
-        separadorParagrafoSemOrdinal: ' \u2013',
-        separadorParagrafoUnico: ' \u2013',
-        separadorInciso: ' \u2013',
-        separadorAlinea: ')',
-        separadorItem: ')'
-    },
-
-    /**
-     * Determina se deve validar o conteúdo atribuído ao componente.
-     */
-    validarAoAtribuir: true,
-
-    /**
-     * Determina as validações que devem ocorrer.
-     */
-    validacao: {
-        /**
-         * Determina se deve validar o uso de caixa alta.
-         */
-        caixaAlta: true,
-
-        /**
-         * Determina se deve validar o uso de aspas em citações.
-         */
-        citacao: true,
-
-        /**
-         * Determina se deve validar a presença de múltiplos elementos em uma enumeração.
-         */
-        enumeracaoElementos: true,
-
-        /**
-         * Determina se deve validar o uso de letra maiúscula no caput do artigo e em parágrafos.
-         */
-        inicialMaiuscula: true,
-
-        /**
-         * Determina se deve validar as pontuações.
-         */
-        pontuacao: true,
-
-        /**
-         * Determina se deve validar pontuação de enumeração.
-         */
-        pontuacaoEnumeracao: true,
-
-        /**
-         * Determina se deve exigir sentença única no dispositivo.
-         */
-        sentencaUnica: true
-    }
-};
+import padrao from './opcoesPadrao';
 
 var cssImportado = false;
 
@@ -184,7 +105,7 @@ class EditorArticulacaoController {
 
     get lexml() {
         try {
-            return this.vazio ? document.createDocumentFragment() : exportarParaLexML(this._elemento);
+            return this.vazio ? document.createDocumentFragment() : exportarParaLexML(this._elemento, this.opcoes.rotulo);
         } catch (e) {
             if (e instanceof ArticulacaoInvalidaException) {
                 for (let filho = this._elemento.firstElementChild; filho; filho = filho.nextElementSibling) {
