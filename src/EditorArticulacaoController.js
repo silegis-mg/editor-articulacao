@@ -291,13 +291,13 @@ class EditorArticulacaoController {
 
     _keyDownEventHandler(event) {
         if (!this.contexto || !this.contexto.cursor.elemento) {
-            _cursorEventHandler(event);
+            this._cursorEventHandler(event);
         }
 
         let elementoSelecionado = obterSelecao(this);
 
         if (elementoSelecionado !== this.contexto.cursor.elemento) {
-            _cursorEventHandler(event);
+            this._cursorEventHandler(event);
         }
     }
 
