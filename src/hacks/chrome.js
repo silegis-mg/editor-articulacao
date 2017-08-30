@@ -1,3 +1,20 @@
+/* Copyright 2017 Assembleia Legislativa de Minas Gerais
+ * 
+ * This file is part of Editor-Articulacao.
+ *
+ * Editor-Articulacao is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * Editor-Articulacao is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { interceptar } from './interceptador';
 
 function hackChrome(controller) {
@@ -13,8 +30,6 @@ function hackChrome(controller) {
  * @param {EditorArticulacaoController} ctrl 
  * @param {function} metodo
  * @param {Array} argumentos 
- * 
- * @author Júlio César e Melo
  */
 function hackAlterarTipo(ctrl, metodo, argumentos) {
     let dispositivo = ctrl.contexto.cursor.dispositivo;
@@ -50,8 +65,6 @@ function hackAlterarTipo(ctrl, metodo, argumentos) {
  * 
  * @param {Element} dispositivo 
  * @param {Object} contadoresDesconsiderar Hash contendo os contadores que não deverão ser considerados.
- * 
- * @author Júlio César e Melo
  */
 function extrairContadores(dispositivo, contadoresDesconsiderar) {
     let counterReset = getComputedStyle(dispositivo).counterReset;
@@ -74,8 +87,6 @@ function extrairContadores(dispositivo, contadoresDesconsiderar) {
  * Efetua a redefinição do contador.
  * 
  * @param {Element} dispositivo 
- * 
- * @author Júlio César e Melo
  */
 function redefinirContador(dispositivo) {
     let tipo = dispositivo.getAttribute('data-tipo');
@@ -96,8 +107,6 @@ function redefinirContador(dispositivo) {
  * 
  * @param {KeyboardEvent} keyboardEvent 
  * @param {EditorArticulacaoController} editorCtrl 
- * 
- * @author Júlio César e Melo
  */
 function hackInterceptarKeydown(keyboardEvent, editorCtrl) {
     /* Somente serão tratadas as alterações de conteúdo. Portanto,

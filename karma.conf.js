@@ -1,3 +1,20 @@
+/* Copyright 2017 Assembleia Legislativa de Minas Gerais
+ * 
+ * This file is part of Editor-Articulacao.
+ *
+ * Editor-Articulacao is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * Editor-Articulacao is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 let webpackConfig = require("./webpack.config.js")('karma', true);
 
 module.exports = function (config) {
@@ -8,15 +25,8 @@ module.exports = function (config) {
             'empacotamento/karma.js': ['webpack']
         },
         webpack: webpackConfig,
-        // test results reporter to use 
-        // possible values: 'dots', 'progress' 
-        // available reporters: https://npmjs.org/browse/keyword/karma-reporter 
-        //        reporters: [/*'dots', 'coverage', */'kjhtml'],
-        // web server port 
         port: 11111,
         colors: true,
-        // level of logging 
-        // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG 
         logLevel: config.LOG_WARN,
         autoWatch: true,
         browsers: ['ChromeNoSandbox', 'Firefox'],

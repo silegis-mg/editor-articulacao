@@ -1,3 +1,20 @@
+/* Copyright 2017 Assembleia Legislativa de Minas Gerais
+ * 
+ * This file is part of Editor-Articulacao.
+ *
+ * Editor-Articulacao is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * Editor-Articulacao is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import DoisPontos from './transformacoes/DoisPontos';
 import PontoFinal from './transformacoes/PontoFinal';
 import AoIniciarAspas from './transformacoes/AoIniciarAspas';
@@ -9,8 +26,6 @@ import RecuarComEnterEmDispositivoVazio from './transformacoes/RecuarComEnterEmD
  * 
  * @param {EditorArticulacaoController} editorArticulacaoCtrl 
  * @param {Element} elemento 
- * 
- * @author Júlio César e Melo
  */
 function adicionarTransformacaoAutomatica(editorArticulacaoCtrl, elemento) {
     var parser = {}, estado = [];
@@ -31,8 +46,6 @@ function adicionarTransformacaoAutomatica(editorArticulacaoCtrl, elemento) {
  * 
  * @param {Object} parser 
  * @param {Transformacao} transformador 
- * 
- * @author Júlio César e Melo
  */
 function adicionarParser(parser, transformador) {
     transformador.sequencias.forEach(function(sequencia) {
@@ -64,8 +77,6 @@ function adicionarParser(parser, transformador) {
 
 /**
  * Realiza o parsing da edição.
- * 
- * @author Júlio César e Melo
  */
 function processarEstado(event, _parser, _estadoParser, controller, elemento) {
     var novoEstado = [],

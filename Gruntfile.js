@@ -1,3 +1,20 @@
+/* Copyright 2017 Assembleia Legislativa de Minas Gerais
+ * 
+ * This file is part of Editor-Articulacao.
+ *
+ * Editor-Articulacao is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * Editor-Articulacao is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 module.exports = function (grunt) {
 	require("matchdep").filterAll("grunt-*").forEach(grunt.loadNpmTasks);
 	var webpack = require("webpack");
@@ -88,7 +105,10 @@ module.exports = function (grunt) {
 	grunt.registerTask("dev", ["jshint", "webpack:build-dev", "watch:app"]);
 
 	// Production build
-	grunt.registerTask("build", ['jshint', 'karma:continuous', "webpack:buildPlain", "webpack:buildAngular1", "webpack:buildPlainPolyfill", "webpack:buildAngular1Polyfill"]);
+	grunt.registerTask("build", ["webpack:buildPlain", "webpack:buildAngular1", "webpack:buildPlainPolyfill", "webpack:buildAngular1Polyfill"]);
+	grunt.registerTask("build-plain", ["webpack:buildPlain"]);
+	grunt.registerTask("build-plain-polyfill", ["webpack:buildPlainPolyfill"]);
+	grunt.registerTask("build-angular1", ["webpack:buildAngular1"]);
 
 	grunt.registerTask('e2e', ['exec:updateWebdriver', 'webpack-dev-server:e2e', 'protractor:e2e']);
 	grunt.registerTask('test', ['jshint', 'karma:continuous', 'e2e']);

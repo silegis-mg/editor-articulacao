@@ -1,4 +1,21 @@
-import ContextoArticulacaoAtualizadoEvent from './eventos/ContextoArticulacaoAtualizadoEvent';
+/* Copyright 2017 Assembleia Legislativa de Minas Gerais
+ * 
+ * This file is part of Editor-Articulacao.
+ *
+ * Editor-Articulacao is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * Editor-Articulacao is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+ import ContextoArticulacaoAtualizadoEvent from './eventos/ContextoArticulacaoAtualizadoEvent';
 import ContextoArticulacao from './ContextoArticulacao';
 import adicionarTransformacaoAutomatica from './transformacaoAutomatica/transformacaoAutomatica';
 import hackChrome from './hacks/chrome';
@@ -33,6 +50,9 @@ var padrao = {
      */
     escaparXML: false,
 
+    /**
+     * Determina o sufixo para os rótulos dos dispositivos.
+     */
     rotulo: {
         separadorArtigo: ' \u2013',
         separadorArtigoSemOrdinal: ' \u2013',
@@ -94,8 +114,6 @@ var cssImportado = false;
 
 /**
  * Controlador do editor de articulação.
- * 
- * @author Júlio César e Melo
  */
 class EditorArticulacaoController {
 
