@@ -87,7 +87,7 @@ module.exports = function (grunt) {
 			}
 		},
 		jshint: {
-			all: ['*.js', 'src/**/*.js'],
+			all: ['*.js', 'src/**/*.js', 'empacotamento/**/*.js'],
 			options: {
 				browser: true,
 				esversion: 6

@@ -28,6 +28,7 @@
 .silegismg-editor-articulacao p[data-tipo]:before {
   display: inline-block; /* Resolve problema de cursor antes do rótulo no chrome */
   margin-right: 1ex;
+  text-indent: 0;
 }
 
 .silegismg-editor-articulacao p {

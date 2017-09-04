@@ -20,21 +20,11 @@
  */
 export default {
     /**
-     * Determina se deve adotar o Shadow DOM, se suportado pelo navegador.
-     */
-    shadowDOM: false,
-
-    /**
-     * Determina se o editor de articulação deve aplicar transformação automática.
-     */
-    transformacaoAutomatica: true,
-
-    /**
      * Determina o escapamento de caracteres de código alto unicode durante a exportação
      * para lexmlString.
      */
     escaparXML: false,
-
+    
     /**
      * Determina o sufixo para os rótulos dos dispositivos.
      */
@@ -50,12 +40,28 @@ export default {
     },
 
     /**
+     * Determina se deve adotar o Shadow DOM, se suportado pelo navegador.
+     */
+    shadowDOM: false,
+
+    /**
+     * Determina se deve permitir a edição, ou se o componente será somente para leitura.
+     */
+    somenteLeitura: false,
+
+    /**
+     * Determina se o editor de articulação deve aplicar transformação automática.
+     */
+    transformacaoAutomatica: true,
+
+    /**
      * Determina se deve validar o conteúdo atribuído ao componente.
      */
     validarAoAtribuir: true,
 
     /**
      * Determina as validações que devem ocorrer.
+     * Nenhuma validação ocorre se o editor for somente para leitura.
      */
     validacao: {
         /**

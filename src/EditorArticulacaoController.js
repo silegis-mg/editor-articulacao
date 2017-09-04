@@ -75,19 +75,21 @@ class EditorArticulacaoController {
             this._normalizarDispositivo(filho);
         }
 
-        this._registrarEventos();
+        if (!this.opcoes.somenteLeitura) {
+            this._registrarEventos();
 
-        if (opcoesEfetivas.transformacaoAutomatica) {
-            adicionarTransformacaoAutomatica(this, elemento);
-        }
+            if (opcoesEfetivas.transformacaoAutomatica) {
+                adicionarTransformacaoAutomatica(this, elemento);
+            }
 
-        this.clipboardCtrl = new ClipboardController(this);
-        this.controleAlteracao = criarControleAlteracao(this);
-        this.validacaoCtrl = new ValidacaoController(this.opcoes.validacao);
+            this.clipboardCtrl = new ClipboardController(this);
+            this.controleAlteracao = criarControleAlteracao(this);
+            this.validacaoCtrl = new ValidacaoController(this.opcoes.validacao);
 
-        // Executa hack se necessário.
-        if (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {
-            hackChrome(this);
+            // Executa hack se necessário.
+            if (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {
+                hackChrome(this);
+            }
         }
     }
 
@@ -129,11 +131,13 @@ class EditorArticulacaoController {
             this._elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
         }
 
-        this.controleAlteracao.comprometer();
+        if (!this.opcoes.somenteLeitura) {
+            this.controleAlteracao.comprometer();
 
-        if (this.opcoes.validarAoAtribuir) {
-            for (let dispositivo = this._elemento.firstElementChild; dispositivo; dispositivo = dispositivo.nextElementSibling) {
-                this.validacaoCtrl.validar(dispositivo);
+            if (this.opcoes.validarAoAtribuir) {
+                for (let dispositivo = this._elemento.firstElementChild; dispositivo; dispositivo = dispositivo.nextElementSibling) {
+                    this.validacaoCtrl.validar(dispositivo);
+                }
             }
         }
     }
@@ -175,7 +179,7 @@ class EditorArticulacaoController {
         this.registrarEventListener('blur', e => {
             let contexto = this.contexto;
 
-            if (contexto && contexto.cursor.dispositivo) {
+            if (contexto && contexto.cursor.dispositivo && !this.opcoes.somenteLeitura) {
                 this.validacaoCtrl.validar(this.contexto.cursor.dispositivo);
             }
         });
@@ -234,8 +238,10 @@ class EditorArticulacaoController {
             this._normalizarDispositivo(dispositivo, this.contexto);
             this._normalizarDispositivo(dispositivo.nextElementSibling);
 
-            this.validacaoCtrl.validar(dispositivo.previousElementSibling);
-            this.validacaoCtrl.validar(dispositivo.nextElementSibling);
+            if (!this.opcoes.somenteLeitura) {
+                this.validacaoCtrl.validar(dispositivo.previousElementSibling);
+                this.validacaoCtrl.validar(dispositivo.nextElementSibling);
+            }
         }
     }
 
@@ -276,7 +282,7 @@ class EditorArticulacaoController {
 
         if (!this.contexto || this.contexto.cursor.elemento !== elementoSelecionado || this.contexto.comparar(novoCalculo)) {
             // Realiza a validação do cursor anterior.
-            if (this.contexto && this.contexto.cursor.dispositivo) {
+            if (this.contexto && this.contexto.cursor.dispositivo && !this.opcoes.somenteLeitura) {
                 this.validacaoCtrl.validar(this.contexto.cursor.dispositivo);
             }
 
@@ -512,7 +518,7 @@ function transformarEmEditor(elemento, editorCtrl, opcoes) {
         editorCtrl.getSelection = () => shadow.getSelection();
 
         let novoElemento = document.createElement('div');
-        novoElemento.contentEditable = true;
+        novoElemento.contentEditable = !opcoes.somenteLeitura;
         novoElemento.spellcheck = elemento.spellcheck;
         novoElemento.classList.add('silegismg-editor-articulacao');
         novoElemento.innerHTML = '<p data-tipo="artigo"><br></p>';
@@ -526,7 +532,7 @@ function transformarEmEditor(elemento, editorCtrl, opcoes) {
 
         return novoElemento;
     } else {
-        elemento.contentEditable = true;
+        elemento.contentEditable = !opcoes.somenteLeitura;
         elemento.classList.add('silegismg-editor-articulacao');
 
         if (!cssImportado) {
