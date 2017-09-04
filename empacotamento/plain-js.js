@@ -19,7 +19,9 @@
  * que permite transformar um DIV em um editor de articulação.
  * A função cria e retorna uma nova instância de EditorArticulacaoController.
  */
+
 import EditorArticulacaoController from '../src/EditorArticulacaoController';
+import interpretadorArticulacao from '../src/interpretadorArticulacao';
 
 /**
  * Prepara um elemento do DOM como um editor de articulação.
@@ -42,3 +44,4 @@ function prepararEditorArticulacao(elemento, opcoes) {
 }
 
 window.silegismgEditorArticulacao = prepararEditorArticulacao;
+window.silegismgInterpretadorArticulacao = interpretadorArticulacao;

@@ -20,6 +20,11 @@
  * A função cria e retorna uma nova instância de EditorArticulacaoController.
  */
 import EditorArticulacaoController from '../src/EditorArticulacaoController';
+import interpretadorArticulacao from '../src/interpretadorArticulacao';
+
+angular.module('silegismg-editor-articulacao', [])
+    .directive('silegismgEditorArticulacaoConteudo', editorArticulacaoConteudoDirective)
+    .service('silegismgInterpretadorArticulacaoService', interpretadorArticulacaoService);
 
 function editorArticulacaoConteudoDirective() {
     return {
@@ -41,11 +46,15 @@ function editorArticulacaoConteudoDirective() {
                     ngModel.$setValidity('lexml', false);
                     throw e;
                 }
-            })
+            });
+
+            scope.$on('$destroy', () => scope.ctrl.desregistrar());
         },
         controller: ['$element', '$scope', ($element, $scope) => new EditorArticulacaoController($element[0], $scope.opcoes)],
         controllerAs: 'ctrl'
-    }
+    };
 }
 
-angular.module('silegismg-editor-articulacao', []).directive('silegismgEditorArticulacaoConteudo', editorArticulacaoConteudoDirective)
+function interpretadorArticulacaoService() {
+    return interpretadorArticulacao;
+}
