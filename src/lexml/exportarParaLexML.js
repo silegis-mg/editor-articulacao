@@ -159,16 +159,35 @@ function exportarParaLexML(dispositivoDOM, rotulos) {
     }
 
     /**
+     * Contexto de transformação especializado em divisões de texto (agrupadores),
+     * como título, capítulo, seção e subseção.
+     */
+    class ContextoTransformacaoAgrupador extends ContextoTransformacao {
+        getIdReferencia(subtipo) {
+            return subtipo === 'Artigo' ? null : super.getIdReferencia(subtipo);
+        }
+    }
+
+    /**
      * Cria o contexto adequado conforme o tipo do nó.
      * 
      * @param {Element} dispositivoLexML 
      * @param {*} contextoAnterior 
      */
     function criarContexto(dispositivoLexML, contextoAnterior) {
-        if (dispositivoLexML.tagName === 'Artigo') {
-            return new ContextoTransformacaoArtigo(dispositivoLexML, contextoAnterior);
-        } else {
-            return new ContextoTransformacao(dispositivoLexML, contextoAnterior);
+        switch (dispositivoLexML.tagName) {
+            case 'Artigo':
+                return new ContextoTransformacaoArtigo(dispositivoLexML, contextoAnterior);
+
+            case 'Parte':
+            case 'Titulo':
+            case 'Capitulo':
+            case 'Secao':
+            case 'Subsecao':
+                return new ContextoTransformacaoAgrupador(dispositivoLexML, contextoAnterior);
+                
+            default:
+                return new ContextoTransformacao(dispositivoLexML, contextoAnterior);
         }
     }
 
