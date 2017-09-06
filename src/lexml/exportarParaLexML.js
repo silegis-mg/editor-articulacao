@@ -353,18 +353,42 @@ function criarElementoP(paragrafo) {
 
 function criarConteudoInline(origem, destino) {
     var arvore = document.createTreeWalker(origem, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
-    var atual = destino;
-    var pilha = [];
+    var atual = {
+        /**
+         * Objeto de contexto de exportação anterior (este mesmo objeto)
+         */
+        anterior: null,
+
+        /**
+         * Elemento que, se encontrado, deve retroceder o contexto. Utilizado para navegar
+         * por elementos filhos e identificar quando o nível, na navegação, retrocede,
+         * obrigando a retroceder também o contexto.
+         */
+        retrocederEm: null,
+
+        /**
+         * Elemento na nova árvore onde os itens serão inseridos.
+         */
+        destino: destino
+    };
 
     while (arvore.nextNode()) {
         let item = arvore.currentNode;
 
+        if (item.parentNode === atual.retrocederEm) {
+            atual = atual.anterior;
+        }
+
         if (item.nodeType === Node.TEXT_NODE) {
-            atual.appendChild(item.cloneNode());
+            atual.destino.appendChild(item.cloneNode());
         } else if (htmlInline.has(item.tagName)) {
-            atual.appendChild(item.cloneNode());
-            pilha.push(atual);
-            atual = atual.lastElementChild;
+            let elemento = document.createElementNS('http://www.lexml.gov.br/1.0', item.tagName.toLowerCase());
+            atual.destino.appendChild(elemento);
+            atual = {
+                anterior: atual,
+                retrocederEm: item.parentNode,
+                destino: elemento
+            };
         } else if (item.tagName === 'BR') {
             // Ignora
         } else {

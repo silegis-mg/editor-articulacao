@@ -34,7 +34,7 @@
 
         var lexml = exportarParaLexML(div.firstElementChild);
         expect(lexml.outerHTML).toBe('<Articulacao><Artigo id="art1"><Rotulo>Art. 1º –</Rotulo><Caput id="art1_cpt"><p>Caput:</p><p>"Citação.".</p></Caput></Artigo></Articulacao>');
-    })
+    });
 
     it('Deve suportar dois parágrafos', function() {
         var div = document.createElement('div');
@@ -42,5 +42,13 @@
 
         var lexml = exportarParaLexML(div.firstElementChild);
         expect(lexml.outerHTML).toBe('<Articulacao><Artigo id="art1"><Rotulo>Art. 1º –</Rotulo><Caput id="art1_cpt"><p>Este é um artigo.</p></Caput><Paragrafo id="art1_par1"><Rotulo>§ 1º –</Rotulo><p>Este é um parágrafo.</p></Paragrafo><Paragrafo id="art1_par2"><Rotulo>§ 2º –</Rotulo><p>Este é outro parágrafo.</p></Paragrafo></Artigo></Articulacao>');
-    })
+    });
+
+    it('Deve suportar itálico', function() {
+        var div = document.createElement('div');
+        div.innerHTML = '<p data-tipo="artigo">Este é um <i>article</i>.</p>';
+
+        var lexml = exportarParaLexML(div.firstElementChild);
+        expect(lexml.outerHTML).toBe('<Articulacao><Artigo id="art1"><Rotulo>Art. 1º –</Rotulo><Caput id="art1_cpt"><p>Este é um <i>article</i>.</p></Caput></Artigo></Articulacao>');
+    });
 });
