@@ -47,7 +47,7 @@ function importarDeLexML(elemento, resultado) {
             case 'CAPITULO':
             case 'SECAO':
             case 'SUBSECAO':
-                resultado.appendChild(criarAgrupador(elemento.tagName.toLowerCase(), elemento.querySelector('NomeAgrupador').textContent));
+                resultado.appendChild(criarAgrupador(elemento.tagName.toLowerCase(), elemento.querySelector('NomeAgrupador').innerHTML));
                 importarDeLexML(elemento.children, resultado);
                 break;
 
@@ -104,7 +104,7 @@ function importarDeLexML(elemento, resultado) {
 function criarAgrupador(agrupador, nome) {
     let elemento = document.createElement('p');
     elemento.setAttribute('data-tipo', agrupador);
-    elemento.textContent = nome;
+    elemento.innerHTML = nome;
     return elemento;
 }
 
