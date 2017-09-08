@@ -32,14 +32,14 @@ exports.config = {
     localSeleniumStandaloneOpts: {
         seleniumArgs: ['-browserTimeout=60']
     },
-    baseUrl: 'http://localhost:8080/',
+    baseUrl: 'http://localhost:8075/',
     onPrepare: function () {
         browser.ignoreSynchronization = true;
         browser.manage().timeouts().pageLoadTimeout(40000);
         browser.manage().timeouts().implicitlyWait(25000);
 
         browser.driver.manage().window().setSize(1024, 768);
-        browser.driver.get('http://localhost:8080/protractor/teste.html');
+        browser.driver.get('http://localhost:8075/protractor/teste.html');
     },
     maxSessions: 1
 };

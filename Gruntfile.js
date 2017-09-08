@@ -72,6 +72,7 @@ module.exports = function (grunt) {
 			},
 			e2e: {
 				keepalive: false,
+                                port: 8075,
 				webpack: {
 					devtool: "inline-source-map",
 				}
