@@ -13,7 +13,7 @@
     "editor"
   ],
   "author": "Assembleia Legislativa de Minas Gerais (ALMG)",
-  "license": "Não licenciado ainda",
+  "license": "LGPL",
   "dependencies": {
     "grunt-contrib-jshint": "^1.1.0"
   },
