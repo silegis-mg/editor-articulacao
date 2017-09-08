@@ -38,7 +38,11 @@ module.exports = function (empacotamento, debug, polyfill) {
                     use: {
                         loader: 'babel-loader',
                         options: {
-                            presets: ['es2016', 'es2015'],
+                            presets: [['env', {
+                                targets: {
+                                    browsers: ['last 2 versions', 'firefox >= 52', 'ie >= 11']
+                                }
+                            }]],
                             plugins: [["babel-plugin-transform-builtin-extend", {
                                 globals: ["CustomEvent"]
                             }]]

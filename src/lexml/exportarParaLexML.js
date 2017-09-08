@@ -86,7 +86,7 @@ function exportarParaLexML(dispositivoDOM, rotulos) {
         }
 
         adicionarProximo(dispositivoLexML) {
-            this.dispositivoLexML.parentElement.appendChild(dispositivoLexML);
+            this.dispositivoLexML.parentNode.appendChild(dispositivoLexML);
         }
 
         possuiSubtipo(subtipo) {
@@ -352,7 +352,7 @@ function criarElementoP(paragrafo) {
 }
 
 function criarConteudoInline(origem, destino) {
-    var arvore = document.createTreeWalker(origem, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
+    var arvore = document.createTreeWalker(origem, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, null /* necesário no IE 11 */, null  /* necesário no IE 11 */);
     var atual = {
         /**
          * Objeto de contexto de exportação anterior (este mesmo objeto)
@@ -371,6 +371,7 @@ function criarConteudoInline(origem, destino) {
          */
         destino: destino
     };
+    var primeiroTexto = true, ultimoTexto = null;
 
     while (arvore.nextNode()) {
         let item = arvore.currentNode;
@@ -380,7 +381,14 @@ function criarConteudoInline(origem, destino) {
         }
 
         if (item.nodeType === Node.TEXT_NODE) {
-            atual.destino.appendChild(item.cloneNode());
+            ultimoTexto = item.cloneNode();
+
+            if (primeiroTexto) {
+                primeiroTexto = false;
+                ultimoTexto.textContent = ultimoTexto.textContent.replace(/^\s+/, '');
+            }
+
+            atual.destino.appendChild(ultimoTexto);
         } else if (htmlInline.has(item.tagName)) {
             let elemento = document.createElementNS('http://www.lexml.gov.br/1.0', item.tagName.toLowerCase());
             atual.destino.appendChild(elemento);
@@ -394,6 +402,10 @@ function criarConteudoInline(origem, destino) {
         } else {
             throw new ArticulacaoInvalidaException(origem, 'Elemento não permitido: ' + item.tagName);
         }
+    }
+
+    if (ultimoTexto) {  
+        ultimoTexto.textContent = ultimoTexto.textContent.replace(/\s+$/, '');
     }
 
     return destino;
@@ -416,22 +428,27 @@ function normalizarParagrafo(paragrafo) {
         paragrafo.removeAttribute(paragrafo.attributes[0].name);
     }
 
-    for (let i = 0; i < paragrafo.children.length; i++) {
-        if (paragrafo.children[i].tagName === 'p') {
+    /* Microsoft Edge não implementa a interface HTMLElement em document.createElementNS.
+     * Portanto, usaremos children se disponível, ou childNodes, para o Edge.
+     */
+    let itens = paragrafo.children || paragrafo.childNodes;
+
+    for (let i = 0; i < itens.length; i++) {
+        if (itens[i].tagName === 'p') {
             /* Tag P dentro de P. Isso não deveria ocorrer, então vamos tratar como continuação.
              * Neste caso, move-se todos os elementos a partir do índice 'i'
              * para novos parágrafos após o atual.
              */
-            while (paragrafo.children.length > i) {
-                let item = paragrafo.children[i];
+            while (itens.length > i) {
+                let item = itens[i];
 
                 if (item.tagName === 'p') {
-                    paragrafo.parentElement.insertBefore(item, paragrafo.nextSibling);
+                    paragrafo.parentNode.insertBefore(item, paragrafo.nextSibling);
                     normalizarParagrafo(item);
                 } else {
                     var novoParagrafo = document.createElementNS('http://www.lexml.gov.br/1.0', 'p');
                     novoParagrafo.appendChild(item);
-                    paragrafo.parentElement.insertBefore(novoParagrafo, paragrafo.nextSibling);
+                    paragrafo.parentNode.insertBefore(novoParagrafo, paragrafo.nextSibling);
                     normalizarParagrafo(novoParagrafo);
                 }
             }

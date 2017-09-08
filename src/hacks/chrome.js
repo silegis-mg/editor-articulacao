@@ -19,7 +19,7 @@ import { interceptar } from './interceptador';
 
 function hackChrome(controller) {
     interceptar(controller, 'alterarTipoDispositivoSelecionado', hackAlterarTipo);
-    
+
     controller.registrarEventListener('keydown', event => hackInterceptarKeydown(event, controller));
 }
 
@@ -121,72 +121,68 @@ function hackInterceptarKeydown(keyboardEvent, editorCtrl) {
         let selection = editorCtrl.getSelection();
         let range = selection.getRangeAt(0);
 
-        try {
-            // Se não houver nada selecionado, então não há problema de desempenho.
-            if (!range.collapsed) {
-                let inicio = range.startContainer.parentElement;
-                let final = range.endContainer.parentElement;
+        // Se não houver nada selecionado, então não há problema de desempenho.
+        if (!range.collapsed) {
+            let inicio = range.startContainer.parentNode;
+            let final = range.endContainer.parentNode;
 
-                range.deleteContents();
+            range.deleteContents();
 
-                /* Se a tecla for de remoção, então evitamos a ação padrão.
-                 * Entretanto, se for de conteúdo, então deixamos que a ação
-                 * padrão seja executada, para que o novo conteúdo seja inserido
-                 * no lugar do conteúdo excluído.
-                 */
-                if (keyboardEvent.key === 'Delete' || keyboardEvent.key === 'Backspace') {
-                    keyboardEvent.preventDefault();
+            /* Se a tecla for de remoção, então evitamos a ação padrão.
+                * Entretanto, se for de conteúdo, então deixamos que a ação
+                * padrão seja executada, para que o novo conteúdo seja inserido
+                * no lugar do conteúdo excluído.
+                */
+            if (keyboardEvent.key === 'Delete' || keyboardEvent.key === 'Backspace') {
+                keyboardEvent.preventDefault();
+            }
+
+            /* O range da seleção, ainda que seja de todo o conteúdo, não abrange
+                * o elemento inicial e o final. Isto é, se o usuário selecionar tudo
+                * usando Ctrl+A e prosseguir com a exclusão com a tecla Delete, 
+                * o conteúdo selecionado correpsonderá ao primeiro nó textual do primeiro
+                * P até o último nó textual do útlimo P.
+                * 
+                *        <p><!-- início da seleção -->nó textual</p>
+                *        <p>nó textual intermediário</p>
+                *        <p>último nó textual<-- final da seleção --></p>
+                * 
+                * Assim, a exclusão irá remover todos os nós textuais e os elementos intermediários,
+                * mantendo, entretanto, o primeiro e último elemento (veja ilustração acima,
+                * em que a seleção foi demarcada em comentário).
+                * 
+                * Para contornar esta situação, realizamos manualmente a exclusão dos elementos,
+                * se o elemento inicial da seleção for diferente do final, condicionando
+                * a exclusão à presença de conteúdo. Deve-se executar o procedimento somente
+                * se o início for diferente do final, pois a seleção pode ser apenas de
+                * conteúdo intermediário, como ilustrado a seguir:
+                * 
+                *      <p>este <!-- início da seleção -->é um <!-- final da seleção -->exemplo.</p>
+                */
+            if (inicio !== final) {
+                if (inicio.textContent.length === 0) {
+                    inicio.remove();
                 }
 
-                /* O range da seleção, ainda que seja de todo o conteúdo, não abrange
-                 * o elemento inicial e o final. Isto é, se o usuário selecionar tudo
-                 * usando Ctrl+A e prosseguir com a exclusão com a tecla Delete, 
-                 * o conteúdo selecionado correpsonderá ao primeiro nó textual do primeiro
-                 * P até o último nó textual do útlimo P.
-                 * 
-                 *        <p><!-- início da seleção -->nó textual</p>
-                 *        <p>nó textual intermediário</p>
-                 *        <p>último nó textual<-- final da seleção --></p>
-                 * 
-                 * Assim, a exclusão irá remover todos os nós textuais e os elementos intermediários,
-                 * mantendo, entretanto, o primeiro e último elemento (veja ilustração acima,
-                 * em que a seleção foi demarcada em comentário).
-                 * 
-                 * Para contornar esta situação, realizamos manualmente a exclusão dos elementos,
-                 * se o elemento inicial da seleção for diferente do final, condicionando
-                 * a exclusão à presença de conteúdo. Deve-se executar o procedimento somente
-                 * se o início for diferente do final, pois a seleção pode ser apenas de
-                 * conteúdo intermediário, como ilustrado a seguir:
-                 * 
-                 *      <p>este <!-- início da seleção -->é um <!-- final da seleção -->exemplo.</p>
-                 */
-                if (inicio !== final) {
-                    if (inicio.textContent.length === 0) {
-                        inicio.remove();
-                    }
-
-                    if (final.textContent.length === 0) {
-                        final.remove();
-                    }
-
-                    /* Caso todo o conteúdo estivesse selecionado, o editor de articulação
-                     * passará a ter nenhum elemento neste momento. Neste caso,
-                     * deve-se recriar o conteúdo mínimo.
-                     */
-                    if (editorCtrl._elemento.children.length === 0) {
-                        editorCtrl._elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
-                    }
+                if (final.textContent.length === 0) {
+                    final.remove();
                 }
-                // ... mas se a seleção for todo o conteúdo de um único elemento...
-                else if (inicio.textContent.length === 0 && inicio.children.length === 0) {
-                    /* então deve-se garantir o conteúdo mínimo, para que o cursor do parágrafo
-                     * fique posicionado corretamente.
-                     */
-                    inicio.innerHTML = '<br>';
+
+                /* Caso todo o conteúdo estivesse selecionado, o editor de articulação
+                    * passará a ter nenhum elemento neste momento. Neste caso,
+                    * deve-se recriar o conteúdo mínimo.
+                    */
+                if (editorCtrl._elemento.children.length === 0) {
+                    editorCtrl.limpar();
                 }
             }
-        } finally {
-            range.detach();
+            // ... mas se a seleção for todo o conteúdo de um único elemento...
+            else if (inicio.textContent.length === 0 && inicio.children.length === 0) {
+                /* então deve-se garantir o conteúdo mínimo, para que o cursor do parágrafo
+                    * fique posicionado corretamente.
+                    */
+                inicio.innerHTML = '<br>';
+            }
         }
     }
 }

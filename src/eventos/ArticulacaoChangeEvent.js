@@ -15,10 +15,12 @@
  * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+ import EventoInterno from './EventoInterno';
+
 /**
  * Evento de notificação de atualização do conteúdo da articulação.
  */
-class ArticulacaoChangeEvent extends CustomEvent {
+class ArticulacaoChangeEvent extends EventoInterno {
     /**
      * Constrói o evento.
      * 

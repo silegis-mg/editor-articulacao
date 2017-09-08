@@ -30,12 +30,12 @@ import interpretadorArticulacao from '../src/interpretadorArticulacao';
  */
 function prepararEditorArticulacao(elemento, opcoes) {
     elemento.ctrlArticulacao = new EditorArticulacaoController(elemento, opcoes);
-    
+
     Object.defineProperty(elemento, 'lexml', {
-        get: function() {
+        get: function () {
             return this.ctrlArticulacao.lexml;
         },
-        set: function(valor) {
+        set: function (valor) {
             this.ctrlArticulacao.lexml = valor;
         }
     });

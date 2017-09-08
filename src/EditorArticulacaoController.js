@@ -15,10 +15,12 @@
  * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- import ContextoArticulacaoAtualizadoEvent from './eventos/ContextoArticulacaoAtualizadoEvent';
+import ContextoArticulacaoAtualizadoEvent from './eventos/ContextoArticulacaoAtualizadoEvent';
 import ContextoArticulacao from './ContextoArticulacao';
 import adicionarTransformacaoAutomatica from './transformacaoAutomatica/transformacaoAutomatica';
 import hackChrome from './hacks/chrome';
+import hackIE from './hacks/ie';
+import polyfill from './hacks/polyfill';
 import importarDeLexML from './lexml/importarDeLexML';
 import exportarParaLexML from './lexml/exportarParaLexML';
 import { interpretarArticulacao } from './interpretadorArticulacao';
@@ -50,6 +52,8 @@ class EditorArticulacaoController {
             throw 'Elemento não é um elemento do DOM.';
         }
 
+        polyfill();
+
         let opcoesEfetivas = Object.create(padrao);
         Object.assign(opcoesEfetivas, opcoes);
 
@@ -70,10 +74,7 @@ class EditorArticulacaoController {
 
         this._handlers = [];
 
-        // Realiza a normalização do conteúdo inicial, se houver.
-        for (let filho = elemento.firstElementChild; filho; filho = filho.nextElementSibling) {
-            this._normalizarDispositivo(filho);
-        }
+        this.limpar();
 
         if (!this.opcoes.somenteLeitura) {
             this._registrarEventos();
@@ -90,11 +91,15 @@ class EditorArticulacaoController {
             if (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {
                 hackChrome(this);
             }
+
+            if (/Trident\//.test(navigator.userAgent)) {
+                hackIE(this);
+            }
         }
     }
 
-    dispatchEvent(evento) {
-        this._elemento.dispatchEvent(evento);
+    dispatchEvent(eventoInterno) {
+        this._elemento.dispatchEvent(eventoInterno.getCustomEvent());
     }
 
     getSelection() {
@@ -128,7 +133,7 @@ class EditorArticulacaoController {
         this._elemento.appendChild(articulacao);
 
         if (this.vazio) {
-            this._elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
+            this.limpar();
         }
 
         if (!this.opcoes.somenteLeitura) {
@@ -140,6 +145,10 @@ class EditorArticulacaoController {
                 }
             }
         }
+    }
+
+    limpar() {
+        this._elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
     }
 
     get lexmlString() {
@@ -171,16 +180,18 @@ class EditorArticulacaoController {
 
         let focusHandler = function () {
             if (!this._elemento.firstElementChild) {
-                this._elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
+                this.limpar();
             }
         }.bind(this);
         this.registrarEventListener('focus', focusHandler, true);
 
         this.registrarEventListener('blur', e => {
-            let contexto = this.contexto;
+            if (!this.opcoes.somenteLeitura) {
+                let contexto = this.contexto;
 
-            if (contexto && contexto.cursor.dispositivo && !this.opcoes.somenteLeitura) {
-                this.validacaoCtrl.validar(this.contexto.cursor.dispositivo);
+                if (contexto && contexto.cursor.dispositivo) {
+                    this.validacaoCtrl.validar(this.contexto.cursor.dispositivo);
+                }
             }
         });
     }
@@ -243,6 +254,10 @@ class EditorArticulacaoController {
                 this.validacaoCtrl.validar(dispositivo.nextElementSibling);
             }
         }
+
+        if (this.vazio) {
+            this.limpar();
+        }
     }
 
     /**
@@ -263,19 +278,15 @@ class EditorArticulacaoController {
          * então devemos recriar o conteúdo mínimo.
          */
         if (elementoSelecionado === this._elemento && (!this._elemento.firstElementChild || this._elemento.firstElementChild === this._elemento.lastElementChild && this._elemento.firstElementChild.tagName === 'BR')) {
-            this._elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
+            this.limpar();
             elementoSelecionado = this._elemento.firstElementChild;
 
             let selecao = this.getSelection();
             selecao.removeAllRanges();
             let range = document.createRange();
 
-            try {
-                range.selectNodeContents(elementoSelecionado);
-                selecao.addRange(range);
-            } finally {
-                range.detach();
-            }
+            range.selectNodeContents(elementoSelecionado);
+            selecao.addRange(range);
         }
 
         var novoCalculo = new ContextoArticulacao(this._elemento, elementoSelecionado);
@@ -316,12 +327,8 @@ class EditorArticulacaoController {
         let range = selecao && selecao.rangeCount > 0 ? selecao.getRangeAt(0) : null;
         let endContainer = range ? range.endContainer : null;
 
-        if (range) {
-            range.detach();
-        }
-
         while (endContainer.nodeType !== Node.ELEMENT_NODE || !endContainer.hasAttribute('data-tipo')) {
-            endContainer = endContainer.parentElement;
+            endContainer = endContainer.parentNode;
         }
 
         while (dispositivo !== endContainer) {
@@ -361,7 +368,7 @@ class EditorArticulacaoController {
      */
     _normalizarDispositivo(dispositivo, contexto) {
         while (dispositivo && !dispositivo.hasAttribute('data-tipo')) {
-            dispositivo = dispositivo.parentElement;
+            dispositivo = dispositivo.parentNode;
         }
 
         if (!dispositivo) {
@@ -451,14 +458,13 @@ function obterSelecao(ctrl) {
 
     if (range) {
         let startContainer = range ? range.startContainer : null;
-        range.detach();
 
         if (!startContainer) {
             return null;
         }
 
         if (startContainer.nodeType !== Node.ELEMENT_NODE || startContainer.nodeName === 'BR') {
-            startContainer = startContainer.parentElement;
+            startContainer = startContainer.parentNode;
         }
 
         return startContainer;
@@ -521,7 +527,6 @@ function transformarEmEditor(elemento, editorCtrl, opcoes) {
         novoElemento.contentEditable = !opcoes.somenteLeitura;
         novoElemento.spellcheck = elemento.spellcheck;
         novoElemento.classList.add('silegismg-editor-articulacao');
-        novoElemento.innerHTML = '<p data-tipo="artigo"><br></p>';
 
         shadow.appendChild(style);
         shadow.appendChild(shadowStyle);
@@ -546,8 +551,6 @@ function transformarEmEditor(elemento, editorCtrl, opcoes) {
 
             cssImportado = true;
         }
-
-        elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
 
         return elemento;
     }

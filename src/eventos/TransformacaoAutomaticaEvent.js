@@ -15,11 +15,13 @@
  * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import EventoInterno from './EventoInterno';
+
 /**
  * Evento de notificação de transformação automática ocorrida
  * em dispositivo.
  */
-class TransformacaoAutomaticaEvent extends CustomEvent {
+class TransformacaoAutomaticaEvent extends EventoInterno {
     /**
      * Constrói o evento.
      * 

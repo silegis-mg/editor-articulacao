@@ -25,7 +25,7 @@
  */
 function encontrarDispositivoAnteriorDoTipo(dispositivo, pontosParada, pontosInterrupcao) {
     while (!dispositivo.hasAttribute('data-tipo')) {
-        dispositivo = dispositivo.parentElement;
+        dispositivo = dispositivo.parentNode;
     }
 
     let setParada = new Set(pontosParada);
@@ -54,7 +54,7 @@ function encontrarDispositivoAnteriorDoTipo(dispositivo, pontosParada, pontosInt
  */
 function encontrarDispositivoPosteriorDoTipo(elemento, pontosParada, pontosInterrupcao) {
     while (!elemento.hasAttribute('data-tipo')) {
-        elemento = elemento.parentElement;
+        elemento = elemento.parentNode;
     }
 
     let setParada = new Set(pontosParada);

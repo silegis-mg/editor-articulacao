@@ -15,12 +15,14 @@
  * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import EventoInterno from './EventoInterno';
+
 /**
  * Evento de notificação de atualização do contexto de edição.
  * Útil para atualização da interface de usuário, habilitando ou
  * desabilitando botões.
  */
-class ContextoArticulacaoAtualizadoEvent extends CustomEvent {
+class ContextoArticulacaoAtualizadoEvent extends EventoInterno {
     /**
      * Constrói o evento.
      * 
