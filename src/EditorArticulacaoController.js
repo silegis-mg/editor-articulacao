@@ -232,7 +232,7 @@ class EditorArticulacaoController {
 
         let elementoSelecionado = obterSelecao(this);
 
-        if (elementoSelecionado !== this.contexto.cursor.elemento) {
+        if (!this.contexto || elementoSelecionado !== this.contexto.cursor.elemento) {
             this._cursorEventHandler(event);
         }
     }
@@ -467,10 +467,15 @@ function obterSelecao(ctrl) {
             startContainer = startContainer.parentNode;
         }
 
-        return startContainer;
-    } else {
-        return null;
+        // Garante que a seleção está dentro do editor de articulação.
+        for (let item = startContainer; item && item !== document.body; item = item.parentNode) {
+            if (item === ctrl._elemento) {
+                return startContainer;
+            }
+        }
     }
+
+    return null;
 }
 
 /**

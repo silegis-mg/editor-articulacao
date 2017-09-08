@@ -46,7 +46,7 @@ class ContextoArticulacao {
             dispositivo = dispositivo.parentNode;
         }
 
-        cursor.dispositivo = dispositivo;
+        cursor.dispositivo = dispositivo !== elementoArticulacao ? dispositivo : null;
         
         while (dispositivo && dispositivo.getAttribute('data-tipo') === 'continuacao') {
             dispositivo = dispositivo.previousElementSibling;
@@ -75,7 +75,7 @@ class ContextoArticulacao {
             }
         });
 
-        cursor.dispositivoAnterior = dispositivo && obterDispositivoAnterior(dispositivo);
+        cursor.dispositivoAnterior = dispositivo && obterDispositivoAnterior(dispositivo, elementoArticulacao);
         cursor.tipoAnterior = cursor.dispositivoAnterior && cursor.dispositivoAnterior.getAttribute('data-tipo');
 
         let matches = Element.prototype.matches || Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.onMatchesSelector || function() { return true; };
@@ -188,12 +188,12 @@ function verificarPrimeiroDoTipo(dispositivo) {
  * @param {Element} dispositivo 
  * @returns {Element} Elemento do dispositivo anterior.
  */
-function obterDispositivoAnterior(dispositivo) {
-    while (dispositivo && !dispositivo.hasAttribute('data-tipo')) {
+function obterDispositivoAnterior(dispositivo, elementoArticulacao) {
+    while (dispositivo && !dispositivo.hasAttribute('data-tipo') && dispositivo !== elementoArticulacao) {
         dispositivo = dispositivo.parentNode;
     }
 
-    if (!dispositivo) {
+    if (!dispositivo || dispositivo === elementoArticulacao) {
         return null;
     }
 
