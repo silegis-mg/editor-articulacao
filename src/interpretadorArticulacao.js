@@ -542,23 +542,14 @@ function transformarEmLexML(json) {
             return texto + '</Artigo>';
         }, '') + '</Articulacao>';
 
-    let container = document.createElement('div');
-    container.innerHTML = lexml;
-
-    let fragmento = document.createDocumentFragment();
-
-    while (container.firstChild) {
-        fragmento.appendChild(container.firstChild);
-    }
-
-    return fragmento;
+    return lexml;
 }
 
 /**
  * Interpreta conteúdo de articulação.
  * 
  * @param {String} texto Texto a ser interpretado
- * @param {String} formato Formato a ser retornado: 'json' ou 'lexml' (padrão).
+ * @param {String} formato Formato a ser retornado: 'json', 'lexml' (padrão) ou "lexmlString".
  * @returns {Object|DocumentFragment}
  */
 function interpretarArticulacao(texto, formato) {
@@ -578,6 +569,10 @@ function interpretarArticulacao(texto, formato) {
                 return json;
 
             case 'lexml':
+                return transformarEmLexMLFragmento(json);
+
+            case 'lexmlstring':
+            case 'lexml-string':
                 return transformarEmLexML(json);
 
             default:
@@ -591,6 +586,20 @@ function interpretarArticulacao(texto, formato) {
             erroOriginal: e
         };
     }
+}
+
+function transformarEmLexMLFragmento(json) {
+    let lexml = transformarEmLexML(json);
+    let container = document.createElement('div');
+    container.innerHTML = lexml;
+
+    let fragmento = document.createDocumentFragment();
+
+    while (container.firstChild) {
+        fragmento.appendChild(container.firstChild);
+    }
+
+    return fragmento;
 }
 
 export default {

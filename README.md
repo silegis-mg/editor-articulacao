@@ -70,6 +70,10 @@ O javascript minificado é gerado por meio do webpack, a partir de uma tarefa do
 #### Plain-JS
 
 O empacotamento `plain-js` define `silegismgEditorArticulacao` como uma função global para transformar um elemento no DOM em um editor de articulação.
+Também define a função `silegismgEditorArticulacaoController` para criar o controller, caso o utilizador queira maior controle
+da interface de usuário.
+
+Também é definida a função global [`silegismgInterpretadorArticulacao.interpretar`](#api-interpretador) para interpretação de texto articulado.
 
 ##### Gerando pacote
 
@@ -91,6 +95,8 @@ completo a interface de usuário.
 
 Para criar o editor de articulação com barra de ferramentas padrão, utilize a sintaxe `silegismgEditorArticulacao(elemento, opcoes)`.
 Para criar o editor de articulação personalizando por completa a interface de usuário, utilize a sintaxe `silegismgEditorArticulacaoController(elemento, opcoes)`, que retornará o controlador, cujos métodos estão descritos na [API do controlador](#api-controlador). Para exemplo de como personalizar a interface, veja o [arquivo de teste do protractor](test/protractor/teste.html).
+
+Veja também a [API do interpretador de articulação](#api-interpretador).
 
 ##### Exemplo
 
@@ -175,6 +181,18 @@ Todas as opções de validação são habilitadas (valor true) por padrão.
 | lexmlString *(propriedade)* | String | Obtém ou define o XML da articulação no formato LexML, porém em String. |
 | alterado *(propriedade, somente leitura)* | Boolean | Verifica se o editor de articulação sofreu alteração. |
 | alterarTipoDispositivoSelecionado(novoTipo) | void | Altera o tipo do dispositivo em que o cursor se encontra, pelo novo tipo (String) fornecido como parâmetro. Os tipos possíveis são: titulo, capitulo, secao, subsecao, artigo, paragrafo, inciso, alinea e continuacao (todos sem acentuação ou cedilha). |
+
+<a name="api-interpretador"></a>
+
+## API do interpretador
+
+Para interpretar um texto puro, transformando em um texto estruturado utilizando LexML, utilize a função interpretar (veja [código-fonte](src/interpretadorArticulacao.js)), com a seguinte sintaxe:
+
+```javascript
+interpretar(texto, formato);
+```
+
+onde ``texto`` é uma `string` e ``formato`` é uma das opções "json", "lexml" (padrão) ou "lexmlString".
 
 Contribuições desejadas
 -----------------------
