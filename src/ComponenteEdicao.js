@@ -36,7 +36,7 @@ class ComponenteEdicao {
             shadow.innerHTML = html.toString();
 
             container = shadow.querySelector('.silegismg-editor-conteudo');
-            containerBotoes = shadow;
+            containerBotoes = shadow.querySelector('.silegismg-editor-botoes');
             botoes = containerBotoes.querySelectorAll('button[data-tipo-destino]');
 
             elemento.addEventListener('focus', focusEvent => container.focus());
@@ -45,7 +45,7 @@ class ComponenteEdicao {
         } else {
             elemento.innerHTML = html.toString();
             container = elemento.querySelector('.silegismg-editor-conteudo');
-            containerBotoes = elemento;
+            containerBotoes = elemento.querySelector('.silegismg-editor-botoes');
             botoes = elemento.querySelectorAll('button[data-tipo-destino]');
             elemento.ctrlArticulacao = this.ctrl = ctrl = new EditorArticulacaoController(container, opcoes);
         }
@@ -81,6 +81,11 @@ class ComponenteEdicao {
             if (tipoAtual) {
                 tipoAtual.classList.add('atual');
             }
+        });
+
+        elemento.addEventListener('scroll', function (evento) {
+            containerBotoes.style.position = 'relative';
+            containerBotoes.style.top = elemento.scrollTop + 'px';
         });
     }
 }
