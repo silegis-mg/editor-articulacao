@@ -20,6 +20,7 @@
  * A função cria e retorna uma nova instância de EditorArticulacaoController.
  */
 
+import ComponenteEdicao from '../src/ComponenteEdicao';
 import EditorArticulacaoController from '../src/EditorArticulacaoController';
 import interpretadorArticulacao from '../src/interpretadorArticulacao';
 
@@ -28,7 +29,7 @@ import interpretadorArticulacao from '../src/interpretadorArticulacao';
  * 
  * @param {Element} elemento 
  */
-function prepararEditorArticulacao(elemento, opcoes) {
+function criarControllerEditorArticulacao(elemento, opcoes) {
     elemento.ctrlArticulacao = new EditorArticulacaoController(elemento, opcoes);
 
     Object.defineProperty(elemento, 'lexml', {
@@ -43,5 +44,21 @@ function prepararEditorArticulacao(elemento, opcoes) {
     return elemento.ctrlArticulacao;
 }
 
-window.silegismgEditorArticulacao = prepararEditorArticulacao;
+function prepararEditorArticulacaoCompleto(elemento, opcoes) {
+    elemento.componenteEdicao = new ComponenteEdicao(elemento, opcoes);
+
+    Object.defineProperty(elemento, 'lexml', {
+        get: function () {
+            return this.componenteEdicao.ctrl.lexml;
+        },
+        set: function (valor) {
+            this.componenteEdicao.ctrl.lexml = valor;
+        }
+    });
+
+    return elemento.componenteEdicao;
+}
+
+window.silegismgEditorArticulacao = prepararEditorArticulacaoCompleto;
+window.silegismgEditorArticulacaoController = criarControllerEditorArticulacao;
 window.silegismgInterpretadorArticulacao = interpretadorArticulacao;

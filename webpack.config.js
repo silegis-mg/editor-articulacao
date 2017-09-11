@@ -31,7 +31,23 @@ module.exports = function (empacotamento, debug, polyfill) {
             loaders: [
                 {
                     test: /\.css$/,
-                    use: 'css-loader'
+                    use: {
+                        loader: 'css-loader',
+                        options: {
+                            minimize: true,
+                            sourceMap: true
+                        }
+                    }
+                },
+                {
+                    test: /\.html$/,
+                    use: {
+                        loader: 'html-loader',
+                        options: {
+                            minimize: true,
+                            removeComments: true,
+                        }
+                    }
                 },
                 {
                     test: /\.js$/,

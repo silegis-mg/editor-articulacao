@@ -98,6 +98,12 @@ class EditorArticulacaoController {
         }
     }
 
+    /**
+     * Dispara evento no DOM. Deve-se usar este método, pois caso seja utilizado
+     * ShadowDOM, este método é substituído para propagação externa de evento.
+     * 
+     * @param {EventoInterno} eventoInterno 
+     */
     dispatchEvent(eventoInterno) {
         this._elemento.dispatchEvent(eventoInterno.getCustomEvent());
     }
@@ -148,7 +154,7 @@ class EditorArticulacaoController {
     }
 
     limpar() {
-        this._elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
+        this._elemento.innerHTML = '<p data-tipo="artigo" style="min-height: 1exm;"><br></p>';
     }
 
     get lexmlString() {
@@ -523,7 +529,7 @@ function transformarEmEditor(elemento, editorCtrl, opcoes) {
         let shadowStyle = document.createElement('style');
         shadowStyle.innerHTML = cssShadow.toString();
 
-        let shadow = elemento.attachShadow({ mode: 'closed' });
+        let shadow = elemento.attachShadow({ mode: (typeof opcoes.shadowDOM === 'string' ? opcoes.shadowDOM : 'open') });
 
         editorCtrl.dispatchEvent = elemento.dispatchEvent.bind(elemento);
         editorCtrl.getSelection = () => shadow.getSelection();

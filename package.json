@@ -29,6 +29,7 @@
     "grunt-karma": "^2.0.0",
     "grunt-protractor-runner": "^5.0.0",
     "grunt-webpack": "^3.0.2",
+    "html-loader": "^0.5.1",
     "jasmine": "^2.6.0",
     "jshint": "^2.9.5",
     "karma": "^1.7.0",

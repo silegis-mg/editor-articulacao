@@ -85,7 +85,12 @@ grunt build-plain-polyfill
 
 ##### Utilizando plain-js
 
-Sintaxe: `silegismgEditorArticulacao(elemento, opcoes)`
+Existem duas possibilidades para criar o editor de articulação. Uma que incorpora a barra de ferramentas
+e outra que apenas vincula o controlador do editor de articulação, permitindo ao utilizador personalizar por
+completo a interface de usuário.
+
+Para criar o editor de articulação com barra de ferramentas padrão, utilize a sintaxe `silegismgEditorArticulacao(elemento, opcoes)`.
+Para criar o editor de articulação personalizando por completa a interface de usuário, utilize a sintaxe `silegismgEditorArticulacaoController(elemento, opcoes)`, que retornará o controlador, cujos métodos estão descritos na [API do controlador](#api-controlador). Para exemplo de como personalizar a interface, veja o [arquivo de teste do protractor](test/protractor/teste.html).
 
 ##### Exemplo
 
@@ -159,6 +164,17 @@ Todas as opções de validação são habilitadas (valor true) por padrão.
 | pontuacao | Determina se deve validar as pontuações. |
 | pontuacaoEnumeracao | Determina se deve validar pontuação de enumeração. |
 | sentencaUnica | Determina se deve exigir sentença única no dispositivo. |
+
+<a name="api-controlador"></a>
+
+## API do controlador
+
+| Propriedade/Função | Retorno/Valor | Descrição |
+| ------------------ | ------------- | --------- |
+| lexml *(propriedade)* | ElementNS | Obtém ou define o XML da articulação no formato LexML. |
+| lexmlString *(propriedade)* | String | Obtém ou define o XML da articulação no formato LexML, porém em String. |
+| alterado *(propriedade, somente leitura)* | Boolean | Verifica se o editor de articulação sofreu alteração. |
+| alterarTipoDispositivoSelecionado(novoTipo) | void | Altera o tipo do dispositivo em que o cursor se encontra, pelo novo tipo (String) fornecido como parâmetro. Os tipos possíveis são: titulo, capitulo, secao, subsecao, artigo, paragrafo, inciso, alinea e continuacao (todos sem acentuação ou cedilha). |
 
 Contribuições desejadas
 -----------------------

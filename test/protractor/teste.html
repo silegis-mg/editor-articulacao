@@ -29,7 +29,7 @@
     <button id="atualizar">Atualizar</button>
 
     <script>
-        var ctrl = silegismgEditorArticulacao(document.getElementById('articulacao'));
+        var ctrl = silegismgEditorArticulacaoController(document.getElementById('articulacao'));
         let botoes = document.querySelectorAll('button[data-tipo-destino]');
 
         for (let i = 0; i < botoes.length; i++) {
@@ -39,6 +39,11 @@
             }
         }
 
+        /* Monitora atualização do contexto do usuário no editor de articulação,
+         * controlando habilitação de botões de transformação de dispositivo.
+         * 
+         * A atualização é feita por meio do evento "contexto" no DOM.
+         */
         document.getElementById('articulacao').addEventListener('contexto', function (evento) {
             // Vamos atualizar os botões.
             for (let i = 0; i < botoes.length; i++) {
