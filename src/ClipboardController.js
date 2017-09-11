@@ -121,10 +121,10 @@ function colarFragmento(fragmento, editorCtrl) {
     let selecao = editorCtrl.getSelection();
     let range = selecao.getRangeAt(0);
     let noInicial = range.startContainer;
-    let excluirNoAtual = fragmento.firstChild.nodeType !== Node.TEXT_NODE && range.startContainer.textContent.trim().length === 0;
+    let excluirNoAtual = fragmento.firstChild.nodeType !== Node.TEXT_NODE && noInicial !== editorCtrl._elemento && noInicial.textContent.trim().length === 0;
 
     // Se a seleção estiver no container, então devemos inserir elementos filhos...
-    if (range.collapsed && range.startContainer === editorCtrl._elemento) {
+    if (range.collapsed && noInicial === editorCtrl._elemento) {
         // Remove as quebras de linha, usada como placeholder pelos contentEditable.
         for (let itens = editorCtrl._elemento.querySelectorAll('br'), i = 0; i < itens.length; i++) {
             itens[i].remove();
