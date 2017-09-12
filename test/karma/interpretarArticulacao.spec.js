@@ -227,6 +227,13 @@ describe('Parser de articulação', function () {
         });
     });
 
+    it('Deve escapar entidades html', function() {
+        var texto = '<P>Art. 1&#176; &#8211; Fica declarado de utilidade p&#250;blica o treste &#160;asdf asd f &#160; &#160;asd, com sede no Munic&#237;pio de Abadia dos Dourados.</P><P>Art. 2&#176; &#8211; Esta lei entra em vigor na data de sua publica&#231;&#227;o.</P>';
+        var lexml = parser.interpretar(texto, 'lexml-string', 'html');
+
+        expect(lexml).toEqual('<Articulacao xmlns="http://www.lexml.gov.br/1.0"><Artigo id="art1"><Rotulo>Art. 1º –</Rotulo><Caput id="art1_cpt"><p>Fica declarado de utilidade pública o treste  asdf asd f    asd, com sede no Município de Abadia dos Dourados.</p></Caput></Artigo><Artigo id="art2"><Rotulo>Art. 2º –</Rotulo><Caput id="art2_cpt"><p>Esta lei entra em vigor na data de sua publicação.</p></Caput></Artigo></Articulacao>');
+    });
+
     describe('transfomarQuebrasDeLinhaEmP', function () {
         var transformarQuebrasDeLinhaEmP = window.interpretadorArticulacao.transformarQuebrasDeLinhaEmP;
 

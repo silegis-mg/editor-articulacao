@@ -21,6 +21,10 @@
   ],
   "author": "Assembleia Legislativa de Minas Gerais (ALMG)",
   "license": "LGPL",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/silegis-mg/editor-articulacao.git"
+  },
   "dependencies": {
   },
   "devDependencies": {

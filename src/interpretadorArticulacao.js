@@ -549,22 +549,30 @@ function transformarEmLexML(json) {
  * Interpreta conteúdo de articulação.
  * 
  * @param {String} texto Texto a ser interpretado
- * @param {String} formato Formato a ser retornado: 'json', 'lexml' (padrão) ou "lexmlString".
+ * @param {String} formatoDestino Formato a ser retornado: 'json', 'lexml' (padrão) ou "lexmlString".
+ * @param {String} formatoOrigem Formatao a ser processado: 'texto' (padrão), 'html'.
  * @returns {Object|DocumentFragment}
  */
-function interpretarArticulacao(texto, formato) {
+function interpretarArticulacao(texto, formatoDestino, formatoOrigem) {
     var json;
 
     try {
-        if (typeof texto === 'string') {
-            var div = document.createElement('div');
-            div.innerHTML = texto;
-            json = parseTexto(div.innerHTML.replace(/<P>(.+?)<\/P>/gi, '$1\n'));
-        } else {
-            throw 'Formato não suportado.';
+        switch ((formatoOrigem || 'texto').toLowerCase()) {
+            case 'texto':
+                json = parseTexto(texto);
+                break;
+
+            case 'html':
+                let div = document.createElement('div');
+                div.innerHTML = texto;
+                json = parseTexto(removerEntidadeHtml(div.innerHTML.replace(/<P>(.+?)<\/P>/gi, '$1\n').trim()));
+                break;
+        
+            default:
+                throw 'Formato não suportado.';
         }
 
-        switch ((formato || 'lexml').toLowerCase()) {
+        switch ((formatoDestino || 'lexml').toLowerCase()) {
             case 'json':
                 return json;
 
@@ -576,16 +584,33 @@ function interpretarArticulacao(texto, formato) {
                 return transformarEmLexML(json);
 
             default:
-                throw 'Formato não suportado: ' + formato;
+                throw 'Formato não suportado: ' + formatoDestino;
         }
     } catch (e) {
         throw {
             mensagem: 'Erro interpretando articulação.',
             item: texto,
-            formato: formato,
+            formato: formatoDestino,
             erroOriginal: e
         };
     }
+}
+
+function removerEntidadeHtml(html) {
+    var safeXmlEntities = ["&lt;", "&gt;", "&quot;", "&amp;", "&apos;"];
+
+    return html.replace(/&.+?;/g, function(entidade) {
+        if(safeXmlEntities.indexOf(entidade)>=0) {
+            return entidade;
+        } else {
+            /* A entidade não é uma das predefinidas no xml e é suportada só no HTML. Por exemplo: &nbsp; ou &copy;.
+             * Nesse caso, converte para texto e no replace abaixo substitui pela notação unicode.
+             */
+            var span = document.createElement('span');
+            span.innerHTML = entidade;
+            return span.textContent;
+        }
+    });
 }
 
 function transformarEmLexMLFragmento(json) {

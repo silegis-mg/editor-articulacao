@@ -189,10 +189,10 @@ Todas as opções de validação são habilitadas (valor true) por padrão.
 Para interpretar um texto puro, transformando em um texto estruturado utilizando LexML, utilize a função interpretar (veja [código-fonte](src/interpretadorArticulacao.js)), com a seguinte sintaxe:
 
 ```javascript
-interpretar(texto, formato);
+interpretar(texto, formatoDestino, formatoOrigem);
 ```
 
-onde ``texto`` é uma `string` e ``formato`` é uma das opções "json", "lexml" (padrão) ou "lexmlString".
+onde ``texto`` é uma `string`, ``formatoDestino`` é uma das opções "json", "lexml" (padrão) ou "lexmlString" e ``formatoOrigem`` é "texto" (padrão) ou "html".
 
 Contribuições desejadas
 -----------------------
