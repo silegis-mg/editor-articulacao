@@ -113,17 +113,36 @@ function parseTexto(textoOriginal) {
                 var item = new Inciso(m[1], m[2]);
                 var container = contexto.getUltimoItemTipo([Artigo, Paragrafo]);
 
+                if (!container) {
+                    container = new Artigo('', contexto.textoAnterior);
+                    contexto.artigos.push(container);
+                    contexto.textoAnterior = '';
+                }
+
                 container.adicionar(item);
 
                 return item;
             }
         }, {
             item: 'alinea',
-            requisito: [Inciso, Alinea, Item],
+            //requisito: [Inciso, Alinea, Item],
             regexp: /^\s*([a-z])\)\s*(.*)/i,
             onMatch: function (contexto, m) {
                 var item = new Alinea(m[1], m[2]);
                 var container = contexto.getUltimoItemTipo(Inciso);
+
+                if (!container) {
+                    let artigo = contexto.getUltimoItemTipo(Artigo);
+                    
+                    if (!artigo) {
+                        artigo = new Artigo('', '');
+                        contexto.artigos.push(artigo);
+                    }
+
+                    container = new Inciso('', contexto.textoAnterior);
+                    artigo.adicionar(container);
+                    contexto.textoAnterior = '';
+                }
 
                 container.adicionar(item);
 
@@ -131,11 +150,32 @@ function parseTexto(textoOriginal) {
             }
         }, {
             item: 'item',
-            requisito: [Alinea, Item],
+            //requisito: [Alinea, Item],
             regexp: /^\s*(\d)\)\s*(.*)/,
             onMatch: function (contexto, m) {
                 var item = new Item(m[1], m[2]);
                 var container = contexto.getUltimoItemTipo(Alinea);
+
+                if (!container) {
+                    container = new Alinea('', contexto.textoAnterior);
+
+                    let inciso = contexto.getUltimoItemTipo(Inciso);
+
+                    if (!inciso) {
+                        let artigo = contexto.getUltimoItemTipo(Artigo);
+
+                        if (!artigo) {
+                            artigo = new Artigo('', '');
+                            contexto.artigos.push(artigo);
+                        }
+
+                        inciso = new Inciso('', '');
+                        artigo.adicionar(inciso);
+                    }
+
+                    inciso.adicionar(container);
+                    contexto.textoAnterior = '';
+                }
 
                 container.adicionar(item);
 
@@ -184,6 +224,11 @@ function parseTexto(textoOriginal) {
         },
         
     ];
+
+    /* Para cada citação, isto é, texto entre aspas, substitui-se o seu conteúdo
+     * por \0 e o conteúdo substituído é inserido na pilha de aspas, para evitar
+     * que o conteúdo seja também interpretado.
+     */
     var aspas = [];
     var texto = textoOriginal.replace(regexpAspas, function (aspa) {
         aspas.push(aspa.replace(/[“”]/g, '"'));
