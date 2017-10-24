@@ -21,6 +21,14 @@ function hackChrome(controller) {
     interceptar(controller, 'alterarTipoDispositivoSelecionado', hackAlterarTipo);
 
     controller.registrarEventListener('keydown', event => hackInterceptarKeydown(event, controller));
+    
+    /* A partir do Chrome 62, começou a ter problema no foco após limpar o editor.
+     * O problema foi evitado adicionando um \n após o <br> ou substituindo o conteúdo
+     * por "&nbsp;"" como feito no IE.
+     */
+    controller.limpar = function() {
+        this._elemento.innerHTML = '<p data-tipo="artigo" style="min-height: 1em;"><br>\n</p>';
+    };
 }
 
 /**
