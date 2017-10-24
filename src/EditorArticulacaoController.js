@@ -333,13 +333,15 @@ class EditorArticulacaoController {
         let range = selecao && selecao.rangeCount > 0 ? selecao.getRangeAt(0) : null;
         let endContainer = range ? range.endContainer : null;
 
-        while (endContainer.nodeType !== Node.ELEMENT_NODE || !endContainer.hasAttribute('data-tipo')) {
-            endContainer = endContainer.parentNode;
-        }
+        if (endContainer) {
+            while (endContainer.nodeType !== Node.ELEMENT_NODE || !endContainer.hasAttribute('data-tipo')) {
+                endContainer = endContainer.parentNode;
+            }
 
-        while (dispositivo !== endContainer) {
-            dispositivo = dispositivo.nextElementSibling;
-            this._definirTipo(dispositivo, novoTipo);
+            while (dispositivo !== endContainer) {
+                dispositivo = dispositivo.nextElementSibling;
+                this._definirTipo(dispositivo, novoTipo);
+            }
         }
 
         this.atualizarContexto();
@@ -473,10 +475,27 @@ function obterSelecao(ctrl) {
             startContainer = startContainer.parentNode;
         }
 
-        // Garante que a seleção está dentro do editor de articulação.
-        for (let item = startContainer; item && item !== document.body; item = item.parentNode) {
-            if (item === ctrl._elemento) {
-                return startContainer;
+        if (startContainer === ctrl._elemento) {
+            // A seleção deveria estar em algum dispositivo.
+            if (range.collapsed && range.startOffset === startContainer.childNodes.length) {
+                // Se está no final do container da articulação, então vamos para o último elemento na hierarquia.
+                do {
+                    startContainer = startContainer.lastElementChild;
+                } while (startContainer.lastElementChild);
+            } else if (range.collapsed && range.startOffset === 0) {
+                // Se está no início do container da articulação, então vamos para o primeiro elemento no último nível da hierarquia.
+                do {
+                    startContainer = startContainer.firstElementChild;
+                } while (startContainer.firstElementChild);
+            }
+
+            return startContainer;
+        } else {
+            // Garante que a seleção está dentro do editor de articulação.
+            for (let item = startContainer; item && item !== document.body; item = item.parentNode) {
+                if (item === ctrl._elemento) {
+                    return startContainer;
+                }
             }
         }
     }
