@@ -193,7 +193,7 @@ function prepararDesfazer(fragmento, editorCtrl) {
         removerListeners();
 
         // Restaura o cursor.
-        let selecao = document.getSelection();
+        let selecao = editorCtrl.getSelection();
         let range = document.createRange();
 
         if (anterior) {
