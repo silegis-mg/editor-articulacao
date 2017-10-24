@@ -477,7 +477,9 @@ function obterSelecao(ctrl) {
 
         if (startContainer === ctrl._elemento) {
             // A seleção deveria estar em algum dispositivo.
-            if (range.collapsed && range.startOffset === startContainer.childNodes.length) {
+            if (startContainer.childNodes.length === 0) {
+                ctrl.limpar();
+            } else if (range.collapsed && range.startOffset === startContainer.childNodes.length) {
                 // Se está no final do container da articulação, então vamos para o último elemento na hierarquia.
                 do {
                     startContainer = startContainer.lastElementChild;
