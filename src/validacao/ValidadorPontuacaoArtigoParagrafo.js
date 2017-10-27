@@ -23,7 +23,7 @@ class ValidadorPontuacaoArtigoParagrafo extends Validador {
     }
 
     validar(dispositivo) {
-        return /.*\S+[:.]$/.test(dispositivo.textContent);
+        return /.*\S+[:.]$/.test(dispositivo.textContent.trim());
     }
 }
 

@@ -23,7 +23,7 @@ class ValidadorSentencaUnica extends Validador {
     }
 
     validar(dispositivo) {
-        let texto = dispositivo.textContent;
+        let texto = dispositivo.textContent.trim();
         let regexp = /[.;:]\s*(\S)/g;
         let m;
         let valido = true;

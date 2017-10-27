@@ -23,7 +23,7 @@ class ValidadorPontuacaoEnumeracao extends Validador {
     }
 
     validar(dispositivo) {
-        return /.*\S+(?:[;.:]|; ou|; e)$/.test(dispositivo.textContent);
+        return /.*\S+(?:[;.:]|; ou|; e)$/.test(dispositivo.textContent.trim());
     }
 }
 

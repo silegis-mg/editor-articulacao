@@ -23,7 +23,7 @@ class ValidadorIniciarLetraMaiuscula extends Validador {
     }
 
     validar(dispositivo) {
-        var texto = dispositivo.textContent;
+        var texto = dispositivo.textContent.trim();
 
         return texto.charAt(0).toUpperCase() === texto.charAt(0);
     }

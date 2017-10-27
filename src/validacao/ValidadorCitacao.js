@@ -24,7 +24,7 @@ class ValidadorCitacao extends Validador {
     }
 
     validar(dispositivo) {
-        let texto = dispositivo.textContent;
+        let texto = dispositivo.textContent.trim();
         let inicio = seNulo(encontrarDispositivoAnteriorDoTipo(dispositivo, ['artigo']), posterior => posterior.nextElementSibling, dispositivo);
 
         if (dispositivo === inicio) {

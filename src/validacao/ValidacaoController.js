@@ -55,7 +55,7 @@ class ValidacaoController {
 
         let problemas = [];
 
-        if (dispositivo.textContent.length > 0) {
+        if (dispositivo.textContent.trim().length > 0) {
             this.validadores.forEach(item => {
                 var validador = item.validador;
                 var opcao = item.opcao;
