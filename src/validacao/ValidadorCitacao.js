@@ -31,7 +31,9 @@ class ValidadorCitacao extends Validador {
             return /^["“]/.test(texto);
         }
 
-        let termino = seNulo(encontrarDispositivoPosteriorDoTipo(dispositivo, ['artigo', 'paragrafo', 'inciso']), posterior => posterior.previousElementSibling, dispositivo);
+        let termino = seNulo(encontrarDispositivoPosteriorDoTipo(dispositivo, ['continuacao', 'artigo', 'paragrafo', 'inciso']),
+            posterior => posterior.getAttribute('data-tipo') === 'continuacao' ? posterior : posterior.previousElementSibling,
+            dispositivo);
 
         if (dispositivo === termino) {
             return /.+[”"]\.$/.test(texto);
