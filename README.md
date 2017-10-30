@@ -39,21 +39,30 @@ incisos, alíneas e itens, bem como as divisões em títulos, capítulos, seçõ
 * [NodeJS com npm](https://nodejs.org/en/download/)
 * Grunt (`npm install -g grunt`)
 
-### Instalação das dependências
+### Baixando o editor
 
 ```
+git clone https://github.com/silegis-mg/editor-articulacao.git
+```
+
+### Instalação das dependências
+
+Após baixar o editor, mude para o diretório onde encontram os fontes e instale as dependências: 
+
+```
+cd editor-articulacao
 npm install
 ```
 
 ### Executando exemplo
 
-Após clonar o repositório, execute a tarefa padrão do grunt.
+Finalizado o passo anterior, execute a tarefa padrão do grunt.
 
 ```
 grunt
 ```
 
-Em seguida, basta abrir o navagedor no endereço http://localhost:8080/exemplo.html
+Em seguida, basta abrir o navegador no endereço http://localhost:8080/exemplo.html
 
 ### Testando
 
