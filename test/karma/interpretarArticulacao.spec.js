@@ -163,7 +163,7 @@ describe('Parser de articulação', function () {
         });
     });
 
-     it('Deve suportar texto com quebra de linha', function () {
+    it('Deve suportar texto com quebra de linha', function () {
         var texto = 'linha 1\nlinha 2';
 
         expect(parser.interpretar(texto, 'json')).toEqual({
@@ -196,8 +196,8 @@ describe('Parser de articulação', function () {
             textoAnterior: '',
             articulacao: [
                 novo(parser.Titulo, {
-                        numero: 'I',
-                        descricao: 'DISPOSIÇÕES PRELIMINARES'
+                    numero: 'I',
+                    descricao: 'DISPOSIÇÕES PRELIMINARES'
                 }),
                 novo(parser.Artigo, {
                     numero: '1',
@@ -227,7 +227,158 @@ describe('Parser de articulação', function () {
         });
     });
 
-    it('Deve escapar entidades html', function() {
+    it('Deve suportar artigo por extenso', function () {
+        var texto = 'Artigo 1º - Primeiro.\nArtigo 2º - Segundo.';
+
+        expect(parser.interpretar(texto, 'json')).toEqual({
+            textoAnterior: '',
+            articulacao: novo(parser.Artigo, [
+                {
+                    numero: '1',
+                    descricao: 'Primeiro.',
+                }, {
+                    numero: '2',
+                    descricao: 'Segundo.'
+                }
+            ])
+        });
+    });
+
+    it('Deve suportar apenas o parágrafo, sem artigo.', function () {
+        var texto = 'Parágrafo único. Teste.';
+
+        expect(parser.interpretar(texto, 'json')).toEqual({
+            textoAnterior: '',
+            articulacao: novo(parser.Artigo, [
+                {
+                    numero: '',
+                    descricao: '',
+                    incisos: [],
+                    paragrafos: [{
+                        numero: 'Parágrafo único',
+                        descricao: 'Teste.',
+                        incisos: []
+                    }]
+                }
+            ])
+        });
+    });
+
+    it('Não deve permitir citação em parágrafo ao exportar para editor.', function () {
+        var texto = 'Art. 1º - Artigo 1.\nParágrafo único - Teste.\nContinuação.';
+        var fragmento = parser.interpretar(texto, 'json').articulacao[0].paraEditor();
+
+        expect(fragmento.children.length).toEqual(2);
+        expect(fragmento.children[1].outerHTML).toEqual('<p data-tipo="paragrafo" class="unico">Teste. Continuação.</p>');
+    });
+
+    it('Deve permitir citação em artigo  ao exportar para editor.', function () {
+        var texto = 'Art. 1º - Artigo 1.\nContinuação.\nParágrafo único - Teste.';
+        var fragmento = parser.interpretar(texto, 'json').articulacao[0].paraEditor();
+
+        expect(fragmento.children.length).toEqual(3);
+        expect(fragmento.children[0].outerHTML).toEqual('<p data-tipo="artigo">Artigo 1.</p>');
+        expect(fragmento.children[1].outerHTML).toEqual('<p data-tipo="continuacao">Continuação.</p>');
+        expect(fragmento.children[2].outerHTML).toEqual('<p data-tipo="paragrafo" class="unico">Teste.</p>');
+    });
+
+    it('Deve permitir inserir inciso, omitindo artigo.', function () {
+        var texto = 'I - Teste.';
+
+        expect(parser.interpretar(texto, 'json')).toEqual({
+            textoAnterior: '',
+            articulacao: novo(parser.Artigo, [
+                {
+                    numero: '',
+                    descricao: '',
+                    incisos: [{
+                        numero: 'I',
+                        descricao: 'Teste.',
+                        alineas: []
+                    }]
+                }])
+        });
+    });
+
+    it('Deve permitir inserir alínea, omitindo artigo e inciso.', function () {
+        var texto = 'a) Teste.';
+
+        expect(parser.interpretar(texto, 'json')).toEqual({
+            textoAnterior: '',
+            articulacao: novo(parser.Artigo, [
+                {
+                    numero: '',
+                    descricao: '',
+                    incisos: [{
+                        numero: '',
+                        descricao: '',
+                        alineas: [{
+                            numero: 'a',
+                            descricao: 'Teste.',
+                            itens: []
+                        }]
+                    }]
+                }])
+        });
+    });
+
+    it('Deve permitir inserir item, omitindo artigo, inciso e alínea.', function () {
+        var texto = '1. Item.';
+
+        expect(parser.interpretar(texto, 'json')).toEqual({
+            textoAnterior: '',
+            articulacao: novo(parser.Artigo, [
+                {
+                    numero: '',
+                    descricao: '',
+                    incisos: [{
+                        numero: '',
+                        descricao: '',
+                        alineas: [{
+                            numero: '',
+                            descricao: '',
+                            itens: [{
+                                numero: '1',
+                                descricao: 'Item.'
+                            }]
+                        }]
+                    }]
+                }])
+        });
+    });
+
+    it('Deve permitir inserir parágrafo com item, omitindo artigo, inciso e alínea.', function () {
+        var texto = 'Parágrafo único - Os cidadãos:\n1. Devem ser legais.';
+
+        expect(parser.interpretar(texto, 'json')).toEqual({
+            textoAnterior: '',
+            articulacao: novo(parser.Artigo, [
+                {
+                    numero: '',
+                    descricao: '',
+                    incisos: [],
+                    paragrafos: [{
+                        numero: 'Parágrafo único',
+                        descricao: 'Os cidadãos:',
+                        incisos: [{
+                            numero: '',
+                            descricao: '',
+                            alineas: [{
+                                numero: '',
+                                descricao: '',
+                                itens: [{
+                                    numero: '1',
+                                    descricao: 'Devem ser legais.'
+                                }]
+                            }]
+                        }]
+                    }]
+                }
+            ])
+        });
+    });
+
+    it('Deve escapar entidades html', function () {
         var texto = '<P>Art. 1&#176; &#8211; Fica declarado de utilidade p&#250;blica o treste &#160;asdf asd f &#160; &#160;asd, com sede no Munic&#237;pio de Abadia dos Dourados.</P><P>Art. 2&#176; &#8211; Esta lei entra em vigor na data de sua publica&#231;&#227;o.</P>';
         var lexml = parser.interpretar(texto, 'lexml-string', 'html');
 

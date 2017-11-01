@@ -33,7 +33,7 @@ function parseTexto(textoOriginal) {
             }
 
             if (typeof tipo === 'function') {
-                while (!(item instanceof tipo)) {
+                while (item && !(item instanceof tipo)) {
                     item = item.$parent;
                 }
             } else if (tipo instanceof Array) {
@@ -87,7 +87,7 @@ function parseTexto(textoOriginal) {
             reiniciar: true
         }, {
             item: 'artigo',
-            regexp: /^\s*Art\.\s*(\d+(?:-[a-z])?)\s*.\s*[-–]?\s*(.+)/i,
+            regexp: /^\s*(?:Art\.?|Artigo)\s*(\d+(?:-[a-z])?)\s*.\s*[-–]?\s*(.+)/i,
             onMatch: function (contexto, m) {
                 var item = new Artigo(m[1], m[2]);
 
@@ -102,13 +102,19 @@ function parseTexto(textoOriginal) {
                 var item = new Paragrafo(m[1] || 'Parágrafo único', m[2]);
                 var container = contexto.getUltimoItemTipo(Artigo);
 
+                if (!container) {
+                    container = new Artigo('', contexto.textoAnterior);
+                    contexto.artigos.push(container);
+                    contexto.textoAnterior = '';
+                }
+
                 container.adicionar(item);
 
                 return item;
             }
         }, {
             item: 'inciso',
-            regexp: /^\s*([IXVDLM]+)\s*[-–]\s*(.+)/i,
+            regexp: /^\s*([IXVDLM]+)\s*[-–).]\s*(.+)/i,
             onMatch: function (contexto, m) {
                 var item = new Inciso(m[1], m[2]);
                 var container = contexto.getUltimoItemTipo([Artigo, Paragrafo]);
@@ -126,13 +132,13 @@ function parseTexto(textoOriginal) {
         }, {
             item: 'alinea',
             //requisito: [Inciso, Alinea, Item],
-            regexp: /^\s*([a-z])\)\s*(.*)/i,
+            regexp: /^\s*([a-z])\s*[-–).]\s*(.*)/i,
             onMatch: function (contexto, m) {
                 var item = new Alinea(m[1], m[2]);
                 var container = contexto.getUltimoItemTipo(Inciso);
 
                 if (!container) {
-                    let artigo = contexto.getUltimoItemTipo(Artigo);
+                    let artigo = contexto.getUltimoItemTipo([Artigo, Paragrafo]);
                     
                     if (!artigo) {
                         artigo = new Artigo('', '');
@@ -151,7 +157,7 @@ function parseTexto(textoOriginal) {
         }, {
             item: 'item',
             //requisito: [Alinea, Item],
-            regexp: /^\s*(\d)\)\s*(.*)/,
+            regexp: /^\s*(\d)\s*[-–).]\s*(.*)/,
             onMatch: function (contexto, m) {
                 var item = new Item(m[1], m[2]);
                 var container = contexto.getUltimoItemTipo(Alinea);
@@ -162,7 +168,7 @@ function parseTexto(textoOriginal) {
                     let inciso = contexto.getUltimoItemTipo(Inciso);
 
                     if (!inciso) {
-                        let artigo = contexto.getUltimoItemTipo(Artigo);
+                        let artigo = contexto.getUltimoItemTipo([Artigo, Paragrafo]);
 
                         if (!artigo) {
                             artigo = new Artigo('', '');
@@ -297,7 +303,6 @@ function parseTexto(textoOriginal) {
     };
 }
 
-
 /**
  * Transforma as quebras de linha em elementos P.
  * 
@@ -312,19 +317,31 @@ function transformarQuebrasDeLinhaEmP(texto) {
         p.textContent = texto;
         fragmento.appendChild(p);
     } else {
-        let novoTexto = texto
-            .replace(/\n/g, '</p><p>')                  // Substitui quebras de linha em parágrafo.
-            .replace(/^(?!<p)(.*?<\/p>)/i, '<p>$1')    // Corrige fechamento de parágrafo sem abertura.
-            .replace(/(<p>.*?)(?:<\/p>)?$/i, '$1</p>')  // Garante o fechamento ao final da linha.
-            .replace(/<p><\/p>/g, '');                  // Remove as linhas vazias.
+        let partes = texto.split(/\n+/g);
 
-        let container = document.createElement("div");
-        container.innerHTML = novoTexto;
-
-        while (container.firstChild) {
-            fragmento.appendChild(container.firstChild);
-        }
+        partes.forEach(parte => {
+            let p = document.createElement('p');
+            p.textContent = parte;
+            fragmento.appendChild(p);
+        });
     }
+    
+    return fragmento;
+}
+
+/**
+ * Transforma as quebras de linha em espaço.
+ * 
+ * @param {String} texto 
+ * @returns {String}
+ */
+function transformarQuebrasDeLinhaEmEspaco(texto) {
+    var fragmento = document.createDocumentFragment();
+
+    let p = document.createElement('p');
+    p.textContent = texto.replace(/\n+/g, ' ');
+
+    fragmento.appendChild(p);
     
     return fragmento;
 }
@@ -359,10 +376,17 @@ class Dispositivo {
     }
 
     /**
+     * Transforma o conteúdo na descrição em fragmento do DOM.
+     */
+    transformarConteudoEmFragmento() {
+        return transformarQuebrasDeLinhaEmEspaco(this.descricao);
+    }
+
+    /**
      * Transforma o dispositivo no formato do editor.
      */
     paraEditor() {
-        let fragmento = transformarQuebrasDeLinhaEmP(this.descricao);
+        let fragmento = this.transformarConteudoEmFragmento();
 
         fragmento.firstElementChild.setAttribute('data-tipo', this.tipo);
 
@@ -399,6 +423,10 @@ class Artigo extends Dispositivo {
         } else {
             throw 'Tipo não suportado.';
         }
+    }
+
+    transformarConteudoEmFragmento() {
+        return transformarQuebrasDeLinhaEmP(this.descricao);
     }
 
     paraEditor() {

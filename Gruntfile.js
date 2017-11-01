@@ -27,20 +27,14 @@ module.exports = function (grunt) {
 		karma: {
 			unit: {
 				configFile: 'karma.conf.js',
-				background: true,
-				singleRun: false
-			},
-			continuous: {
-				configFile: 'karma.conf.js',
 				background: false,
-				singleRun: true/*,
-				browsers: ['PhantomJS']*/
+				singleRun: true
 			},
 			debug: {
 				configFile: 'karma.conf.js',
 				background: false,
 				singleRun: false
-			},
+			}
 		},
 		protractor: {
 			options: {
@@ -81,7 +75,7 @@ module.exports = function (grunt) {
 		watch: {
 			app: {
 				files: ["src/**/*"],
-				tasks: ["webpack:build-dev", "jshint", "karma:continuous"],
+				tasks: ["webpack:build-dev", "jshint", "karma:unit"],
 				options: {
 					spawn: false,
 				}
@@ -112,7 +106,7 @@ module.exports = function (grunt) {
 	grunt.registerTask("build-angular1", ["webpack:buildAngular1"]);
 
 	grunt.registerTask('e2e', ['exec:updateWebdriver', 'webpack-dev-server:e2e', 'protractor:e2e']);
-	grunt.registerTask('test', ['jshint', 'karma:continuous', 'e2e']);
+	grunt.registerTask('test', ['jshint', 'karma:unit', 'e2e']);
 
 	grunt.registerTask('debug', ['karma:debug']);
 };

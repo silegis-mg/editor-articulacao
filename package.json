@@ -4,7 +4,9 @@
   "description": "Editor de Articulação",
   "main": "src/editor-articulacao.js",
   "scripts": {
-    "test": "grunt test"
+    "build": "grunt build",
+    "test": "grunt test",
+    "start": "grunt"
   },
   "keywords": [
     "silegismg",
