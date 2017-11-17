@@ -7,6 +7,10 @@ Ele permite a edição de texto articulado, formatando e numerando automaticamen
 incisos, alíneas e itens, bem como as divisões em títulos, capítulos, seções e subseções. O texto articulado
 é estruturado em formato XML, conforme elemento `Articulacao` definido pelo schema do [LexML](https://github.com/lexml/lexml-xml-schemas/tree/master/src/main/resources/xsd).
 
+## Demonstração
+
+Acesse https://silegis-mg.github.io/editor-articulacao/ para ver uma simples demonstração do editor de articulação funcionando em seu navegador.
+
 ## Funcionalidades
 
 * Criação de **rótulo e numeração automática** para dispositivos (artigo, parágrafo, inciso, alínea e item);
