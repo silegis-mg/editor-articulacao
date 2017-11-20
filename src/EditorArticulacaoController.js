@@ -316,6 +316,8 @@ class EditorArticulacaoController {
      * @param {String} novoTipo Novo tipo do dispositivo.
      */
     alterarTipoDispositivoSelecionado(novoTipo) {
+        this.atualizarContexto();
+        
         if (!this.contexto) {
             throw 'Não há contexto atual.';
         }
@@ -333,12 +335,12 @@ class EditorArticulacaoController {
         let range = selecao && selecao.rangeCount > 0 ? selecao.getRangeAt(0) : null;
         let endContainer = range ? range.endContainer : null;
 
-        if (endContainer) {
-            while (endContainer.nodeType !== Node.ELEMENT_NODE || !endContainer.hasAttribute('data-tipo')) {
+        if (endContainer && endContainer !== this._elemento) {
+            while (endContainer !== this._elemento && (endContainer.nodeType !== Node.ELEMENT_NODE || !endContainer.hasAttribute('data-tipo'))) {
                 endContainer = endContainer.parentNode;
             }
 
-            while (dispositivo !== endContainer) {
+            while (dispositivo !== endContainer && dispositivo) {
                 dispositivo = dispositivo.nextElementSibling;
                 this._definirTipo(dispositivo, novoTipo);
             }
