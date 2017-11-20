@@ -317,7 +317,7 @@ class EditorArticulacaoController {
      */
     alterarTipoDispositivoSelecionado(novoTipo) {
         this.atualizarContexto();
-        
+
         if (!this.contexto) {
             throw 'Não há contexto atual.';
         }
@@ -335,11 +335,19 @@ class EditorArticulacaoController {
         let range = selecao && selecao.rangeCount > 0 ? selecao.getRangeAt(0) : null;
         let endContainer = range ? range.endContainer : null;
 
-        if (endContainer && endContainer !== this._elemento) {
+        if (endContainer) {
+            /* Se o container final não estiver no mesmo nível (por exemplo,
+             * um nó textual ou até mesmo uma tag de itálico dentro do
+             * dispositivo), então considera-se como endContainer o dispositivo
+             * ancestral, por meio da verificação do atributo "data-tipo".
+             */
             while (endContainer !== this._elemento && (endContainer.nodeType !== Node.ELEMENT_NODE || !endContainer.hasAttribute('data-tipo'))) {
                 endContainer = endContainer.parentNode;
             }
 
+            /* Altera o tipo para todos os dispositivos seguintes até encontrar
+             * o container final.
+             */
             while (dispositivo !== endContainer && dispositivo) {
                 dispositivo = dispositivo.nextElementSibling;
                 this._definirTipo(dispositivo, novoTipo);
