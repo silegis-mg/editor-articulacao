@@ -103,7 +103,7 @@ class ContextoArticulacao {
             artigo: true /*cursor.tipoAnterior !== 'titulo' - No manual de redação parlamentar da ALMG, dá a entender que o título é um agrupamento de capítulos, mas a constituição possui Art 1º. logo após o título.*/,
             continuacao: cursor.tipoAnterior === 'artigo' || cursor.continuacao,
             inciso: !anteriorAgrupador && (!cursor.artigo || (cursor.artigo && !cursor.primeiroDoTipo)),
-            paragrafo: !cursor.artigo || (cursor.artigo && (!cursor.primeiroDoTipo || cursor.continuacao)),
+            paragrafo: (!anteriorAgrupador && !cursor.artigo) || (cursor.artigo && (!cursor.primeiroDoTipo || cursor.continuacao)),
             alinea: (cursor.inciso && !cursor.primeiroDoTipo) || cursor.tipoAnterior === 'inciso' || cursor.tipoAnterior === 'alinea' || cursor.tipoAnterior === 'item',
             item: (cursor.alinea && !cursor.primeiroDoTipo) || cursor.tipoAnterior === 'alinea' || cursor.tipoAnterior === 'item'
         };
@@ -132,6 +132,14 @@ class ContextoArticulacao {
         return false;
     }
 
+    /**
+     * Determina se o contexto atual é válido.
+     * 
+     * @returns {Boolean} Verdadeiro, se o contexto estiver válido.
+     */
+    get valido() {
+        return this.permissoes[this.cursor.tipo];
+    }
 }
 
 /**
