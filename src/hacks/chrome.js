@@ -137,42 +137,42 @@ function hackInterceptarKeydown(keyboardEvent, editorCtrl) {
             range.deleteContents();
 
             /* Se a tecla for de remoção, então evitamos a ação padrão.
-                * Entretanto, se for de conteúdo, então deixamos que a ação
-                * padrão seja executada, para que o novo conteúdo seja inserido
-                * no lugar do conteúdo excluído.
-                */
+             * Entretanto, se for de conteúdo, então deixamos que a ação
+             * padrão seja executada, para que o novo conteúdo seja inserido
+             * no lugar do conteúdo excluído.
+             */
             if (keyboardEvent.key === 'Delete' || keyboardEvent.key === 'Backspace') {
                 keyboardEvent.preventDefault();
             }
 
             /* O range da seleção, ainda que seja de todo o conteúdo, não abrange
-                * o elemento inicial e o final. Isto é, se o usuário selecionar tudo
-                * usando Ctrl+A e prosseguir com a exclusão com a tecla Delete, 
-                * o conteúdo selecionado correpsonderá ao primeiro nó textual do primeiro
-                * P até o último nó textual do útlimo P.
-                * 
-                *        <p><!-- início da seleção -->nó textual</p>
-                *        <p>nó textual intermediário</p>
-                *        <p>último nó textual<-- final da seleção --></p>
-                * 
-                * Assim, a exclusão irá remover todos os nós textuais e os elementos intermediários,
-                * mantendo, entretanto, o primeiro e último elemento (veja ilustração acima,
-                * em que a seleção foi demarcada em comentário).
-                * 
-                * Para contornar esta situação, realizamos manualmente a exclusão dos elementos,
-                * se o elemento inicial da seleção for diferente do final, condicionando
-                * a exclusão à presença de conteúdo. Deve-se executar o procedimento somente
-                * se o início for diferente do final, pois a seleção pode ser apenas de
-                * conteúdo intermediário, como ilustrado a seguir:
-                * 
-                *      <p>este <!-- início da seleção -->é um <!-- final da seleção -->exemplo.</p>
-                */
+             * o elemento inicial e o final. Isto é, se o usuário selecionar tudo
+             * usando Ctrl+A e prosseguir com a exclusão com a tecla Delete, 
+             * o conteúdo selecionado correpsonderá ao primeiro nó textual do primeiro
+             * P até o último nó textual do útlimo P.
+             * 
+             *        <p><!-- início da seleção -->nó textual</p>
+             *        <p>nó textual intermediário</p>
+             *        <p>último nó textual<-- final da seleção --></p>
+             * 
+             * Assim, a exclusão irá remover todos os nós textuais e os elementos intermediários,
+             * mantendo, entretanto, o primeiro e último elemento (veja ilustração acima,
+             * em que a seleção foi demarcada em comentário).
+             * 
+             * Para contornar esta situação, realizamos manualmente a exclusão dos elementos,
+             * se o elemento inicial da seleção for diferente do final, condicionando
+             * a exclusão à presença de conteúdo. Deve-se executar o procedimento somente
+             * se o início for diferente do final, pois a seleção pode ser apenas de
+             * conteúdo intermediário, como ilustrado a seguir:
+             * 
+             *      <p>este <!-- início da seleção -->é um <!-- final da seleção -->exemplo.</p>
+             */
             if (inicio !== final) {
-                if (inicio.textContent.length === 0) {
+                if (inicio != editorCtrl._elemento && inicio.textContent.length === 0) {
                     inicio.remove();
                 }
 
-                if (final.textContent.length === 0) {
+                if (final != editorCtrl._elemento && final.textContent.length === 0) {
                     final.remove();
                 }
 
