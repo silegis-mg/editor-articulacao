@@ -17,7 +17,7 @@ Acesse https://silegis-mg.github.io/editor-articulacao/ para ver uma simples dem
 
 * Formatação padrão dos dispositivos, conforme regras de redação definidas no art. 12 da [LCP 78/2004](http://www.almg.gov.br/consulte/legislacao/completa/completa.html?tipo=LCP&num=78&comp=&ano=2004).
 
-  * A formatação pode ser **configurável**, para atender ao padrão de redação federal, sem alteração no código.
+  * A formatação pode ser **configurada**, para atender ao padrão de redação federal, sem alteração no código.
     
 * Divisão dos artigos em títulos, capítulos, seções e subseções;
 * Validação automática de:
