@@ -23,21 +23,6 @@ function hackIE(controller) {
         this._elemento.innerHTML = '<p data-tipo="artigo">&nbsp;</p>';
     };
 
-    /* IE 11 coloca o foco fora do dispositivo, permitindo a criação de texto no DIV
-     * principal, sem elemento P.
-     */
-    controller.registrarEventListener('focus', () => {
-        if (controller.vazio || /^\s+$/.test(controller._elemento.firstElementChild.textContent)) {
-            let selecao = controller.getSelection();
-
-            selecao.removeAllRanges();
-            
-            let range = document.createRange();
-            range.setStart(controller._elemento.firstElementChild, 0);
-            selecao.addRange(range);
-        }
-    });
-
     // Toggle do classList não funciona no IE 11
     // https://connect.microsoft.com/IE/Feedback/details/878564/
     interceptar(DOMTokenList.prototype, 'toggle', (classList, metodo, argumentos) => {
@@ -67,7 +52,7 @@ function hackIE(controller) {
 
 function substituirSet() {
     function substituirMetodo(metodo) {
-        if (typeof SetNativo.prototype[metodos[i]] === 'function') {
+        if (typeof SetNativo.prototype[metodo] === 'function') {
             window.Set.prototype[metodo] = function() { return this.$set[metodo].apply(this.$set, arguments); };
         }
     }

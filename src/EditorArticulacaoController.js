@@ -74,8 +74,6 @@ class EditorArticulacaoController {
 
         this._handlers = [];
 
-        this.limpar();
-
         if (!this.opcoes.somenteLeitura) {
             this._registrarEventos();
 
@@ -96,6 +94,8 @@ class EditorArticulacaoController {
                 hackIE(this);
             }
         }
+
+        this.limpar();
     }
 
     /**
@@ -184,15 +184,12 @@ class EditorArticulacaoController {
         eventos.forEach(evento => this.registrarEventListener(evento, eventHandler));
         this.registrarEventListener('keydown', this._keyDownEventHandler.bind(this));
 
-        let focusHandler = function () {
-            if (!this._elemento.firstElementChild) {
-                this.limpar();
-            }
-        }.bind(this);
-        this.registrarEventListener('focus', focusHandler, true);
-
         this.registrarEventListener('blur', e => {
             if (!this.opcoes.somenteLeitura) {
+                if (this.vazio) {
+                this.limpar();
+            }
+
                 let contexto = this.contexto;
 
                 if (contexto && contexto.cursor.dispositivo) {
@@ -259,10 +256,6 @@ class EditorArticulacaoController {
                 this.validacaoCtrl.validar(dispositivo.previousElementSibling);
                 this.validacaoCtrl.validar(dispositivo.nextElementSibling);
             }
-        }
-
-        if (this.vazio) {
-            this.limpar();
         }
     }
 
@@ -486,9 +479,12 @@ function obterSelecao(ctrl) {
         }
 
         if (startContainer === ctrl._elemento) {
+            let refazerSelecao = true;
+
             // A seleção deveria estar em algum dispositivo.
-            if (startContainer.childNodes.length === 0) {
+            if (!startContainer.firstElementChild || !startContainer.firstElementChild.hasAttribute('data-tipo')) {
                 ctrl.limpar();
+                startContainer = ctrl._elemento.firstElementChild;
             } else if (range.collapsed && range.startOffset === startContainer.childNodes.length) {
                 // Se está no final do container da articulação, então vamos para o último elemento na hierarquia.
                 do {
@@ -499,6 +495,15 @@ function obterSelecao(ctrl) {
                 do {
                     startContainer = startContainer.firstElementChild;
                 } while (startContainer.firstElementChild);
+            } else {
+                refazerSelecao = false;
+            }
+
+            if (refazerSelecao) {
+                selecao.removeAllRanges();
+                range = document.createRange();
+                range.setStart(startContainer, 0);
+                selecao.addRange(range);
             }
 
             return startContainer;
