@@ -150,8 +150,14 @@ function colarFragmento(fragmento, editorCtrl) {
             range.insertNode(item);
         }
 
-        // Insere os elementos em seguida, pois não podem estar aninhados ao elemento da seleção.
-        range.endContainer.parentNode.insertBefore(fragmento, range.endContainer.nextSibling);
+        // Insere os elementos em seguida, no container, pois não podem estar aninhados ao elemento da seleção.
+        let referencia = range.endContainer;
+
+        while (referencia.parentElement !== editorCtrl._elemento) {
+            referencia = referencia.parentElement;
+        }
+        
+        referencia.parentElement.insertBefore(fragmento, referencia.nextSibling);
     }
 
     if (excluirNoAtual) {
