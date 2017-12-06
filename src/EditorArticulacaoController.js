@@ -187,8 +187,8 @@ class EditorArticulacaoController {
         this.registrarEventListener('blur', e => {
             if (!this.opcoes.somenteLeitura) {
                 if (this.vazio) {
-                this.limpar();
-            }
+                    this.limpar();
+                }
 
                 let contexto = this.contexto;
 
@@ -507,13 +507,9 @@ function obterSelecao(ctrl) {
             }
 
             return startContainer;
-        } else {
+        } else if (startContainer.compareDocumentPosition(ctrl._elemento) & Node.DOCUMENT_POSITION_CONTAINS) {
             // Garante que a seleção está dentro do editor de articulação.
-            for (let item = startContainer; item && item !== document.body; item = item.parentNode) {
-                if (item === ctrl._elemento) {
-                    return startContainer;
-                }
-            }
+            return startContainer;
         }
     }
 
