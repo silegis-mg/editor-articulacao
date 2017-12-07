@@ -219,3 +219,16 @@ As limitações conhecidas correspondem a um conjunto de funcionalidade que não
 
 * Copiar do editor de articulação e colar em editor externo omite os rótulos;
 * Interpretação de artigo com emenda (exemplo: Art. 283-A da Constituição do Estado de Minas Gerais), apesar de haver suporte para importação de LexML com este tipo de dispositivo.
+
+# Compatibilidade com navegadores
+
+|  Navegador | Compatível | Mantida<sup>[1](#rodape1)</sup> |
+| ---------- |:----------:|:----------:|
+| Firefox 52 | ✓ | ✓ |
+| Firefox Quantum 57 | ✓ | |
+| Chrome 62 |  ✓ | ✓ |
+| IE 11 |  ✓ | |
+| Edge | X | |
+| Safari | ? | |
+
+<a name="rodape1">1</a>: Considera-se compatibilidade com navegador mantida aquela que é constantemente testada pela equipe de desenvolvimento.
