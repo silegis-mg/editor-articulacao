@@ -154,7 +154,7 @@ class EditorArticulacaoController {
     }
 
     limpar() {
-        this._elemento.innerHTML = '<p data-tipo="artigo" style="min-height: 1em;"><br></p>';
+        this._elemento.innerHTML = '<p data-tipo="artigo"><br></p>';
     }
 
     get lexmlString() {
