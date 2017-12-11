@@ -19,10 +19,11 @@ module.exports = function (grunt) {
 	require("matchdep").filterAll("grunt-*").forEach(grunt.loadNpmTasks);
 	var webpack = require("webpack");
 	var webpackConfig = require("./webpack.config.js");
+        var webDriverProxy = process.env.http_proxy ? ' --proxy ' + process.env.http_proxy : '';
 
 	grunt.initConfig({
 		exec: {
-			updateWebdriver: 'node node_modules/protractor/bin/webdriver-manager update'
+			updateWebdriver: 'node node_modules/protractor/bin/webdriver-manager update' + webDriverProxy
 		},
 		karma: {
 			unit: {
