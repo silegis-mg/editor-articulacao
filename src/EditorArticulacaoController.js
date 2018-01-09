@@ -335,7 +335,7 @@ class EditorArticulacaoController {
              * ancestral, por meio da verificação do atributo "data-tipo".
              */
             while (endContainer !== this._elemento && (endContainer.nodeType !== Node.ELEMENT_NODE || !endContainer.hasAttribute('data-tipo'))) {
-                endContainer = endContainer.parentNode;
+                endContainer = endContainer.parentElement;
             }
 
             /* Altera o tipo para todos os dispositivos seguintes até encontrar
@@ -379,7 +379,7 @@ class EditorArticulacaoController {
      */
     _normalizarDispositivo(dispositivo, contexto) {
         while (dispositivo && !dispositivo.hasAttribute('data-tipo')) {
-            dispositivo = dispositivo.parentNode;
+            dispositivo = dispositivo.parentElement;
         }
 
         if (!dispositivo) {

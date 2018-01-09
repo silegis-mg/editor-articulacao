@@ -43,7 +43,7 @@ class ContextoArticulacao {
         };
 
         while (dispositivo && dispositivo !== elementoArticulacao && !dispositivo.hasAttribute('data-tipo')) {
-            dispositivo = dispositivo.parentNode;
+            dispositivo = dispositivo.parentElement;
         }
 
         cursor.dispositivo = dispositivo !== elementoArticulacao ? dispositivo : null;
@@ -198,7 +198,7 @@ function verificarPrimeiroDoTipo(dispositivo) {
  */
 function obterDispositivoAnterior(dispositivo, elementoArticulacao) {
     while (dispositivo && !dispositivo.hasAttribute('data-tipo') && dispositivo !== elementoArticulacao) {
-        dispositivo = dispositivo.parentNode;
+        dispositivo = dispositivo.parentElement;
     }
 
     if (!dispositivo || dispositivo === elementoArticulacao) {
