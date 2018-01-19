@@ -15,14 +15,10 @@
  * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Cria uma função global, chamada silegismgEditorArticulacao,
- * que permite transformar um DIV em um editor de articulação.
- * A função cria e retorna uma nova instância de EditorArticulacaoController.
- */
 import EditorArticulacaoController from '../src/EditorArticulacaoController';
 import interpretadorArticulacao from '../src/interpretadorArticulacao';
 
-angular.module('silegismg-editor-articulacao', [])
+window.angular.module('silegismg-editor-articulacao', [])
     .directive('silegismgEditorArticulacaoConteudo', editorArticulacaoConteudoDirective)
     .service('silegismgInterpretadorArticulacaoService', interpretadorArticulacaoService);
 
