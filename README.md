@@ -76,7 +76,7 @@ O editor de articulação possui testes automatizados utilizando karma e protrac
 grunt test
 ```
 
-### Gerando pacote para aplicações finais
+### Gerando pacote para aplicações finais em ES5
 
 O javascript minificado é gerado por meio do webpack, a partir de uma tarefa do grunt. Existem dois empacotamentos para uso em aplicações finais:
 
@@ -139,6 +139,43 @@ grunt build-angular1
 ```
 
 <a name="opcoes"></a>
+
+### Utilizando como módulo ES6 e webpack
+
+```
+npm install silegismg-editor-articulacao
+```
+
+JS:
+```js
+import { ComponenteEdicao, EditorArticulacaoController, interpretadorArticulacao } from 'silegismg-editor-articulacao';
+
+const opcoes = { /* ... */ };
+var elemento = document.getElementById('exemplo');
+var ctrl = new EditorArticulacaoController(elemento, opcoes);
+```
+
+HTML:
+```html
+<div id="exemplo"></div>
+```
+
+#### Configuração do webpack
+
+O editor de articulação importa o conteúdo do CSS e manipula em tempo de execução, a fim de aplicar os parâmetros de configuração. Para tanto, deve-se utilizar o seguinte loader para os arquivos CSS deste módulo:
+
+```json
+{
+    test: /\.css$/,
+    use: {
+        loader: 'css-loader',
+        options: {
+            minimize: true,
+            sourceMap: true
+        }
+    }
+}
+```
 
 ## Opções do editor de articulação
 
