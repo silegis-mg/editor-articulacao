@@ -58,7 +58,7 @@ function importarDeLexML(elemento, resultado) {
                 break;
 
             case 'ARTIGO':
-                clonar(elemento, 'Caput > p', 'artigo', resultado);
+                clonar(elemento, 'Caput > p', idx => idx === 0 ? 'artigo' : 'continuacao', resultado);
 
                 if (/\d+º?-[A-Z]/.test(elemento.querySelector('Rotulo').textContent)) {
                     resultado.lastElementChild.classList.add('emenda');
@@ -129,21 +129,36 @@ function obterP(elemento) {
  * 
  * @param {Element} elemento Elemento que será clonado ou que contém os elementos a serem clonados, se a query for especificada.
  * @param {String} query Query a ser executada para filtrar os elementos filhos.
- * @param {String} tipoFinal Tipo final do elemento clonado.
+ * @param {String|function} tipoFinal Tipo final do elemento clonado (string) ou uma função que recebe (índice, elemento) e retorna o tipo em string.
  * @param {DocumentFragment} resultado 
  */
 function clonar(elemento, query, tipoFinal, resultado) {
+    let fnTipo;
+
+    switch (typeof tipoFinal) {
+        case 'string':
+            fnTipo = () => tipoFinal;
+            break;
+
+        case 'function':
+            fnTipo = tipoFinal;
+            break;
+
+        default:
+            throw new Error('Tipo final não é literal nem função.');
+    }
+
     if (query) {
         var itens = elemento.querySelectorAll(query);
 
         for (let i = 0; i < itens.length; i++) {
             let novoItem = itens[i].cloneNode(true);
-            novoItem.setAttribute('data-tipo', tipoFinal);
+            novoItem.setAttribute('data-tipo', fnTipo(i, novoItem));
             resultado.appendChild(novoItem);
         }
     } else {
         let novoItem = elemento.cloneNode(true);
-        novoItem.setAttribute('data-tipo', tipoFinal);
+        novoItem.setAttribute('data-tipo', fnTipo(0, novoItem));
         resultado.appendChild(novoItem);
     }
 
