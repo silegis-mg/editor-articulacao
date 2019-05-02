@@ -26,11 +26,11 @@ class ContextoArticulacaoAtualizadoEvent extends EventoInterno {
     /**
      * Constrói o evento.
      * 
-     * @param {EditorArticulacaoController} editorArticulacaoCtrl 
+     * @param {ContextoArticulacao} contexto 
      */
-    constructor(editorArticulacaoCtrl) {
+    constructor(contexto) {
         super('contexto', {
-            detail: editorArticulacaoCtrl
+            detail: contexto
         });
     }
 }

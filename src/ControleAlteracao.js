@@ -18,7 +18,7 @@
  import ArticulacaoChangeEvent from './eventos/ArticulacaoChangeEvent';
 
 /**
- * Monitora alterações no editor de articulação e dispara o evento chagne.
+ * Monitora alterações no editor de articulação e dispara o evento change.
  */
 class ControleAlteracao {
     constructor(editorCtrl) {

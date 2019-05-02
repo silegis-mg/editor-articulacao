@@ -232,6 +232,15 @@ Todas as opções de validação são habilitadas (valor true) por padrão.
 | alterado *(propriedade, somente leitura)* | Boolean | Verifica se o editor de articulação sofreu alteração. |
 | alterarTipoDispositivoSelecionado(novoTipo) | void | Altera o tipo do dispositivo em que o cursor se encontra, pelo novo tipo (String) fornecido como parâmetro. Os tipos possíveis são: titulo, capitulo, secao, subsecao, artigo, paragrafo, inciso, alinea e continuacao (todos sem acentuação ou cedilha). |
 
+### Eventos do controlador
+
+| Evento | Disparo | Condição | Classe do evento | Dados do evento |
+|--------|---------|----------|------------------|-----------------|
+| change | blur    | Texto articulado alterado | ArticulacaoChangeEvent | N/A |
+| contexto | | Objeto de contexto atualizado | ContextoArticulacaoAtualizadoEvent | ContextoArticulacao |
+| transformacao | | Controlador aplicou alguma transformação automática | TransformacaoAutomaticaEvent | Objeto contendo os seguintes atributos: automatica (booleano), tipoAnterior (literal, tipo do elemento antes da alteração), novoTipo (literal, tipo do elemento depois da alteração), transformacao (literal, nome da transformacao), editorArticulacaoCtrl (controller) |
+
+
 <a name="api-interpretador"></a>
 
 ## API do interpretador
