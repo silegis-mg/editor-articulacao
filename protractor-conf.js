@@ -25,7 +25,7 @@ exports.config = {
             chromeOptions: {
                 args: ['--no-sandbox']
             }
-        }/*, {
+        }/*, { https://github.com/angular/protractor/issues/4177
             'browserName': 'firefox'
         }*/
     ],
