@@ -1,5 +1,5 @@
 /* Copyright 2017 Assembleia Legislativa de Minas Gerais
- * 
+ *
  * This file is part of Editor-Articulacao.
  *
  * Editor-Articulacao is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ class ContextoArticulacao {
         }
 
         cursor.dispositivo = dispositivo !== elementoArticulacao ? dispositivo : null;
-        
+
         while (dispositivo && dispositivo.getAttribute('data-tipo') === 'continuacao') {
             dispositivo = dispositivo.previousElementSibling;
             cursor.continuacao = true;
@@ -64,7 +64,7 @@ class ContextoArticulacao {
         }
 
         let primeiroDoTipo, tipoAnterior;
-        
+
         Object.defineProperty(cursor, 'primeiroDoTipo', {
             get: function() {
                 if (primeiroDoTipo === undefined) {
@@ -83,7 +83,7 @@ class ContextoArticulacao {
         function possuiAnterior(dispositivo, tipo) {
             /* Implementação falha/incompleta. Uma subseção deve existir depois de uma seção,
              * mas não deveria permitir capítulo + seção + artigo + capítulo + subseção.
-             * 
+             *
              * Cuidado pois esta implementação não pode ser cara!
              */
             return dispositivo && matches.call(dispositivo, 'p[data-tipo="' + tipo + '"] ~ *');
@@ -102,8 +102,8 @@ class ContextoArticulacao {
             },
             artigo: true /*cursor.tipoAnterior !== 'titulo' - No manual de redação parlamentar da ALMG, dá a entender que o título é um agrupamento de capítulos, mas a constituição possui Art 1º. logo após o título.*/,
             continuacao: cursor.tipoAnterior === 'artigo' || cursor.continuacao,
-            inciso: !anteriorAgrupador && (!cursor.artigo || (cursor.artigo && !cursor.primeiroDoTipo)),
-            paragrafo: !anteriorAgrupador && (!cursor.artigo || (cursor.artigo && (!cursor.primeiroDoTipo || cursor.continuacao))),            
+            inciso: cursor.tipoAnterior && !anteriorAgrupador && (!cursor.artigo || (cursor.artigo && !cursor.primeiroDoTipo)),
+            paragrafo: cursor.tipoAnterior && !anteriorAgrupador && (!cursor.artigo || (cursor.artigo && (!cursor.primeiroDoTipo || cursor.continuacao))),
             alinea: (cursor.inciso && !cursor.primeiroDoTipo) || cursor.tipoAnterior === 'inciso' || cursor.tipoAnterior === 'alinea' || cursor.tipoAnterior === 'item',
             item: (cursor.alinea && !cursor.primeiroDoTipo) || cursor.tipoAnterior === 'alinea' || cursor.tipoAnterior === 'item'
         };
@@ -134,7 +134,7 @@ class ContextoArticulacao {
 
     /**
      * Determina se o contexto atual é válido.
-     * 
+     *
      * @returns {Boolean} Verdadeiro, se o contexto estiver válido.
      */
     get valido() {
@@ -144,8 +144,8 @@ class ContextoArticulacao {
 
 /**
  * Determina se o dispositivo é o primeiro do tipo.
- * 
- * @param {Element} dispositivo 
+ *
+ * @param {Element} dispositivo
  * @returns {Boolean} Verdadeiro, se for o primeiro do tipo.
  */
 function verificarPrimeiroDoTipo(dispositivo) {
@@ -159,7 +159,7 @@ function verificarPrimeiroDoTipo(dispositivo) {
         dispositvo = dispositivo.previousElementSibling;
         tipo = dispositivo.getAttribute('data-tipo');
     }
-    
+
     let pontosParagem = ({
         parte: [],
         livro: [],
@@ -192,8 +192,8 @@ function verificarPrimeiroDoTipo(dispositivo) {
 
 /**
  * Obtém o tipo de dispositivo anterior.
- * 
- * @param {Element} dispositivo 
+ *
+ * @param {Element} dispositivo
  * @returns {Element} Elemento do dispositivo anterior.
  */
 function obterDispositivoAnterior(dispositivo, elementoArticulacao) {
