@@ -127,7 +127,7 @@ describe('Formatação do editor de articulação', function() {
             expect(resultado.getText()).toEqual('<Articulacao xmlns="http://www.lexml.gov.br/1.0"><Artigo id="art1"><Rotulo>Art. 1º –</Rotulo><Caput id="art1_cpt"><p>Este é um artigo.</p></Caput><Paragrafo id="art1_par1u"><Rotulo>Parágrafo único –</Rotulo><p>Este é um parágrafo.</p></Paragrafo></Artigo></Articulacao>');
     });
     
-    it('Quando houver dois parágrafo, a formatação deve ser numérica', function() {
+    it('Quando houver dois parágrafos, a formatação deve ser numérica', function() {
         escrever('Este é um artigo.' + protractor.Key.ENTER);
         
         browser.actions()

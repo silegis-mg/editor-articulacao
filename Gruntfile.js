@@ -23,7 +23,7 @@ module.exports = function (grunt) {
 
 	grunt.initConfig({
 		exec: {
-			updateWebdriver: 'node node_modules/protractor/bin/webdriver-manager update' + webDriverProxy
+			updateWebdriver: 'node node_modules/protractor/bin/webdriver-manager update' + webDriverProxy + ' --gecko=false'
 		},
 		karma: {
 			unit: {

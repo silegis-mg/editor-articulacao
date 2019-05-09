@@ -1,0 +1,21 @@
+dist: bionic
+services:
+  - xvfb
+
+language: node_js
+
+node_js:
+  - "8"
+
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+
+install:
+  - npm install
+
+script:
+  - npm test
