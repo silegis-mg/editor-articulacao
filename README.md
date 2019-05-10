@@ -1,3 +1,5 @@
+[![npm version](https://badge.fury.io/js/silegismg-editor-articulacao.svg)](https://badge.fury.io/js/silegismg-editor-articulacao) [![Build Status](https://travis-ci.org/silegis-mg/editor-articulacao.svg?branch=master)](https://travis-ci.org/silegis-mg/editor-articulacao)
+
 # Editor de Articulação
 
 O editor de articulação é uma biblioteca javascript elaborada pela Assembleia Legislativa de Minas Gerais,
