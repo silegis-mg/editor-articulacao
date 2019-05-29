@@ -1,4 +1,6 @@
-[![npm version](https://badge.fury.io/js/silegismg-editor-articulacao.svg)](https://badge.fury.io/js/silegismg-editor-articulacao) [![Build Status](https://travis-ci.org/silegis-mg/editor-articulacao.svg?branch=master)](https://travis-ci.org/silegis-mg/editor-articulacao)
+[![npm version](https://badge.fury.io/js/silegismg-editor-articulacao.svg)](https://badge.fury.io/js/silegismg-editor-articulacao)
+[![Build Status](https://travis-ci.org/silegis-mg/editor-articulacao.svg?branch=master)](https://travis-ci.org/silegis-mg/editor-articulacao)
+[![Maintainability](https://api.codeclimate.com/v1/badges/053249e72dc77f0e2e3b/maintainability)](https://codeclimate.com/github/silegis-mg/editor-articulacao/maintainability)
 
 # Editor de Articulação
 
