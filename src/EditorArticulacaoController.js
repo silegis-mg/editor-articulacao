@@ -81,9 +81,9 @@ class EditorArticulacaoController {
                 adicionarTransformacaoAutomatica(this, elemento);
             }
 
-            this.clipboardCtrl = new ClipboardController(this);
             this.controleAlteracao = criarControleAlteracao(this);
             this.validacaoCtrl = new ValidacaoController(this.opcoes.validacao);
+            this.clipboardCtrl = new ClipboardController(this, this.validacaoCtrl);
 
             // Executa hack se necessário.
             if (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {

@@ -22,8 +22,9 @@ import { interpretarArticulacao, transformarQuebrasDeLinhaEmP } from './interpre
  * Controlador da área de transferência do editor de articulação.
  */
 class ClipboardController {
-    constructor(editorCtrl) {
+    constructor(editorCtrl, validacaoCtrl) {
         this.editorCtrl = editorCtrl;
+        this.validacaoCtrl = validacaoCtrl;
 
         editorCtrl.registrarEventListener('paste', (event) => aoColar(event, this));
     }
@@ -48,7 +49,7 @@ class ClipboardController {
 
         let fragmento = transformar(texto, this.editorCtrl.contexto.cursor.tipo, this.editorCtrl.contexto.cursor.continuacao);
 
-        colarFragmento(fragmento, this.editorCtrl);
+        colarFragmento(fragmento, this.editorCtrl, this.validacaoCtrl);
     }
 }
 
@@ -113,8 +114,9 @@ function aoColar(event, clipboardCtrl) {
  * 
  * @param {DocumentFragment} fragmento 
  * @param {EditorArticulacaoController} editorCtrl 
+ * @param {ValidacaoController} validacaoCtrl
  */
-function colarFragmento(fragmento, editorCtrl) {
+function colarFragmento(fragmento, editorCtrl, validacaoCtrl) {
     prepararDesfazer(fragmento, editorCtrl);
 
     let proximaSelecao = fragmento.lastChild;
@@ -122,6 +124,7 @@ function colarFragmento(fragmento, editorCtrl) {
     let range = selecao.getRangeAt(0);
     let noInicial = range.startContainer;
     let excluirNoAtual = fragmento.firstChild.nodeType !== Node.TEXT_NODE && noInicial !== editorCtrl._elemento && noInicial.textContent.trim().length === 0;
+    let primeiroElementoAValidar;
 
     // Se a seleção estiver no container, então devemos inserir elementos filhos...
     if (range.collapsed && noInicial === editorCtrl._elemento) {
@@ -143,8 +146,15 @@ function colarFragmento(fragmento, editorCtrl) {
             fragmento.insertBefore(p, fragmento.firstElementChild);
         }
 
+        primeiroElementoAValidar = fragmento.firstElementChild;
         range.insertNode(fragmento);
     } else {
+        if (excluirNoAtual) {
+            primeiroElementoAValidar = fragmento.firstElementChild;
+        } else {
+            primeiroElementoAValidar = noInicial.nodeType === Node.ELEMENT_NODE ? noInicial : noInicial.parentElement;
+        }
+
         // Insere os primeiros nós textuais na própria seleção.
         for (let item = fragmento.firstChild; item && item.nodeType === Node.TEXT_NODE; item = fragmento.firstChild) {
             range.insertNode(item);
@@ -172,6 +182,13 @@ function colarFragmento(fragmento, editorCtrl) {
     selecao.addRange(range);
     
     editorCtrl.atualizarContexto();
+
+    // Realiza validação do fragmento colado.
+    let ultimoElementoAValidar = proximaSelecao.nodeType === Node.ELEMENT_NODE ? proximaSelecao : proximaSelecao.parentElement;
+
+    for (let noAlterado = primeiroElementoAValidar; noAlterado && noAlterado !== ultimoElementoAValidar; noAlterado = noAlterado.nextElementSibling) {
+        validacaoCtrl.validar(noAlterado);
+    }
 }
 
 /**
