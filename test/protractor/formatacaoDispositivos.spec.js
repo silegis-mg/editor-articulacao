@@ -15,40 +15,11 @@
  * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var $it = it;
+const { $describe, escrever } = require('./utilitariosTeste');
 
-describe('Formatação do editor de articulação', function() {
-    'use strict';
-
-    const EC = protractor.ExpectedConditions;
+$describe('Formatação do editor de articulação', function(it) {
     var editor = element(by.id('articulacao'));
     var resultado = element(by.id('lexml'));
-    var testes = 0, totalTestes = 0;
-
-    function it(descricao, funcao) {
-        $it(descricao, function() {
-            testes++;
-
-            browser.executeScript(function(texto) {
-                titulo.textContent = texto;
-            }, `Teste ${testes}/${totalTestes}: ${descricao}`);
-            
-            funcao.apply(this, arguments);
-        });
-
-        totalTestes++;
-    }
-    
-    function escrever(buffer, rapido) {
-        for (let i = 0; i < buffer.length; i++) {
-            browser.actions().sendKeys(buffer[i]).perform();
-            browser.sleep(25);
-        }
-
-        if (!rapido) {
-            browser.sleep(1000);
-        }
-    }
 
     function finalizar() {
         browser.actions()
@@ -56,19 +27,6 @@ describe('Formatação do editor de articulação', function() {
             .click()
             .perform();
     }
-    
-    beforeEach(function() {
-        browser.actions()
-            .mouseMove(editor)
-            .click()
-            .perform();
-    });
-    
-    afterEach(function() {
-        browser.executeScript(function() {
-            ctrl.lexml = '<Articulacao></Articulacao>';
-        });
-    });
 
     it('Vários artigos', function() {
         escrever('Primeiro.' + protractor.Key.ENTER, true);
