@@ -278,7 +278,7 @@ As limitações conhecidas correspondem a um conjunto de funcionalidade que não
 | Firefox Quantum 57 | ✓ | |
 | Chrome 62 |  ✓ | ✓ |
 | IE 11 |  ✓ | |
-| Edge | X | |
+| Edge | ✓ | |
 | Safari | ? | |
 
-<a name="rodape1">1</a>: Considera-se compatibilidade com navegador mantida aquela que é constantemente testada pela equipe de desenvolvimento.
+<a name="rodape1"><sup>1</sup></a>: Considera-se compatibilidade com navegador mantida aquela que é constantemente testada pela equipe de desenvolvimento.
