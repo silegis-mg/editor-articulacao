@@ -544,7 +544,7 @@ function obterTipoValido(tipoDesejado, permissoes) {
  * @returns {String} XML escapado.
  */
 function escaparXml(xml) {
-    return xml.replace(/[\u00A0-\u9999]/gim, function (i) {
+    return xml.replace(/[\u00A0-\u9999]/gm, function (i) {
         return '&#' + i.charCodeAt(0) + ';';    // Converte em unicode escapado.
     });
 }
