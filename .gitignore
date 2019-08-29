@@ -2,3 +2,8 @@
 /.vscode
 /build/*.js
 /build/*.map
+-e 
+.classpath
+.project
+.settings
+
