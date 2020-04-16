@@ -237,4 +237,15 @@ $describe('Formatação do editor de articulação', function(it) {
         expect(resultado.getText()).toEqual('<Articulacao xmlns="http://www.lexml.gov.br/1.0"><Artigo id="art1"><Rotulo>Art. 1º –</Rotulo><Caput id="art1_cpt"><p>Artigo.</p></Caput><Paragrafo id="art1_par1u"><Rotulo>Parágrafo único –</Rotulo><p>Parágrafo:</p></Paragrafo></Artigo><Artigo id="art2"><Rotulo>Art. 2º –</Rotulo><Caput id="art2_cpt"><p>Artigo.</p></Caput></Artigo></Articulacao>');
     });
 
+    it('"Desfazer" não pode violar formatação', function() {
+        escrever('Teste.' + protractor.Key.HOME + protractor.Key.ENTER);
+        browser.actions()
+            .mouseMove(element(by.css('button[data-tipo-destino="continuacao"]')))
+            .click()
+            .perform();
+        escrever(protractor.Key.chord(protractor.Key.CONTROL, 'z'));
+        finalizar();
+        expect(resultado.getText()).toEqual('<Articulacao xmlns="http://www.lexml.gov.br/1.0"><Artigo id="art1"><Rotulo>Art. 1º –</Rotulo><Caput id="art1_cpt"><p>Teste.</p></Caput></Artigo></Articulacao>');
+    });
+
 });

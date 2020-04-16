@@ -75,7 +75,7 @@ class ContextoArticulacao {
             }
         });
 
-        cursor.dispositivoAnterior = dispositivo && obterDispositivoAnterior(dispositivo, elementoArticulacao);
+        cursor.dispositivoAnterior = cursor.continuacao ? dispositivo : dispositivo && obterDispositivoAnterior(dispositivo, elementoArticulacao);
         cursor.tipoAnterior = cursor.dispositivoAnterior && cursor.dispositivoAnterior.getAttribute('data-tipo');
 
         let matches = Element.prototype.matches || Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.onMatchesSelector || function() { return true; };
@@ -101,7 +101,7 @@ class ContextoArticulacao {
                 return (!anteriorAgrupador || cursor.tipoAnterior === 'secao') && possuiAnterior(cursor.dispositivo, 'secao');
             },
             artigo: true /*cursor.tipoAnterior !== 'titulo' - No manual de redação parlamentar da ALMG, dá a entender que o título é um agrupamento de capítulos, mas a constituição possui Art 1º. logo após o título.*/,
-            continuacao: cursor.tipoAnterior === 'artigo' || cursor.continuacao,
+            continuacao: cursor.tipoAnterior === 'artigo',
             inciso: cursor.tipoAnterior && !anteriorAgrupador && (!cursor.artigo || (cursor.artigo && !cursor.primeiroDoTipo)),
             paragrafo: cursor.tipoAnterior && !anteriorAgrupador && (!cursor.artigo || (cursor.artigo && (!cursor.primeiroDoTipo || cursor.continuacao))),
             alinea: (cursor.inciso && !cursor.primeiroDoTipo) || cursor.tipoAnterior === 'inciso' || cursor.tipoAnterior === 'alinea' || cursor.tipoAnterior === 'item',

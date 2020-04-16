@@ -202,7 +202,13 @@ function exportarParaLexML(dispositivoDOM, rotulos) {
     while (dispositivoDOM) {
         let tipo = dispositivoDOM.getAttribute('data-tipo').replace(/^[a-z]/, letra => letra.toUpperCase());
 
-        if (tipo === 'Continuacao') {
+        if (!tipo) {
+            throw new ArticulacaoInvalidaException(dispositivoDOM, 'Dispositivo não possui tipo definido.');
+        } else if (tipo === 'Continuacao') {
+            if (!contexto.contextoAnterior) {
+                throw new ArticulacaoInvalidaException(dispositivoDOM, 'Continuação não possui dispositivo anterior.');
+            }
+            
             let p = criarElementoP(dispositivoDOM);
             contexto.adicionarSubitem(p);
         } else {
