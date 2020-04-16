@@ -45,7 +45,6 @@ Acesse https://silegis-mg.github.io/editor-articulacao/ para ver uma simples dem
 ### Pré-requisitos para compilação
 
 * [NodeJS com npm](https://nodejs.org/en/download/)
-* Grunt (`npm install -g grunt`)
 
 ### Baixando o editor
 
@@ -64,20 +63,20 @@ npm install
 
 ### Executando exemplo
 
-Finalizado o passo anterior, execute a tarefa padrão do grunt.
+Finalizado o passo anterior, execute:
 
 ```
-grunt
+npm start
 ```
 
 Em seguida, basta abrir o navegador no endereço http://localhost:8080/exemplo.html
 
 ### Testando
 
-O editor de articulação possui testes automatizados utilizando karma e protractor. Para executá-los, basta iniciar a tarefa test pelo grunt.
+O editor de articulação possui testes automatizados utilizando karma e protractor.
 
 ```
-grunt test
+npm test
 ```
 
 ### Gerando pacote para aplicações finais em ES5
@@ -95,13 +94,13 @@ Também é definida a função global [`silegismgInterpretadorArticulacao.interp
 ##### Gerando pacote
 
 ```
-grunt build-plain
+npx grunt build-plain
 ```
 
 É possível incluir o polyfill do babel também, utilizando:
 
 ```
-grunt build-plain-polyfill
+npx grunt build-plain-polyfill
 ```
 
 ##### Utilizando plain-js
@@ -132,7 +131,7 @@ O empacotamento `angular1` registra a diretiva `silegismgEditorArticulacaoConteu
 ##### Gerando pacote
 
 ```
-grunt build-angular1
+npx grunt build-angular1
 ```
 
 ##### Exemplo
