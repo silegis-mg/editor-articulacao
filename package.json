@@ -1,6 +1,6 @@
 {
   "name": "silegismg-editor-articulacao",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Editor de Articulação",
   "main": "src/editor-articulacao.js",
   "scripts": {
