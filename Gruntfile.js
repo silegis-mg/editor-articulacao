@@ -23,6 +23,10 @@ module.exports = function (grunt) {
 
 	grunt.initConfig({
 		exec: {
+			updateWebdriverManager: {
+                cwd: 'node_modules/protractor/node_modules',
+                cmd: 'npm i webdriver-manager@~12.1.0'
+            },
 			updateWebdriver: 'node node_modules/protractor/bin/webdriver-manager update' + webDriverProxy + ' --gecko=false'
 		},
 		karma: {
@@ -106,7 +110,7 @@ module.exports = function (grunt) {
 	grunt.registerTask("build-plain-polyfill", ["webpack:buildPlainPolyfill"]);
 	grunt.registerTask("build-angular1", ["webpack:buildAngular1"]);
 
-	grunt.registerTask('e2e', ['exec:updateWebdriver', 'webpack-dev-server:e2e', 'protractor:e2e']);
+	grunt.registerTask('e2e', ['exec:updateWebdriverManager', 'exec:updateWebdriver', 'webpack-dev-server:e2e', 'protractor:e2e']);
 	grunt.registerTask('test', ['jshint', 'karma:unit', 'e2e']);
 
 	grunt.registerTask('debug', ['karma:debug']);
