@@ -121,4 +121,33 @@ describe('Importação do LexML', function () {
             '<p data-tipo="continuacao">IV - outro teste.".</p>' +
             '<p data-tipo="artigo">Esta lei entra em vigor na data de sua publicação.</p>');
     });
+
+    it('Deve transformar parágrafo vazio', function() {
+        var articulacao = `Articulacao xmlns="http://www.lexml.gov.br/1.0">
+            <Artigo id="art1">
+                <Rotulo>Art. 1º –</Rotulo>
+                <Caput id="art1_cpt">
+                    <p>Teste:</p>
+                    <Inciso id="art1_cpt_inc1">
+                        <Rotulo>II &#8211;</Rotulo>
+                        <p>Teste.</p>
+                        <Alinea id="art1_cpt_inc1_ali1">
+                            <Rotulo>a)</Rotulo>
+                            <p />
+                            <Item id="art3_cpt_inc7_ali1_ite1">
+                                <Rotulo>1)</Rotulo>
+                                <p>Teste</p>
+                            </Item>
+                        </Alinea>
+                    </Inciso>
+                </Caput>
+            </Artigo>
+        </Articulacao>`;
+
+        var fragmento = importarDeLexML(articulacao);
+        var container = document.createElement('div');
+        container.appendChild(fragmento);
+
+        expect(container.innerHTML).toBe('<p data-tipo="artigo">Teste:</p><p data-tipo="inciso">Teste.</p><p data-tipo="alinea"></p><p data-tipo="item">Teste</p>');
+    });
 });

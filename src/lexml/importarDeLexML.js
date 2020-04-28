@@ -34,9 +34,9 @@ function importarDeLexML(elemento, resultado) {
             importarDeLexML(elemento[i], resultado);
         }
     } else if (typeof elemento === 'string') {
-        let container = document.createElement('div');
-        container.innerHTML = elemento;
-        importarDeLexML(container.children, resultado);
+        let container = document.createElement('html');
+        container.innerHTML = elemento.replace(/<p\s*\/>/ig, '<P></P>'); // HTML não suporta notação <tag /> como no XML.
+        importarDeLexML(container.querySelector('body').children, resultado);
     } else {
         switch (elemento.tagName) {
             case 'ARTICULACAO':
