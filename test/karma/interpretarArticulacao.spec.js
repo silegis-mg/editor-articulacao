@@ -421,4 +421,13 @@ describe('Parser de articulação', function () {
             expect(fragmento.lastChild.outerHTML).toBe('<p>linha 3</p>');
         });
     });
+
+    it('Interpretação de diferentes formas de parágrafo', function () {
+        var texto = 'Art. 1º - Teste 1.\n§ 1º - P1.\n§ 2º - P2.\nParágrafo 3º - P3\nParagrafo 4ª - P4\nParágrafo quinto - P5\nArt. 2º - Outro artigo.';
+        var fragmento = parser.interpretar(texto, 'lexml');
+        var container = document.createElement('div');
+        container.appendChild(fragmento);
+
+        expect(container.innerHTML).toEqual('<articulacao xmlns="http://www.lexml.gov.br/1.0"><artigo id="art1"><rotulo>Art. 1º –</rotulo><caput id="art1_cpt"><p>Teste 1.</p></caput><paragrafo id="art1_par1"><rotulo>§1º –</rotulo><p>P1.</p></paragrafo><paragrafo id="art1_par2"><rotulo>§2º –</rotulo><p>P2.</p></paragrafo><paragrafo id="art1_par3"><rotulo>§3º –</rotulo><p>P3</p></paragrafo><paragrafo id="art1_par4"><rotulo>§4º –</rotulo><p>P4</p></paragrafo><paragrafo id="art1_par5"><rotulo>§5º –</rotulo><p>P5</p></paragrafo></artigo><artigo id="art2"><rotulo>Art. 2º –</rotulo><caput id="art2_cpt"><p>Outro artigo.</p></caput></artigo></articulacao>');
+    });
 });

@@ -97,7 +97,7 @@ function parseTexto(textoOriginal) {
             }
         }, {
             item: 'paragrafo',
-            regexp: /^\s*(?:Parágrafo único|§\s*(\d+))\s*.?\s*[-–]?\s*(.+)/i,
+            regexp: /^\s*(?:Par[áa]grafo [úu]nico|(?:§|Par[áa]grafo)\s*(\d+|primeiro|segundo|terceiro|quarto|quinto|sexto|s[eé]timo|oitavo|nono))\s*.?\s*[-–]?\s*(.+)/i,
             onMatch: function (contexto, m) {
                 var item = new Paragrafo(m[1] || 'Parágrafo único', m[2]);
                 var container = contexto.getUltimoItemTipo(Artigo);
