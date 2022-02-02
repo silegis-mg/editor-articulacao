@@ -19,7 +19,7 @@ describe('ClipboardController', function() {
     'use strict';
 
     describe('transformar', function() {
-        var transformar = window.clipbaordControllerModule.transformar;
+        var transformar = window.clipboardControllerModule.transformar;
 
         it('Única linha deve ser um nó textual', function() {
             var fragmento = transformar('linha única', 'artigo');
@@ -78,6 +78,23 @@ describe('ClipboardController', function() {
             container.appendChild(fragmento);
 
             expect(container.innerHTML).toBe('Enumeração:<p data-tipo="inciso">Inciso:</p><p data-tipo="alinea">Alínea:</p><p data-tipo="item">Item;</p><p data-tipo="item">Item 2.</p><p data-tipo="alinea">Alínea 2.</p><p data-tipo="inciso">Inciso 2.</p><p data-tipo="artigo">Artigo 2.</p><p data-tipo="artigo">Artigo 3.</p>');
+        });
+
+        it('Deve corrigir formatação de parágrafo único', function() {
+            const fragmento = transformar(`
+                Art. 1º - Teste. 
+                § 1º - Teste. 
+                Art. 2º - Teste. 
+                § 1º - Teste. 
+                § 2º - Teste. 
+                Art. 3º - Teste. 
+            `, false);
+            
+            const paragrafos = fragmento.querySelectorAll('p[data-tipo="paragrafo"]');
+
+            expect(paragrafos[0].classList.contains('unico')).toBe(true);
+            expect(paragrafos[1].classList.contains('unico')).toBe(false);
+            expect(paragrafos[2].classList.contains('unico')).toBe(false);
         });
     });
 });

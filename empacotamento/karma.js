@@ -24,7 +24,7 @@ import ValidacaoController from '../src/validacao/ValidacaoController';
 window.importarDeLexML = importarDeLexML;
 window.exportarParaLexML = exportarParaLexML;
 window.interpretadorArticulacao = interpretadorArticulacao;
-window.clipbaordControllerModule = {
+window.clipboardControllerModule = {
     interpretarTextoPuro: transformarTextoPuro,
     transformar: transformar
 };
