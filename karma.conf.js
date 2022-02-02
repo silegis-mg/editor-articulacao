@@ -29,11 +29,15 @@ module.exports = function (config) {
         colors: true,
         logLevel: config.LOG_WARN,
         autoWatch: true,
-        browsers: ['ChromeNoSandbox', 'Firefox'],
+        browsers: ['ChromeNoSandbox', 'FirefoxHeadless'],
         customLaunchers: { // https://github.com/karma-runner/karma-chrome-launcher/issues/73
             ChromeNoSandbox: {
-                base: 'Chrome',
-                flags: ['--no-sandbox']
+                base: 'ChromeHeadless',
+                flags: ['--no-sandbox', '--disable-extensions']
+            },
+            FirefoxHeadless: {
+                base: 'Firefox',
+                flags: [ '-headless' ],
             }
         },
         singleRun: false,

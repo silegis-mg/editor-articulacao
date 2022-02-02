@@ -1,3 +1,4 @@
+
 /* Copyright 2017 Assembleia Legislativa de Minas Gerais
  * 
  * This file is part of Editor-Articulacao.
@@ -23,7 +24,7 @@ exports.config = {
         {
             browserName: 'chrome',
             chromeOptions: {
-                args: ['--no-sandbox']
+                args: ['--no-sandbox', '--headless']
             }
         }/*, { https://github.com/angular/protractor/issues/4177
             'browserName': 'firefox'
