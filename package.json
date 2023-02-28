@@ -1,8 +1,9 @@
 {
   "name": "silegismg-editor-articulacao",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Editor de Articulação",
   "main": "src/editor-articulacao.js",
+  "types": "src/editor-articulacao.d.ts",
   "scripts": {
     "build": "npx grunt build",
     "test": "npx grunt test",
