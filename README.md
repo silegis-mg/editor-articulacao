@@ -79,6 +79,8 @@ O editor de articulação possui testes automatizados utilizando karma e protrac
 npm test
 ```
 
+Se estiver utlizando proxy, defina a variável de ambiente http_proxy para que o teste consiga baixar o webdriver do Chrome mais atual.
+
 ### Gerando pacote para aplicações finais em ES5
 
 O javascript minificado é gerado por meio do webpack, a partir de uma tarefa do grunt. Existem dois empacotamentos para uso em aplicações finais:
@@ -234,6 +236,7 @@ Todas as opções de validação são habilitadas (valor true) por padrão.
 | lexmlString *(propriedade)* | String | Obtém ou define o XML da articulação no formato LexML, porém em String. |
 | alterado *(propriedade, somente leitura)* | Boolean | Verifica se o editor de articulação sofreu alteração. |
 | alterarTipoDispositivoSelecionado(novoTipo) | void | Altera o tipo do dispositivo em que o cursor se encontra, pelo novo tipo (String) fornecido como parâmetro. Os tipos possíveis são: titulo, capitulo, secao, subsecao, artigo, paragrafo, inciso, alinea e continuacao (todos sem acentuação ou cedilha). |
+| contexto | object | Obtém o contexto atual do editor |
 
 ### Eventos do controlador
 

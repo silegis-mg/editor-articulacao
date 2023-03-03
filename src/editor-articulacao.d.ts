@@ -1,3 +1,4 @@
+import ContextoArticulacao from './ContextoArticulacao';
 import interpretadorArticulacao from './interpretadorArticulacao';
 
 /**
@@ -54,6 +55,8 @@ declare class EditorArticulacaoController {
      * @param novoTipo Novo tipo do dispositivo.
      */
     alterarTipoDispositivoSelecionado(novoTipo: TipoDispositivo): void;
+
+    get contexto(): ContextoArticulacao;
 }
 
 declare interface IOpcoesEditorArticulacaoController {
@@ -312,8 +315,152 @@ declare class Subsecao extends Divisao {
     constructor(numero: string, descricao: string);
 }
 
+/**
+ * Representa o contexto do usuário no editor de articulação.
+ * Possui dois atributos: cursor, contendo o contexto no cursor,
+ * e as permissões de alteração de dispositivo na seleção.
+ */
+declare class ContextoArticulacao {
+    constructor(elementoArticulacao: HTMLElement, dispositivo: Dispositivo);
+
+    comparar(obj2: ContextoArticulacao): boolean {
+        for (let i in this.cursor) {
+            if (this.cursor[i] !== obj2.cursor[i]) {
+                return true;
+            }
+        }
+
+        for (let i in this.permissoes) {
+            if (this.permissoes[i] !== obj2.permissoes[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Determina se o contexto atual é válido.
+     *
+     * @returns {Boolean} Verdadeiro, se o contexto estiver válido.
+     */
+    get valido(): boolean;
+
+    /**
+     * Verifica quais tipos de dispositivos são permitidos no contexto atual.
+     */
+    readonly permissoes: {
+        readonly titulo: boolean;
+        readonly capitulo: boolean;
+        readonly secao: boolean;
+        readonly subsecao: boolean;
+        readonly artigo: boolean;
+        readonly continuacao: boolean;
+        readonly inciso: boolean;
+        readonly paragrafo: boolean;
+        readonly alinea: boolean;
+        readonly item: boolean;
+    }
+
+    /**
+     * Informações sobre o contexto onde está o cursor.
+     */
+    readonly cursor: {
+        /**
+         * Indica se o cursor está em um trecho com itálico.
+         */
+        readonly italico: boolean;
+
+        /**
+         * Indica se o cursor está em um elemento desconhecido.
+         */
+        readonly desconhecido: boolean;
+
+        /**
+         * Indica se o cursor está em um título.
+         */
+        readonly titulo: boolean;
+
+        /**
+         * Indica se o cursor está em um capítulo.
+         */
+        readonly capitulo: boolean;
+
+        /**
+         * Indica se o cursor está em uma seção.
+         */
+        readonly secao: boolean;
+
+        /**
+         * Indica se o cursor está em uma subseção.
+         */
+        readonly subsecao: boolean;
+
+        /**
+         * Indica se o cursor está em um artigo.
+         */
+        readonly artigo: boolean;
+
+        /**
+         * Indica se o cursor está em uma continuação (outra linha)
+         * do dispositivo.
+         */
+        readonly continuacao: boolean;
+
+        /**
+         * Indica se o cursor está em um parágrafo.
+         */
+        readonly paragrafo: boolean;
+
+        /**
+         * Indica se o cursor está em uma alínea.
+         */
+        readonly inciso: boolean;
+
+        /**
+         * Indica se o cursor está em uma alínea.
+         */
+        readonly alinea: boolean;
+
+        /**
+         * Indica se o cursor está em um item.
+         */
+        readonly item: boolean;
+
+        /**
+         * Indica se o cursor está na raíz do editor.
+         */
+        readonly raiz: boolean;
+
+        /**
+         * Elemento do DOM do dispositivo atual.
+         */
+        readonly elemento: HTMLElement;
+
+        /**
+         * Tipo do dispositivo atual.
+         */
+        readonly tipo: TipoDispositivo;
+
+        /**
+         * Dispositivo atual.
+         */
+        readonly dispositivo: Dispositivo;
+
+        /**
+         * Instância do dispositivo anterior.
+         */
+        readonly dispositivoAnterior: Dispositivo;
+
+        /**
+         * Tipo do dispositivo anterior.
+         */
+        readonly tipoAnterior: TipoDispositivo;
+    }
+}
+
 export = {
-    ComponenteEdicao
+    ComponenteEdicao,
     EditorArticulacaoController,
     interpretadorArticulacao
 }
