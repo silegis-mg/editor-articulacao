@@ -26,6 +26,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - name: Identify Chrome version for e2e test
-      run: echo "webdriver_manager_opt=$(google-chrome --version | grep -iE " [0-9]{1,3}.[0-9]{1,3})" >> $GITHUB_ENV
+      run: echo "webdriver_manager_opt=\"--versions.chrome $(google-chrome --version | grep -iE ' [0-9]{1,3}.[0-9]{1,3})')\"" >> $GITHUB_ENV
     - run: npm ci
     - run: npm test
