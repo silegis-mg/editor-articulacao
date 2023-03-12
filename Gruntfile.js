@@ -17,17 +17,16 @@
 
 module.exports = function (grunt) {
 	require("matchdep").filterAll("grunt-*").forEach(grunt.loadNpmTasks);
-	var webpack = require("webpack");
 	var webpackConfig = require("./webpack.config.js");
-        var webDriverProxy = process.env.http_proxy ? ' --proxy ' + process.env.http_proxy : '';
+	var webDriverProxy = process.env.http_proxy ? ' --proxy ' + process.env.http_proxy : '';
 
 	grunt.initConfig({
 		exec: {
 			updateWebdriverManager: {
-		                cwd: 'node_modules/protractor/node_modules',
-		                cmd: 'npm i webdriver-manager@~12.1.0'
-            		},
-			updateWebdriver: 'node node_modules/protractor/bin/webdriver-manager update' + webDriverProxy + ' --gecko=false ' + process.env.webdriver_manager_opt
+				cwd: 'node_modules/protractor/node_modules',
+				cmd: 'npm i webdriver-manager@~12.1.0'
+			},
+			updateWebdriver: 'node node_modules/protractor/bin/webdriver-manager update' + webDriverProxy + ' --gecko=false'
 		},
 		karma: {
 			unit: {
@@ -71,7 +70,7 @@ module.exports = function (grunt) {
 			},
 			e2e: {
 				keepalive: false,
-                                port: 8075,
+				port: 8075,
 				webpack: {
 					devtool: "inline-source-map",
 				}
@@ -110,8 +109,9 @@ module.exports = function (grunt) {
 	grunt.registerTask("build-plain-polyfill", ["webpack:buildPlainPolyfill"]);
 	grunt.registerTask("build-angular1", ["webpack:buildAngular1"]);
 
-	grunt.registerTask('e2e', ['exec:updateWebdriverManager', 'exec:updateWebdriver', 'webpack-dev-server:e2e', 'protractor:e2e']);
-	grunt.registerTask('test', ['jshint', 'karma:unit', 'e2e']);
+	grunt.registerTask('e2e-updating', ['exec:updateWebdriverManager', 'exec:updateWebdriver', 'webpack-dev-server:e2e', 'protractor:e2e']);
+	grunt.registerTask('e2e', ['webpack-dev-server:e2e', 'protractor:e2e']);
+	grunt.registerTask('test', ['jshint', 'karma:unit', 'e2e-updating']);
 
 	grunt.registerTask('debug', ['karma:debug']);
 };

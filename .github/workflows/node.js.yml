@@ -25,7 +25,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - name: Identify Chrome version for e2e test
-      run: echo "webdriver_manager_opt=\"--versions.chrome $(google-chrome --version | grep -iE ' [0-9]{1,3}.[0-9]{1,3})')\"" >> $GITHUB_ENV
+    - uses: nanasess/setup-chromedriver@v1        
     - run: npm ci
-    - run: npm test
+    - name: jshint
+      run: npx grunt jshint
+    - name: unit tests
+      run: npx grunt karma:unit
+    - name: e2e
+      run: npx grunt e2e
