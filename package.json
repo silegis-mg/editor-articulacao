@@ -45,7 +45,7 @@
     "html-loader": "^0.5.5",
     "jasmine": "^2.99.0",
     "jshint": "^2.13.4",
-    "karma": "^1.7.1",
+    "karma": "^6.4.2",
     "karma-chrome-launcher": "~3.1.0",
     "karma-firefox-launcher": "^2.1.0",
     "karma-jasmine": "^1.1.2",
