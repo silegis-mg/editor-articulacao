@@ -14,67 +14,24 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
  */
+const path = require('path');
 
-const webpack = require('webpack');
-
-module.exports = function (empacotamento, debug, polyfill) {
+module.exports = function (empacotamento) {
     var entry = './empacotamento/' + empacotamento + '.js';
-    var sufixo = polyfill ? empacotamento + '-polyfill' : empacotamento;
+    var sufixo = empacotamento;
 
     return {
-        entry: polyfill ? ['babel-polyfill', entry] : entry,
+        entry: entry,
         output: {
             path: __dirname + '/build',
             filename: 'silegismg-editor-articulacao-' + sufixo + '.js'
         },
-        module: {
-            loaders: [
-                {
-                    test: /\.css$/,
-                    use: {
-                        loader: 'css-loader',
-                        options: {
-                            minimize: true,
-                            sourceMap: true
-                        }
-                    }
-                },
-                {
-                    test: /\.html$/,
-                    use: {
-                        loader: 'html-loader',
-                        options: {
-                            minimize: true,
-                            removeComments: true,
-                        }
-                    }
-                },
-                {
-                    test: /\.js$/,
-                    use: {
-                        loader: 'babel-loader',
-                        options: {
-                            presets: [['env', {
-                                targets: {
-                                    browsers: ['last 2 versions', 'firefox >= 52', 'ie >= 11']
-                                }
-                            }]],
-                            plugins: [["babel-plugin-transform-builtin-extend", {
-                                globals: ["CustomEvent"]
-                            }]]
-                        }
-                    }
-                }
-            ]
-        },
-        devtool: 'source-map',
-        plugins: debug ? [] : [
-            new webpack.optimize.UglifyJsPlugin({
-                sourceMap: true,
-                uglifyOptions: {
-                    keep_classnames: true
-                }
-            })
-        ]
+        mode: 'production',
+        devServer: {
+            static: {
+                directory: path.join(__dirname, 'test/puppeteer')
+            },
+            port: 9000
+        }
     };
 };

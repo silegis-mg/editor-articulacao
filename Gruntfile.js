@@ -18,16 +18,8 @@
 module.exports = function (grunt) {
 	require("matchdep").filterAll("grunt-*").forEach(grunt.loadNpmTasks);
 	var webpackConfig = require("./webpack.config.js");
-	var webDriverProxy = process.env.http_proxy ? ' --proxy ' + process.env.http_proxy : '';
-
+	
 	grunt.initConfig({
-		exec: {
-			updateWebdriverManager: {
-				cwd: 'node_modules/protractor/node_modules',
-				cmd: 'npm i webdriver-manager@~12.1.0'
-			},
-			updateWebdriver: 'node node_modules/protractor/bin/webdriver-manager update' + webDriverProxy + ' --gecko=false'
-		},
 		karma: {
 			unit: {
 				configFile: 'karma.conf.js',
@@ -40,17 +32,6 @@ module.exports = function (grunt) {
 				singleRun: false
 			}
 		},
-		protractor: {
-			options: {
-				configFile: 'protractor-conf.js',
-				noColor: false
-			},
-			e2e: {
-				options: {
-					keepAlive: false
-				}
-			}
-		},
 		webpack: {
 			buildPlain: webpackConfig('plain-js'),
 			buildAngular1: webpackConfig('angular1'),
@@ -59,21 +40,8 @@ module.exports = function (grunt) {
 			"build-dev": webpackConfig('plain-js', true)
 		},
 		"webpack-dev-server": {
-			options: {
-				webpack: webpackConfig('plain-js', true),
-				contentBase: ['exemplo', 'test']
-			},
+			options: webpackConfig('plain-js', true),
 			start: {
-				webpack: {
-					devtool: "inline-source-map",
-				}
-			},
-			e2e: {
-				keepalive: false,
-				port: 8075,
-				webpack: {
-					devtool: "inline-source-map",
-				}
 			}
 		},
 		watch: {
@@ -109,9 +77,7 @@ module.exports = function (grunt) {
 	grunt.registerTask("build-plain-polyfill", ["webpack:buildPlainPolyfill"]);
 	grunt.registerTask("build-angular1", ["webpack:buildAngular1"]);
 
-	grunt.registerTask('e2e-updating', ['exec:updateWebdriverManager', 'exec:updateWebdriver', 'webpack-dev-server:e2e', 'protractor:e2e']);
-	grunt.registerTask('e2e', ['webpack-dev-server:e2e', 'protractor:e2e']);
-	grunt.registerTask('test', ['jshint', 'karma:unit', 'e2e-updating']);
+	grunt.registerTask('test', ['jshint', 'karma:unit']);
 
 	grunt.registerTask('debug', ['karma:debug']);
 };

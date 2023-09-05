@@ -5,32 +5,24 @@ name: Teste de Unidade
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, develop ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, develop ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [14.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - name: jshint
-      run: npx grunt jshint
-    - name: unit tests
-      run: npx grunt karma:unit
-    - name: Download ChromeDriver
-      run: node node_modules/protractor/bin/webdriver-manager update --versions.chrome $(/usr/bin/chromium --version | awk '{print $2}')
-    - name: e2e
-      run: npx grunt e2e
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm ci
+      - name: jshint
+        run: npx grunt jshint
+      - name: unit tests
+        run: npx grunt karma:unit
+

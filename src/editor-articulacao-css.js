@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+const css = `
 .silegismg-editor-articulacao {
   counter-reset: parte livro titulo capitulo secao subsecao artigo;
   outline: none;
@@ -49,15 +49,6 @@
   text-indent: 0;
   margin-left: auto;
   font-size: 90%;
-
-/*
-  white-space: nowrap;
-  text-overflow: clip;
-  overflow: hidden;
-  max-width: 2ex;
-  vertical-align: middle;
-  margin-left: 1ex;
-*/
 }
 
 .silegismg-editor-articulacao p[data-tipo="titulo"]:before {
@@ -131,23 +122,23 @@
 
 
 .silegismg-editor-articulacao p[data-tipo="artigo"]:before {
-  content: 'Art. ' counter(artigo) 'º' '${separadorArtigo}';
+  content: 'Art. ' counter(artigo) 'º' '\${separadorArtigo}';
   counter-increment: artigo;
 }
 
 .silegismg-editor-articulacao p[data-tipo="artigo"].emenda:before {
-  content: 'Art. ' counter(artigo) 'º-' counter(emenda, upper-latin) '${separadorArtigo}';
+  content: 'Art. ' counter(artigo) 'º-' counter(emenda, upper-latin) '\${separadorArtigo}';
   counter-increment: emenda;
 }
 
 /* A partir do artigo 10, não se usa "º" */
 
 .silegismg-editor-articulacao p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda):before {
-  content: 'Art. ' counter(artigo) '${separadorArtigoSemOrdinal}';
+  content: 'Art. ' counter(artigo) '\${separadorArtigoSemOrdinal}';
 }
 
 .silegismg-editor-articulacao p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"].emenda:before {
-  content: 'Art. ' counter(artigo) '-' counter(emenda, upper-latin) '${separadorArtigoSemOrdinal}';
+  content: 'Art. ' counter(artigo) '-' counter(emenda, upper-latin) '\${separadorArtigoSemOrdinal}';
 }
 
 .silegismg-editor-articulacao p[data-tipo='artigo'] {
@@ -163,17 +154,17 @@
 }
 
 .silegismg-editor-articulacao p[data-tipo='paragrafo']:before {
-  content: '§ ' counter(paragrafo) 'º' '${separadorParagrafo}';
+  content: '§ ' counter(paragrafo) 'º' '\${separadorParagrafo}';
   counter-increment: paragrafo;
 }
 
 .silegismg-editor-articulacao p.semOrdinal[data-tipo='paragrafo']:before {
-  content: '§ ' counter(paragrafo) '${separadorParagrafoSemOrdinal}';
+  content: '§ ' counter(paragrafo) '\${separadorParagrafoSemOrdinal}';
   counter-increment: paragrafo;
 }
 
 .silegismg-editor-articulacao p[data-tipo='paragrafo'].unico:before {
-  content: 'Parágrafo único${separadorParagrafoUnico}';
+  content: 'Parágrafo único\${separadorParagrafoUnico}';
 }
 
 .silegismg-editor-articulacao p[data-tipo='inciso'] {
@@ -181,7 +172,7 @@
 }
 
 .silegismg-editor-articulacao p[data-tipo='inciso']:before {
-  content: counter(inciso, upper-roman) '${separadorInciso}';
+  content: counter(inciso, upper-roman) '\${separadorInciso}';
   counter-increment: inciso;
 }
 
@@ -190,12 +181,12 @@
 }
 
 .silegismg-editor-articulacao p[data-tipo='alinea']:before {
-  content: counter(alinea, lower-latin) '${separadorAlinea}';
+  content: counter(alinea, lower-latin) '\${separadorAlinea}';
   counter-increment: alinea;
 }
 
 .silegismg-editor-articulacao p[data-tipo='item']:before {
-  content: counter(item) '${separadorItem}';
+  content: counter(item) '\${separadorItem}';
   counter-increment: item;
 }
 
@@ -224,3 +215,6 @@
     opacity: 1;
   }
 }
+`;
+
+export default css;

@@ -15,7 +15,7 @@
  * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import html from './editor.html';
+import html from './editor-html';
 import EditorArticulacaoController from './EditorArticulacaoController';
 
 /**
