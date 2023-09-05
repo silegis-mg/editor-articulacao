@@ -35,7 +35,7 @@ function importarDeLexML(elemento, resultado) {
         }
     } else if (typeof elemento === 'string') {
         let container = document.createElement('html');
-        container.innerHTML = elemento.replace(/<p\s*\/>/ig, '<P></P>'); // HTML não suporta notação <tag /> como no XML.
+        container.innerHTML = elemento.replace(/<([^ >]+)\s*\/>/g, '<$1></$1>'); // HTML não suporta notação <tag /> como no XML.
         importarDeLexML(container.querySelector('body').children, resultado);
     } else {
         switch (elemento.tagName) {
