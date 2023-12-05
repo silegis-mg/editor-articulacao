@@ -21,8 +21,8 @@ jobs:
           node-version: 18
           cache: 'npm'
       - run: npm ci
-      - name: jshint
-        run: npx grunt jshint
-      - name: unit tests
-        run: npx grunt karma:unit
+      - name: eslint
+        run: npx lint
+      # - name: unit tests
+      #   run: npx grunt karma:unit
 

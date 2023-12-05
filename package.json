@@ -5,9 +5,10 @@
   "main": "src/editor-articulacao.js",
   "types": "src/editor-articulacao.d.ts",
   "scripts": {
-    "build": "npx grunt build",
-    "test": "npx grunt test",
-    "start": "npx grunt"
+    "build": "webpack",
+    "test": "grunt test",
+    "lint": "eslint --ext .ts src",
+    "start": "webpack serve --config-name plain-js"
   },
   "keywords": [
     "silegismg",
@@ -29,19 +30,19 @@
     "url": "https://github.com/silegis-mg/editor-articulacao.git"
   },
   "devDependencies": {
-    "grunt-contrib-jshint": "^3.2.0",
-    "grunt-karma": "^4.0.2",
-    "grunt-webpack": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "eslint": "^8.55.0",
     "jasmine": "^2.99.0",
-    "jshint": "^2.13.4",
     "karma-chrome-launcher": "^3.2.0",
     "karma-firefox-launcher": "^2.1.2",
     "karma-jasmine": "^5.1.0",
     "karma-webpack": "^5.0.0",
     "matchdep": "^2.0.0",
+    "ts-loader": "^9.5.0",
+    "typescript": "^5.2.2",
     "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1"
-  },
-  "dependencies": {
   }
 }

@@ -22,7 +22,7 @@
 
 import ComponenteEdicao from '../src/ComponenteEdicao';
 import EditorArticulacaoController from '../src/EditorArticulacaoController';
-import interpretadorArticulacao from '../src/interpretadorArticulacao';
+import * as interpretadorArticulacao from '../src/interpretadorArticulacao';
 
 /**
  * Prepara um elemento do DOM como um editor de articulação.

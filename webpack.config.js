@@ -16,12 +16,13 @@
  */
 const path = require('path');
 
-module.exports = function (empacotamento) {
+module.exports = ['plain-js', 'angular1'].map(empacotamento => {
     var entry = './empacotamento/' + empacotamento + '.js';
     var sufixo = empacotamento;
 
     return {
         entry: entry,
+        name: empacotamento,
         output: {
             path: __dirname + '/build',
             filename: 'silegismg-editor-articulacao-' + sufixo + '.js'
@@ -32,6 +33,18 @@ module.exports = function (empacotamento) {
                 directory: path.join(__dirname, 'test/puppeteer')
             },
             port: 9000
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.ts?$/,
+                    use: 'ts-loader',
+                    exclude: /node_modules/,
+                },
+            ],
+        },
+        resolve: {
+            extensions: ['.ts', '.js'],
         }
     };
-};
+});

@@ -16,7 +16,7 @@
  */
 
 import EditorArticulacaoController from '../src/EditorArticulacaoController';
-import interpretadorArticulacao from '../src/interpretadorArticulacao';
+import * as interpretadorArticulacao from '../src/interpretadorArticulacao';
 
 window.angular.module('silegismg-editor-articulacao', [])
     .directive('silegismgEditorArticulacaoConteudo', editorArticulacaoConteudoDirective)
