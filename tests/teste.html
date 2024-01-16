@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="silegismg-editor-articulacao-playwright.js"></script>
+</head>
+
+<body>
+    <h1 style="margin-top: 2em">Teste do editor de articulação</h1>
+    <h2 id="titulo">Editor</h2>
+
+    <div style="position: fixed; top: 0; left: 0; right: 0; padding: 1ex; background: #ccc">
+        <button data-tipo-destino="titulo">Título</button>
+        <button data-tipo-destino="capitulo">Capítulo</button>
+        <button data-tipo-destino="secao">Seção</button>
+        <button data-tipo-destino="subsecao">Subseção</button>
+        <button data-tipo-destino="continuacao">Continuação</button>
+        <button data-tipo-destino="artigo">Artigo</button>
+        <button data-tipo-destino="paragrafo">Parágrafo</button>
+        <button data-tipo-destino="inciso">Inciso</button>
+        <button data-tipo-destino="alinea">Alínea</button>
+        <button data-tipo-destino="item">Item</button>
+    </div>
+
+    <div id="articulacao"></div>
+    <hr>
+    <pre id="lexml"></pre>
+    
+    <button id="atualizar">Atualizar</button>
+
+    <script>
+        var ctrl = silegismgEditorArticulacaoController(document.getElementById('articulacao'));
+        let botoes = document.querySelectorAll('button[data-tipo-destino]');
+
+        for (let i = 0; i < botoes.length; i++) {
+            botoes[i].onclick = function (event) {
+                articulacao.ctrlArticulacao.alterarTipoDispositivoSelecionado(event.target.getAttribute('data-tipo-destino'));
+                articulacao.focus();
+            }
+        }
+
+        /* Monitora atualização do contexto do usuário no editor de articulação,
+         * controlando habilitação de botões de transformação de dispositivo.
+         * 
+         * A atualização é feita por meio do evento "contexto" no DOM.
+         */
+        document.getElementById('articulacao').addEventListener('contexto', function (evento) {
+            // Vamos atualizar os botões.
+            for (let i = 0; i < botoes.length; i++) {
+                botoes[i].disabled = !evento.detail.permissoes[botoes[i].getAttribute('data-tipo-destino')];
+            }
+        });
+
+        document.getElementById('articulacao').addEventListener('change', function () {
+            lexml.textContent = !ctrl.vazio ? ctrl.lexmlString : '';
+        });
+
+        document.getElementById('atualizar').onclick = event => lexml.textContent = !ctrl.vazio ? ctrl.lexmlString : '';
+    </script>
+</body>
+
+</html>

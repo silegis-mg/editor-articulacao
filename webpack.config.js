@@ -16,7 +16,7 @@
  */
 const path = require('path');
 
-module.exports = ['plain-js', 'angular1'].map(empacotamento => {
+module.exports = ['plain-js', 'angular1', 'playwright'].map(empacotamento => {
     var entry = './empacotamento/' + empacotamento + '.js';
     var sufixo = empacotamento;
 
@@ -30,16 +30,19 @@ module.exports = ['plain-js', 'angular1'].map(empacotamento => {
         mode: 'production',
         devServer: {
             static: {
-                directory: path.join(__dirname, 'test/puppeteer')
+                directory: path.join(__dirname, 'tests')
             },
             port: 9000
         },
         module: {
             rules: [
                 {
-                    test: /\.ts?$/,
-                    use: 'ts-loader',
-                    exclude: /node_modules/,
+                    test: /tests?/,
+                    use: 'ignore-loader'
+                },
+                {
+                    test: /\.ts$/,
+                    use: 'ts-loader'
                 },
             ],
         },

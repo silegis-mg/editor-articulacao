@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* Copyright 2017 Assembleia Legislativa de Minas Gerais
  * 
  * This file is part of Editor-Articulacao.
@@ -14,18 +15,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
  */
+import { expect, test } from './fixture';
 
-describe('Importação do LexML', function () {
-    'use strict';
+function testarImportacao(titulo: string, lexml: string, htmlEsperado: string) {
+    return test(titulo, async ({ importarDeLexml }) => {
+        const html = await importarDeLexml(lexml);
+        expect(html).toBe(htmlEsperado);
+    });
+}
 
-    var importarDeLexML = window.importarDeLexML;
-
-    it('Deve importar os artigos 1 a 3 da constituição federal', function () {
-        var articulacao = `<Articulacao>
-            <Titulo id="tit1">
-                <Rotulo>Título I</Rotulo>
-                <NomeAgrupador>Dos Princípios Fundamentais</NomeAgrupador>
-                <Artigo id="art1">
+test.describe('Importação do LexML', () => {
+    testarImportacao('Deve importar os artigos 1 a 3 da constituição federal', `<Articulacao>
+        <Titulo id="tit1">
+            <Rotulo>Título I</Rotulo>
+            <NomeAgrupador>Dos Princípios Fundamentais</NomeAgrupador>
+            <Artigo id="art1">
                 <Rotulo>Art. 1º</Rotulo>
                 <Caput id="art1_cpt">
                     <p>A República Federativa do Brasil, formada pela união indissolúvel dos Estados e Municípios e do Distrito Federal, constitui-se em Estado democrático de direito e tem como fundamentos:</p>
@@ -54,8 +58,8 @@ describe('Importação do LexML', function () {
                     <Rotulo>Parágrafo único.</Rotulo>
                     <p>Todo o poder emana do povo, que o exerce por meio de representantes eleitos ou diretamente, nos termos desta Constituição.</p>
                 </Paragrafo>
-                </Artigo>
-                <Artigo id="art2">
+            </Artigo>
+            <Artigo id="art2">
                 <Rotulo>Art. 2º</Rotulo>
                 <Caput id="art2_cpt">
                     <p>São Poderes da União, independentes e harmônicos entre si, o Legislativo, o Executivo e o Judiciário.</p>
@@ -82,18 +86,12 @@ describe('Importação do LexML', function () {
                         <p>promover o bem de todos, sem preconceitos de origem, raça, sexo, cor, idade e quaisquer outras formas de discriminação.</p>
                     </Inciso>
                 </Caput>
-                </Artigo>
-            </Articulacao>`;
+            </Artigo>
+        </Articulacao>`,
+    '<p data-tipo="titulo">Dos Princípios Fundamentais</p><p data-tipo="artigo">A República Federativa do Brasil, formada pela união indissolúvel dos Estados e Municípios e do Distrito Federal, constitui-se em Estado democrático de direito e tem como fundamentos:</p><p data-tipo="inciso">a soberania;</p><p data-tipo="inciso">a cidadania;</p><p data-tipo="inciso">a dignidade da pessoa humana;</p><p data-tipo="inciso">os valores sociais do trabalho e da livre iniciativa;</p><p data-tipo="inciso">o pluralismo político.</p><p data-tipo="paragrafo" class="unico">Todo o poder emana do povo, que o exerce por meio de representantes eleitos ou diretamente, nos termos desta Constituição.</p><p data-tipo="artigo">São Poderes da União, independentes e harmônicos entre si, o Legislativo, o Executivo e o Judiciário.</p><p data-tipo="artigo">Constituem objetivos fundamentais da República Federativa do Brasil:</p><p data-tipo="inciso">construir uma sociedade livre, justa e solidária;</p><p data-tipo="inciso">garantir o desenvolvimento nacional;</p><p data-tipo="inciso">erradicar a pobreza e a marginalização e reduzir as desigualdades sociais e regionais;</p><p data-tipo="inciso">promover o bem de todos, sem preconceitos de origem, raça, sexo, cor, idade e quaisquer outras formas de discriminação.</p>'
+    );
 
-        var fragmento = importarDeLexML(articulacao);
-        var container = document.createElement('div');
-        container.appendChild(fragmento);
-
-        expect(container.innerHTML).toBe('<p data-tipo="titulo">Dos Princípios Fundamentais</p><p data-tipo="artigo">A República Federativa do Brasil, formada pela união indissolúvel dos Estados e Municípios e do Distrito Federal, constitui-se em Estado democrático de direito e tem como fundamentos:</p><p data-tipo="inciso">a soberania;</p><p data-tipo="inciso">a cidadania;</p><p data-tipo="inciso">a dignidade da pessoa humana;</p><p data-tipo="inciso">os valores sociais do trabalho e da livre iniciativa;</p><p data-tipo="inciso">o pluralismo político.</p><p data-tipo="paragrafo" class="unico">Todo o poder emana do povo, que o exerce por meio de representantes eleitos ou diretamente, nos termos desta Constituição.</p><p data-tipo="artigo">São Poderes da União, independentes e harmônicos entre si, o Legislativo, o Executivo e o Judiciário.</p><p data-tipo="artigo">Constituem objetivos fundamentais da República Federativa do Brasil:</p><p data-tipo="inciso">construir uma sociedade livre, justa e solidária;</p><p data-tipo="inciso">garantir o desenvolvimento nacional;</p><p data-tipo="inciso">erradicar a pobreza e a marginalização e reduzir as desigualdades sociais e regionais;</p><p data-tipo="inciso">promover o bem de todos, sem preconceitos de origem, raça, sexo, cor, idade e quaisquer outras formas de discriminação.</p>');
-    });
-
-    it('Deve importar citações dentro de artigo', function () {
-        var articulacao = `<Articulacao xmlns="http://www.lexml.gov.br/1.0">
+    testarImportacao('Deve importar citações dentro de artigo', `<Articulacao xmlns="http://www.lexml.gov.br/1.0">
             <Artigo id="art1">
                 <Rotulo>Art. 1º –</Rotulo>
                 <Caput id="art1_cpt">
@@ -109,21 +107,15 @@ describe('Importação do LexML', function () {
                     <p>Esta lei entra em vigor na data de sua publicação.</p>
                 </Caput>
             </Artigo>
-        </Articulacao>`;
+        </Articulacao>`,
+        '<p data-tipo="artigo">Ficam acrescidos ao art. 2º da Lei nº 1.234, de 31 de fevereiro de 2018, os incisos III e IV:</p>' +
+        '<p data-tipo="continuacao">"Art. 2º - (...)</p>' +
+        '<p data-tipo="continuacao">III - testar a importação;</p>' +
+        '<p data-tipo="continuacao">IV - outro teste.".</p>' +
+        '<p data-tipo="artigo">Esta lei entra em vigor na data de sua publicação.</p>'
+    );
 
-        var fragmento = importarDeLexML(articulacao);
-        var container = document.createElement('div');
-        container.appendChild(fragmento);
-
-        expect(container.innerHTML).toBe('<p data-tipo="artigo">Ficam acrescidos ao art. 2º da Lei nº 1.234, de 31 de fevereiro de 2018, os incisos III e IV:</p>' +
-            '<p data-tipo="continuacao">"Art. 2º - (...)</p>' +
-            '<p data-tipo="continuacao">III - testar a importação;</p>' +
-            '<p data-tipo="continuacao">IV - outro teste.".</p>' +
-            '<p data-tipo="artigo">Esta lei entra em vigor na data de sua publicação.</p>');
-    });
-
-    it('Deve transformar parágrafo vazio', function() {
-        var articulacao = `Articulacao xmlns="http://www.lexml.gov.br/1.0">
+    testarImportacao('Deve transformar parágrafo vazio', `Articulacao xmlns="http://www.lexml.gov.br/1.0">
             <Artigo id="art1">
                 <Rotulo>Art. 1º –</Rotulo>
                 <Caput id="art1_cpt">
@@ -142,12 +134,7 @@ describe('Importação do LexML', function () {
                     </Inciso>
                 </Caput>
             </Artigo>
-        </Articulacao>`;
-
-        var fragmento = importarDeLexML(articulacao);
-        var container = document.createElement('div');
-        container.appendChild(fragmento);
-
-        expect(container.innerHTML).toBe('<p data-tipo="artigo">Teste:</p><p data-tipo="inciso">Teste.</p><p data-tipo="alinea"></p><p data-tipo="item">Teste</p>');
-    });
+        </Articulacao>`,
+    '<p data-tipo="artigo">Teste:</p><p data-tipo="inciso" data-invalido="Enumerações devem possuir mais de um elemento.">Teste.</p><p data-tipo="alinea"></p><p data-tipo="item" data-invalido="Enumerações devem possuir mais de um elemento. Enumerações devem ser terminadas com ponto final (.), ponto e vírgula (;) ou dois pontos (:), sem espaço antes da pontuação.">Teste</p>'
+    );
 });

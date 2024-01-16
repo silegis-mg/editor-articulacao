@@ -17,7 +17,7 @@
 
 import EditorArticulacaoController from './EditorArticulacaoController';
 import { TipoDispositivo, TipoDispositivoOuAgrupador } from './TipoDispositivo';
-import { TArticulacao, interpretarArticulacao, transformarQuebrasDeLinhaEmP } from './interpretadorArticulacao';
+import { TArticulacao, interpretar, transformarQuebrasDeLinhaEmP } from './interpretadorArticulacao';
 import { obterElemento } from './util';
 import ValidacaoController from './validacao/ValidacaoController';
 
@@ -61,13 +61,13 @@ export default class ClipboardController {
  * @param texto Texto a ser transformado.
  * @param tipo Tipo do contexto atual do cursor.
  */
-function transformar(texto: string, tipo: TipoDispositivoOuAgrupador | 'desconhecido') {
+function transformar(texto: string, tipo: TipoDispositivoOuAgrupador | 'desconhecido'): DocumentFragment | null {
     let fragmento;
 
     if (tipo === 'continuacao') {
         fragmento = transformarTextoPuro(texto, 'continuacao');
     } else {
-        const dados = interpretarArticulacao(texto, 'json');
+        const dados = interpretar(texto, 'json');
 
         if (dados.textoAnterior) {
             fragmento = transformarTextoPuro(dados.textoAnterior, tipo !== 'desconhecido' ? tipo : TipoDispositivo.ARTIGO);

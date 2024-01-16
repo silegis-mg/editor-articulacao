@@ -593,10 +593,10 @@ function transformarEmLexML(json: IResultadoInterpretacao): string {
  * @param {String} formatoOrigem Formatao a ser processado: 'texto' (padrão), 'html'.
  * @returns {Object|DocumentFragment}
  */
-export function interpretarArticulacao(texto: string, formatoDestino: 'json', formatoOrigem?: 'texto' | 'html'): IResultadoInterpretacao;
-export function interpretarArticulacao(texto: string, formatoDestino: 'lexml', formatoOrigem?: 'texto' | 'html'): DocumentFragment;
-export function interpretarArticulacao(texto: string, formatoDestino: 'lexml-string' | 'lexmlstring', formatoOrigem?: 'texto' | 'html'): string;
-export function interpretarArticulacao(texto: string, formatoDestino: 'json' | 'lexml' | 'lexml-string' | 'lexmlstring' = 'lexml', formatoOrigem: 'texto' | 'html' = 'texto'): IResultadoInterpretacao | DocumentFragment | string {
+export function interpretar(texto: string, formatoDestino: 'json', formatoOrigem?: 'texto' | 'html'): IResultadoInterpretacao;
+export function interpretar(texto: string, formatoDestino: 'lexml', formatoOrigem?: 'texto' | 'html'): DocumentFragment;
+export function interpretar(texto: string, formatoDestino: 'lexml-string' | 'lexmlstring', formatoOrigem?: 'texto' | 'html'): string;
+export function interpretar(texto: string, formatoDestino: 'json' | 'lexml' | 'lexml-string' | 'lexmlstring' = 'lexml', formatoOrigem: 'texto' | 'html' = 'texto'): IResultadoInterpretacao | DocumentFragment | string {
     let json: IResultadoInterpretacao;
 
     try {

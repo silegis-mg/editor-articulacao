@@ -1,0 +1,1 @@
+final do anterior.<p data-tipo="artigo">Artigo 2.</p>

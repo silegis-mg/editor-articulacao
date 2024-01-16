@@ -29,7 +29,7 @@ import * as interpretadorArticulacao from '../src/interpretadorArticulacao';
  * 
  * @param {Element} elemento 
  */
-function criarControllerEditorArticulacao(elemento, opcoes) {
+export function criarControllerEditorArticulacao(elemento, opcoes) {
     elemento.ctrlArticulacao = new EditorArticulacaoController(elemento, opcoes);
 
     Object.defineProperty(elemento, 'lexml', {
@@ -44,7 +44,7 @@ function criarControllerEditorArticulacao(elemento, opcoes) {
     return elemento.ctrlArticulacao;
 }
 
-function prepararEditorArticulacaoCompleto(elemento, opcoes) {
+export function prepararEditorArticulacaoCompleto(elemento, opcoes) {
     elemento.componenteEdicao = new ComponenteEdicao(elemento, opcoes);
 
     Object.defineProperty(elemento, 'lexml', {

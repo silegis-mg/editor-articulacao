@@ -1,0 +1,1 @@
+<p data-tipo="artigo">Teste.</p><p data-tipo="paragrafo" class="unico">Teste.</p><p data-tipo="artigo">Teste.</p><p data-tipo="paragrafo">Teste.</p><p data-tipo="paragrafo">Teste.</p><p data-tipo="artigo">Teste.</p><p data-tipo="continuacao"></p>

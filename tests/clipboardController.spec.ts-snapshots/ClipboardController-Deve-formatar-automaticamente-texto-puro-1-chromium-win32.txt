@@ -1,0 +1,1 @@
+Enumeração:<p data-tipo="inciso">Inciso:</p><p data-tipo="alinea">Alínea:</p><p data-tipo="item">Item;</p><p data-tipo="item">Item 2.</p><p data-tipo="alinea">Alínea 2.</p><p data-tipo="inciso">Inciso 2.</p><p data-tipo="artigo">Artigo 2.</p><p data-tipo="artigo">Artigo 3.</p>

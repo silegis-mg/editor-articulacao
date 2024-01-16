@@ -14,18 +14,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-import importarDeLexML from '../src/lexml/importarDeLexML';
-import exportarParaLexML from '../src/lexml/exportarParaLexML';
-import interpretadorArticulacao from '../src/interpretadorArticulacao';
-import { transformarTextoPuro, transformar } from '../src/ClipboardController';
+import { prepararEditorArticulacaoCompleto, criarControllerEditorArticulacao } from './plain-js';
+import * as interpretadorArticulacao from '../src/interpretadorArticulacao';
+import { transformar } from '../src/ClipboardController';
 import ValidacaoController from '../src/validacao/ValidacaoController';
 
-window.importarDeLexML = importarDeLexML;
-window.exportarParaLexML = exportarParaLexML;
-window.interpretadorArticulacao = interpretadorArticulacao;
 window.clipboardControllerModule = {
-    interpretarTextoPuro: transformarTextoPuro,
-    transformar: transformar
+    transformar
 };
 window.ValidacaoController = ValidacaoController;
+
+window.silegismgEditorArticulacao = prepararEditorArticulacaoCompleto;
+window.silegismgEditorArticulacaoController = criarControllerEditorArticulacao;
+window.silegismgInterpretadorArticulacao = interpretadorArticulacao;

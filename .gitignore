@@ -9,3 +9,7 @@
 /node_modules
 debug.log
 /dist
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
