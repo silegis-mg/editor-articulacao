@@ -22,7 +22,7 @@ jobs:
       - name: Instalar dependências
         run: npm ci
       - name: eslint
-        run: npx lint
+        run: npm run lint
       - name: Instalar navegadores do Playwright
         run: npx playwright install --with-deps
       - name: Executar testes do Playwright
