@@ -62,9 +62,13 @@ function adicionarParser(parser: Parser, transformador: Transformacao) {
     transformador.sequencias.forEach(function(sequencia) {
         let i, pAtual = parser, c;
         const handler = transformador.transformar.bind(transformador);
+        const mapa: Record<string, string> = {
+            '\n': 'Enter'
+        };
 
         for (i = 0; i < sequencia.length; i++) {
-            c = sequencia.charCodeAt(i);
+            c = sequencia.charAt(i);
+            c = mapa[c] ?? c;
 
             if (!pAtual[c]) {
                 pAtual[c] = {};
@@ -90,8 +94,7 @@ function adicionarParser(parser: Parser, transformador: Transformacao) {
  * Realiza o parsing da edição.
  */
 function processarEstado(event: KeyboardEvent, _parser: Parser, _estadoParser: Parser[], controller: EditorArticulacaoController, elemento: Element) {
-    const novoEstado = [],
-        c = event.key ?? event.charCode ?? event.keyCode;
+    const novoEstado = [], c = event.key;
 
     _estadoParser.forEach(function (estado) {
         if (estado[c]) {

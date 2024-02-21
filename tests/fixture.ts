@@ -33,6 +33,10 @@ interface IFixtures {
      * @param texto Entrada a ser transformada.
      */
     clipboardTransformar(texto: string): Promise<string>;
+
+    escrever(texto: string, rapido?: boolean): Promise<void>;
+
+    obterLexml(): Promise<string>;
 }
 
 export const test = base.extend<IFixtures>({
@@ -83,7 +87,27 @@ export const test = base.extend<IFixtures>({
                 return container.innerHTML;
             }, texto);
         });
+    },
+
+
+    escrever({ page }, use) {
+        use(async (texto, rapido) => {
+            await page.getByTestId('articulacao').pressSequentially(texto);
+            
+            if (!rapido) {
+                await page.waitForTimeout(1000);
+            }
+        });
+    },
+
+    obterLexml({ page }, use) {
+        use(() => {
+            return page.evaluate(() => {
+                return (window as any).ctrl.lexmlString;
+            });
+        });
     }
+
 });
 
 export { expect, Page } from '@playwright/test';

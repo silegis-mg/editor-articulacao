@@ -1,1 +1,0 @@
-linha 1<p data-tipo="artigo">linha 2</p><p data-tipo="artigo">linha 3</p>

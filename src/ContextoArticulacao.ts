@@ -19,7 +19,14 @@ import { TipoAgrupador, TipoDispositivo, TipoDispositivoOuAgrupador } from './Ti
 
 
 class Cursor {
-    desconhecido = false;
+    /**
+     * Normalmente, elemento === dispositivo. Entretanto, elementos de formatação,
+     * tais como itálico ou negrito podem fazer com que o cursor esteja no elemento
+     * de formatação, mas o dispositivo sempre será aquele que tem o atributo data-tipo.
+     */
+    readonly dispositivo: Element | null;
+    readonly dispositivoReferencia: Element | null;
+    readonly desconhecido: boolean;
     titulo = false;
     capitulo = false;
     secao = false;
@@ -34,17 +41,39 @@ class Cursor {
     private _primeiroDoTipo?: boolean;
     private _dispositivoAnterior: Element;
 
-    constructor(public readonly dispositivo: Element, private readonly elementoArticulacao: Element) {}
+    constructor(public readonly elemento: Element, private readonly elementoArticulacao: Element) {
+        this.dispositivo = elemento;
 
-    /**
-     * @deprecated Usar dispositivo.
-     */
-    get elemento() { 
-        console.warn('Substituir Cursor.elemento por Cursor.dispositivo');
-        return this.dispositivo;
+        while (this.dispositivo && this.dispositivo !== elementoArticulacao && !this.dispositivo.hasAttribute('data-tipo')) {
+            this.dispositivo = this.dispositivo.parentElement;
+        }
+
+        if (this.dispositivo === elementoArticulacao) {
+            this.dispositivo = null;
+        }
+
+        this.dispositivoReferencia = this.dispositivo;
+
+        while (this.dispositivoReferencia && this.dispositivoReferencia.getAttribute('data-tipo') === 'continuacao') {
+            this.dispositivoReferencia = this.dispositivoReferencia.previousElementSibling;
+            this.continuacao = true;
+        }
+
+        if (!this.dispositivoReferencia) {
+            this.desconhecido = true;
+        } else if (this.dispositivoReferencia === elementoArticulacao) {
+            this.raiz = true;
+            this.desconhecido = false;
+        } else if (this.dispositivoReferencia.hasAttribute('data-tipo')) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (this as any)[this.dispositivoReferencia.getAttribute('data-tipo')] = true;
+            this.desconhecido = false;
+        } else {
+            this.desconhecido = true;
+        }
     }
 
-    get italico(): boolean { return this.dispositivo.tagName === 'I'; }
+    get italico(): boolean { return this.elemento.tagName === 'I'; }
 
     get tipo(): TipoDispositivoOuAgrupador | 'desconhecido' {
         return this.dispositivo ? this.dispositivo.getAttribute('data-tipo') as TipoDispositivoOuAgrupador: 'desconhecido';
@@ -61,11 +90,9 @@ class Cursor {
     get dispositivoAnterior(): Element | undefined {
         if (this._dispositivoAnterior === undefined) {
             if (this.continuacao) {
-                this._dispositivoAnterior = this.dispositivo;
-            } else if (this.dispositivo) {
-                this._dispositivoAnterior = obterDispositivoAnterior(this.dispositivo, this.elementoArticulacao);
-            } else {
-                // TODO: Possível cair aqui?
+                this._dispositivoAnterior = this.dispositivoReferencia;
+            } else if (this.dispositivoReferencia) {
+                this._dispositivoAnterior = obterDispositivoAnterior(this.dispositivoReferencia, this.elementoArticulacao);
             }
         }
 
@@ -91,27 +118,9 @@ export default class ContextoArticulacao {
     public readonly permissoes: Permissoes;
     
     constructor(elementoArticulacao: Element, dispositivo: Element) {
-        while (dispositivo && dispositivo !== elementoArticulacao && !dispositivo.hasAttribute('data-tipo')) {
-            dispositivo = dispositivo.parentElement;
-        }
-
         const cursor = this.cursor = new Cursor(dispositivo !== elementoArticulacao ? dispositivo : null, elementoArticulacao);
 
-        while (dispositivo && dispositivo.getAttribute('data-tipo') === 'continuacao') {
-            dispositivo = dispositivo.previousElementSibling;
-            this.cursor.continuacao = true;
-        }
 
-        if (!dispositivo) {
-            this.cursor.desconhecido = true;
-        } else if (dispositivo === elementoArticulacao) {
-            this.cursor.raiz = true;
-        } else if (dispositivo.hasAttribute('data-tipo')) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (this.cursor as any)[dispositivo.getAttribute('data-tipo')] = true;
-        } else {
-            this.cursor.desconhecido = true;
-        }
 
         function possuiAnterior(dispositivo: Element, tipo: TipoDispositivoOuAgrupador) {
             /* Implementação falha/incompleta. Uma subseção deve existir depois de uma seção,

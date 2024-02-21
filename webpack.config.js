@@ -48,6 +48,7 @@ module.exports = ['plain-js', 'angular1', 'playwright'].map(empacotamento => {
         },
         resolve: {
             extensions: ['.ts', '.js'],
-        }
+        },
+        devtool: 'source-map'
     };
 });
