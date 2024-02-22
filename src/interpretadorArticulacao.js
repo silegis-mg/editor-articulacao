@@ -114,7 +114,7 @@ function parseTexto(textoOriginal) {
             }
         }, {
             item: 'inciso',
-            regexp: /^\s*([IXVDLM]+)\s*[-–).]\s*(.+)/i,
+            regexp: /^\s*([IXVDLM]+)\s*[-–).]\s*(.+)/,
             onMatch: function (contexto, m) {
                 var item = new Inciso(m[1], m[2]);
                 var container = contexto.getUltimoItemTipo([Artigo, Paragrafo]);
