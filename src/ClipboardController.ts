@@ -51,7 +51,9 @@ export default class ClipboardController {
 
         const fragmento = transformar(texto, this.editorCtrl.contexto.cursor.tipo);
 
-        colarFragmento(fragmento, this.editorCtrl, this.validacaoCtrl);
+        if (fragmento !== null) {
+            colarFragmento(fragmento, this.editorCtrl, this.validacaoCtrl);
+        }
     }
 }
 
@@ -62,25 +64,25 @@ export default class ClipboardController {
  * @param tipo Tipo do contexto atual do cursor.
  */
 function transformar(texto: string, tipo: TipoDispositivoOuAgrupador | 'desconhecido'): DocumentFragment | null {
-    let fragmento;
 
     if (tipo === 'continuacao') {
-        fragmento = transformarTextoPuro(texto, 'continuacao');
-    } else {
-        const dados = interpretar(texto, 'json');
+        return transformarTextoPuro(texto, 'continuacao');
+    }
 
-        if (dados.textoAnterior) {
-            fragmento = transformarTextoPuro(dados.textoAnterior, tipo !== 'desconhecido' ? tipo : TipoDispositivo.ARTIGO);
-        }
+    const dados = interpretar(texto, 'json');
+    let fragmento: DocumentFragment | null = null;
 
-        if (dados.articulacao.length > 0) {
-            const fragmentoArticulacao = transformarArticulacao(dados.articulacao);
+    if (dados.textoAnterior) {
+        fragmento = transformarTextoPuro(dados.textoAnterior, tipo !== 'desconhecido' ? tipo : TipoDispositivo.ARTIGO);
+    }
 
-            if (fragmento) {
-                fragmento.appendChild(fragmentoArticulacao);
-            } else {
-                fragmento = fragmentoArticulacao;
-            }
+    if (dados.articulacao.length > 0) {
+        const fragmentoArticulacao = transformarArticulacao(dados.articulacao);
+
+        if (fragmento) {
+            fragmento.appendChild(fragmentoArticulacao);
+        } else {
+            fragmento = fragmentoArticulacao;
         }
     }
 
@@ -95,14 +97,17 @@ function aoColar(event: ClipboardEvent, clipboardCtrl: ClipboardController) {
     const clipboardData = event.clipboardData || (window as any).clipboardData;
     const itens = clipboardData.items;
 
+    console.info('Itens ao colar', itens);
     if (itens) {
         for (let i = 0; i < itens.length; i++) {
+            console.info('Tipo', itens[i].type);
             if (itens[i].type === 'text/plain') {
                 itens[i].getAsString(clipboardCtrl.colarTexto.bind(clipboardCtrl));
                 event.preventDefault();
             }
         }
     } else if (clipboardData.getData) {
+        console.info('getData?');
         clipboardCtrl.colarTexto(clipboardData.getData('text/plain'));
         event.preventDefault();
     }

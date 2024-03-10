@@ -52,11 +52,18 @@ test.describe('Validação', function () {
 
             const dataTrans = new DataTransfer();
 
-            dataTrans.items.add('Primeira linha\nSegunda linha\nTerceira linha\nQuarta linha\nQuinta linha', 'text/plain');
+            try {
+                dataTrans.setData('text/plain', 'Primeira linha\nSegunda linha\nTerceira linha\nQuarta linha\nQuinta linha');
+            } catch (e) {
+                // webkit não suporta
+            }
 
             document.querySelector('[contenteditable]').dispatchEvent(new ClipboardEvent('paste', {
-                clipboardData: dataTrans
-            }));
+                clipboardData: dataTrans,
+                // Adaptação para funcionar no firefox e webkit
+                dataType: 'text/plain',
+                data: 'Primeira linha\nSegunda linha\nTerceira linha\nQuarta linha\nQuinta linha'
+            } as any)); // eslint-disable-line @typescript-eslint/no-explicit-any
         });
 
         await page.waitForTimeout(250);
