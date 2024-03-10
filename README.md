@@ -57,8 +57,7 @@ git clone https://github.com/silegis-mg/editor-articulacao.git
 Após baixar o editor, mude para o diretório onde encontram os fontes e instale as dependências: 
 
 ```
-cd editor-articulacao
-npm install
+npm ci
 ```
 
 ### Executando exemplo
@@ -73,9 +72,10 @@ Em seguida, basta abrir o navegador no endereço http://localhost:8080/exemplo.h
 
 ### Testando
 
-O editor de articulação possui testes automatizados utilizando karma e protractor.
+O editor de articulação possui testes automatizados utilizando Playwright.
 
 ```
+npx playwright install --with-deps
 npm test
 ```
 
@@ -83,7 +83,7 @@ Se estiver utlizando proxy, defina a variável de ambiente http_proxy para que o
 
 ### Gerando pacote para aplicações finais em ES5
 
-O javascript minificado é gerado por meio do webpack, a partir de uma tarefa do grunt. Existem dois empacotamentos para uso em aplicações finais:
+O javascript minificado é gerado por meio do webpack. Existem dois empacotamentos para uso em aplicações finais: plain-js e AngularJS (versão 1).
 
 #### Plain-JS
 
@@ -96,14 +96,9 @@ Também é definida a função global [`silegismgInterpretadorArticulacao.interp
 ##### Gerando pacote
 
 ```
-npx grunt build-plain
+npm run build
 ```
 
-É possível incluir o polyfill do babel também, utilizando:
-
-```
-npx grunt build-plain-polyfill
-```
 
 ##### Utilizando plain-js
 
@@ -126,7 +121,7 @@ Veja também a [API do interpretador de articulação](#api-interpretador).
 </script>
 ```
 
-#### Angular 1
+#### AngularJS 1
 
 O empacotamento `angular1` registra a diretiva `silegismgEditorArticulacaoConteudo` no módulo `silegismg-editor-articulacao` para AngularJS 1.x.
 

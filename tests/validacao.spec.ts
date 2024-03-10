@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Editor-Articulacao.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { test, expect, Page } from './fixture';
+import { test, expect } from './fixture';
 
 test.describe('Validação', function () {
     test.describe('Validador de sentença única', function () {
@@ -37,5 +37,32 @@ test.describe('Validação', function () {
             const resultado = await validar('Este é um teste de citação do art. 5º da constituição. Este é outro.');
             expect(resultado).toEqual(['sentencaUnica']);
         });
+    });
+
+    test('Deve validar todos os dispositivos ao colar', async ({ page }) => {
+        await page.getByTestId('articulacao').click();
+
+        await page.evaluate(function () {
+            const selecao = this.getSelection();
+            selecao.removeAllRanges();
+            
+            const range = document.createRange();
+            range.selectNodeContents(document.querySelector('[contenteditable]').firstElementChild);
+            selecao.addRange(range);
+
+            const dataTrans = new DataTransfer();
+
+            dataTrans.items.add('Primeira linha\nSegunda linha\nTerceira linha\nQuarta linha\nQuinta linha', 'text/plain');
+
+            document.querySelector('[contenteditable]').dispatchEvent(new ClipboardEvent('paste', {
+                clipboardData: dataTrans
+            }));
+        });
+
+        await page.waitForTimeout(250);
+
+        const invalidos = await page.evaluate(function() { return document.querySelectorAll('p[data-invalido]').length; });
+
+        expect(invalidos).toBe(4);
     });
 });
