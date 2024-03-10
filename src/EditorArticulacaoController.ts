@@ -590,9 +590,13 @@ function obterTipoValido(tipoDesejado: TipoDispositivoOuAgrupador, permissoes: P
  * @returns XML escapado.
  */
 function escaparXml(xml: string): string {
-    return xml.replace(/[\u00A0-\u9999]/gm, function (i) {
-        return '&#' + i.charCodeAt(0) + ';';    // Converte em unicode escapado.
-    });
+    return xml
+        // Remove caracteres de controle C0 não permitidos no XML 1.0
+        .replace(/[\u0001-\u0008\u000B-\u000C\u000E\u001F]/gm, '')        // eslint-disable-line no-control-regex
+        // Converte caracteres superiores a 160
+        .replace(/[\u00A0-\u9999]/gm, function (i) {
+            return '&#' + i.charCodeAt(0) + ';';    // Converte em unicode escapado.
+        });
 }
 
 function transformarEmEditor(elemento: HTMLElement, editorCtrl: EditorArticulacaoController, opcoes: IOpcoesEditorArticulacaoController) {

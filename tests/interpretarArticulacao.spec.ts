@@ -37,7 +37,7 @@ test.describe('Parser de articulação', function () {
     }
 
     test('Interpretação de articulação', function () {
-        const texto = 'Art. 1º - Teste 1:\nI - inciso do artigo;\nII - segundo inciso:\na) alínea do inciso:\n1) item da alínea;\n2) outro item.\nb) outra alínea.\nIII - último inciso.\nParágrafo Único - Parágrafo:\nI - inciso do parágrafo.\nArt. 2º - Outro artigo.';
+        const texto = 'Art. 1º - Teste 1:\nI - inciso do artigo;\nII - segundo inciso:\na) alínea do inciso:\n1) item da alínea;\n2) outro item.\nb) outra alínea;\nc) cê\nd) dê.\nIII - último inciso.\nParágrafo Único - Parágrafo:\nI - inciso do parágrafo.\nArt. 2º - Outro artigo.';
 
         expect(parser.interpretar(texto, 'json')).toEqual({
             textoAnterior: '',
@@ -65,7 +65,13 @@ test.describe('Parser de articulação', function () {
                                     }]
                                 }, {
                                     numero: 'b',
-                                    descricao: 'outra alínea.'
+                                    descricao: 'outra alínea;'
+                                }, {
+                                    numero: 'c',
+                                    descricao: 'cê'
+                                }, {
+                                    numero: 'd',
+                                    descricao: 'dê.'
                                 }
                             ]
                         }, {
