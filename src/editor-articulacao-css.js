@@ -20,15 +20,18 @@ const css = `
   outline: none;
 }
 
-.silegismg-editor-articulacao p:before {
+.silegismg-editor-articulacao p::before {
   font-weight: bolder;
   animation: .25s ease-in rotulo;
 }
 
-.silegismg-editor-articulacao p[data-tipo]:before {
-  display: inline-block; /* Resolve problema de cursor antes do rótulo no chrome */
-  margin-right: 1ex;
+.silegismg-editor-articulacao p[data-tipo] {
   text-indent: 0;
+}
+
+.silegismg-editor-articulacao p[data-tipo]::before {
+  float: left;
+  padding: 0 1ex 0 4ex;
 }
 
 .silegismg-editor-articulacao p {
@@ -42,7 +45,7 @@ const css = `
   border-left-color: red;
 }
 
-.silegismg-editor-articulacao p[data-invalido]:after {
+.silegismg-editor-articulacao p[data-invalido]::after {
   display: block;
   content: attr(data-invalido);
   color: red;
@@ -51,7 +54,7 @@ const css = `
   font-size: 90%;
 }
 
-.silegismg-editor-articulacao p[data-tipo="titulo"]:before {
+.silegismg-editor-articulacao p[data-tipo="titulo"]::before {
   content: 'Título ' counter(titulo, upper-roman);
   counter-increment: titulo;
   display: block;
@@ -69,7 +72,7 @@ const css = `
   text-indent: 0;
 }
 
-.silegismg-editor-articulacao p[data-tipo="capitulo"]:before {
+.silegismg-editor-articulacao p[data-tipo="capitulo"]::before {
   content: 'Capítulo ' counter(capitulo, upper-roman);
   counter-increment: capitulo;
   display: block;
@@ -87,7 +90,7 @@ const css = `
   text-indent: 0;
 }
 
-.silegismg-editor-articulacao p[data-tipo="secao"]:before {
+.silegismg-editor-articulacao p[data-tipo="secao"]::before {
   content: 'Seção ' counter(secao, upper-roman);
   counter-increment: secao;
   display: block;
@@ -104,7 +107,7 @@ const css = `
   text-indent: 0;
 }
 
-.silegismg-editor-articulacao p[data-tipo="subsecao"]:before {
+.silegismg-editor-articulacao p[data-tipo="subsecao"]::before {
   content: 'Subseção ' counter(subsecao, upper-roman);
   counter-increment: subsecao;
   display: block;
@@ -121,23 +124,23 @@ const css = `
 }
 
 
-.silegismg-editor-articulacao p[data-tipo="artigo"]:before {
+.silegismg-editor-articulacao p[data-tipo="artigo"]::before {
   content: 'Art. ' counter(artigo) 'º' '\${separadorArtigo}';
   counter-increment: artigo;
 }
 
-.silegismg-editor-articulacao p[data-tipo="artigo"].emenda:before {
+.silegismg-editor-articulacao p[data-tipo="artigo"].emenda::before {
   content: 'Art. ' counter(artigo) 'º-' counter(emenda, upper-latin) '\${separadorArtigo}';
   counter-increment: emenda;
 }
 
 /* A partir do artigo 10, não se usa "º" */
 
-.silegismg-editor-articulacao p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda):before {
+.silegismg-editor-articulacao p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda)::before {
   content: 'Art. ' counter(artigo) '\${separadorArtigoSemOrdinal}';
 }
 
-.silegismg-editor-articulacao p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"].emenda:before {
+.silegismg-editor-articulacao p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"]:not(.emenda) ~ p[data-tipo="artigo"].emenda::before {
   content: 'Art. ' counter(artigo) '-' counter(emenda, upper-latin) '\${separadorArtigoSemOrdinal}';
 }
 
@@ -153,17 +156,17 @@ const css = `
   counter-reset: inciso;
 }
 
-.silegismg-editor-articulacao p[data-tipo='paragrafo']:before {
+.silegismg-editor-articulacao p[data-tipo='paragrafo']::before {
   content: '§ ' counter(paragrafo) 'º' '\${separadorParagrafo}';
   counter-increment: paragrafo;
 }
 
-.silegismg-editor-articulacao p.semOrdinal[data-tipo='paragrafo']:before {
+.silegismg-editor-articulacao p.semOrdinal[data-tipo='paragrafo']::before {
   content: '§ ' counter(paragrafo) '\${separadorParagrafoSemOrdinal}';
   counter-increment: paragrafo;
 }
 
-.silegismg-editor-articulacao p[data-tipo='paragrafo'].unico:before {
+.silegismg-editor-articulacao p[data-tipo='paragrafo'].unico::before {
   content: 'Parágrafo único\${separadorParagrafoUnico}';
 }
 
@@ -171,7 +174,7 @@ const css = `
   counter-reset: alinea;
 }
 
-.silegismg-editor-articulacao p[data-tipo='inciso']:before {
+.silegismg-editor-articulacao p[data-tipo='inciso']::before {
   content: counter(inciso, upper-roman) '\${separadorInciso}';
   counter-increment: inciso;
 }
@@ -180,12 +183,12 @@ const css = `
   counter-reset: item;
 }
 
-.silegismg-editor-articulacao p[data-tipo='alinea']:before {
+.silegismg-editor-articulacao p[data-tipo='alinea']::before {
   content: counter(alinea, lower-latin) '\${separadorAlinea}';
   counter-increment: alinea;
 }
 
-.silegismg-editor-articulacao p[data-tipo='item']:before {
+.silegismg-editor-articulacao p[data-tipo='item']::before {
   content: counter(item) '\${separadorItem}';
   counter-increment: item;
 }

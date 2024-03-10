@@ -21,6 +21,9 @@
 import EditorArticulacaoController from '../EditorArticulacaoController';
 import { interceptar, interceptarApos } from './interceptador';
 
+/**
+ * @deprecated
+ */
 function hackIE(controller: EditorArticulacaoController) {
     controller.limpar = function() {
         // IE 11 precisa de conteúdo dentro do elemento para que o mesmo ganhe foco e seja editável

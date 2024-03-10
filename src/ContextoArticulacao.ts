@@ -120,8 +120,6 @@ export default class ContextoArticulacao {
     constructor(elementoArticulacao: Element, dispositivo: Element) {
         const cursor = this.cursor = new Cursor(dispositivo !== elementoArticulacao ? dispositivo : null, elementoArticulacao);
 
-
-
         function possuiAnterior(dispositivo: Element, tipo: TipoDispositivoOuAgrupador) {
             /* Implementação falha/incompleta. Uma subseção deve existir depois de uma seção,
              * mas não deveria permitir capítulo + seção + artigo + capítulo + subseção.
