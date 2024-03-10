@@ -34,6 +34,7 @@ import padrao from './opcoesPadrao';
 import IOpcoesEditorArticulacaoController from './IOpcoesEditorArticulacaoController';
 import EventoInterno from './eventos/EventoInterno';
 import { TipoAgrupador, TipoDispositivo, TipoDispositivoOuAgrupador } from './TipoDispositivo';
+import { IDetalhesTransformacaoAutomaticaEvent } from './eventos/TransformacaoAutomaticaEvent';
 
 /**
  * Controlador do editor de articulação.
@@ -227,6 +228,9 @@ class EditorArticulacaoController {
      * 
      * @param evento Evento a ser capturado.
      */
+    registrarEventListener(evento: 'contexto', listener: (this: Element, ev: CustomEvent<ContextoArticulacao>) => void, options?: AddEventListenerOptions): void;
+    registrarEventListener(evento: 'tranformacao', listener: (this: Element, ev: CustomEvent<IDetalhesTransformacaoAutomaticaEvent>) => void, options?: AddEventListenerOptions): void;
+    registrarEventListener(evento: 'change', listener: (this: Element, ev: CustomEvent<void>) => void, options?: AddEventListenerOptions): void;
     registrarEventListener<K extends keyof HTMLElementEventMap>(evento: K, listener: (this: Element, ev: HTMLElementEventMap[K]) => unknown): void;
     registrarEventListener<K extends keyof HTMLElementEventMap>(evento: K, listener: (this: Element, ev: HTMLElementEventMap[K]) => unknown, useCapture: boolean): void;
     registrarEventListener<K extends keyof HTMLElementEventMap>(evento: K, listener: (this: Element, ev: HTMLElementEventMap[K]) => unknown, options: AddEventListenerOptions): void;
@@ -264,7 +268,7 @@ class EditorArticulacaoController {
         }
     }
 
-    private  _normalizarContexto(): void {
+    private _normalizarContexto(): void {
         if (!this._contexto) {
             return;
         }
@@ -358,16 +362,19 @@ class EditorArticulacaoController {
              * dispositivo), então considera-se como endContainer o dispositivo
              * ancestral, por meio da verificação do atributo "data-tipo".
              */
-            while (endContainer !== this._elemento && (endContainer.nodeType !== Node.ELEMENT_NODE || !(endContainer as Element).hasAttribute('data-tipo'))) {
+            while (endContainer && endContainer !== this._elemento && (endContainer.nodeType !== Node.ELEMENT_NODE || !(endContainer as Element).hasAttribute('data-tipo'))) {
                 endContainer = endContainer.parentElement;
             }
 
             /* Altera o tipo para todos os dispositivos seguintes até encontrar
              * o container final.
              */
-            while (dispositivo !== endContainer && dispositivo) {
+            while (dispositivo && dispositivo !== endContainer && dispositivo) {
                 dispositivo = dispositivo.nextElementSibling;
-                this._definirTipo(dispositivo, novoTipo);
+
+                if (dispositivo) {
+                    this._definirTipo(dispositivo, novoTipo);
+                }
             }
         }
 
