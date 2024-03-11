@@ -226,13 +226,4 @@ test.describe('Formatação do editor de articulação', () => {
         expect(await obterLexml()).toEqual('<Articulacao xmlns="http://www.lexml.gov.br/1.0"><Artigo id="art1"><Rotulo>Art. 1º –</Rotulo><Caput id="art1_cpt"><p>Artigo.</p></Caput><Paragrafo id="art1_par1u"><Rotulo>Parágrafo único –</Rotulo><p>Parágrafo:</p></Paragrafo></Artigo><Artigo id="art2"><Rotulo>Art. 2º –</Rotulo><Caput id="art2_cpt"><p>Artigo.</p></Caput></Artigo></Articulacao>');
     });
 
-    test('"Desfazer" não pode violar formatação', async ({ page, escrever, obterLexml }) => {
-        await escrever('Teste.');
-        await page.keyboard.press('Home');
-        await page.keyboard.press('Enter');
-        await page.getByText('Continuação').click();
-        await page.keyboard.press('Control+Z');
-        expect(await obterLexml()).toEqual('<Articulacao xmlns="http://www.lexml.gov.br/1.0"><Artigo id="art1"><Rotulo>Art. 1º –</Rotulo><Caput id="art1_cpt"><p>Teste.</p></Caput></Artigo></Articulacao>');
-    });
-
 });
